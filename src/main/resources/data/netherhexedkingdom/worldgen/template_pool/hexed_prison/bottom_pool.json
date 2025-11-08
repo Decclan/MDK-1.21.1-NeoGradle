@@ -1,0 +1,16 @@
+{
+  "name": "repurposed_structures:hexed_prison/bottom_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+
+        "location": "netherhexedkingdom:hexed_prison_bottom",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+    // More info on template pools can be found here: https://minecraft.gamepedia.com/Custom_world_generation#JSON_format_8
+    // Yes, worldgen json files can have comments. Minecraft does "lenient" parsing of these json files.
+
+  "name": "repurposed_structures:hexed_red_sun_tower/start_pool",
+
+  "fallback": "minecraft:empty",
+
+  "elements": [
+    {
+
+      "weight": 1,
+      "element": {
+
+       "location": "netherhexedkingdom:hexed_red_sun_tower_bottom",
+
+        "processors": "minecraft:empty",
+
+        "projection": "rigid",
+
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}
