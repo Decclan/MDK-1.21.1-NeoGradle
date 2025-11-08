@@ -22,8 +22,28 @@ public class ModCreativeTabs {
                     .withTabsBefore(CreativeModeTabs.COMBAT)
                     .icon(() -> ModItems.MILITUS_ALLOY_INGOT.get().getDefaultInstance()) // Placeholder item
                     .displayItems((parameters, output) -> {
+                        // Items
                         output.accept(ModItems.MILITUS_ALLOY_INGOT.get());
+                        output.accept(ModItems.MILITUS_ALLOY_NUGGET.get());
+                        output.accept(ModItems.NETHERITE_FRAGMENT_BUNDLE.get());
+                        output.accept(ModItems.NETHERITE_FRAGMENT.get());
+                        output.accept(ModItems.NETHERITE_OXIDE.get());
+                        output.accept(ModItems.IRON_CLUMP.get());
+                        // Blocks
                         output.accept(ModBlocks.MILITUS_ALLOY_BLOCK.get());
+                        output.accept(ModBlocks.MILITUS_ALLOY_ORE.get());
+                        output.accept(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get());
+                        output.accept(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get());
+                        output.accept(ModBlocks.ETERNAL_LIGHT_BLOCK.get());
+                        output.accept(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.get());
+                        output.accept(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get());
+                        output.accept(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get());
+                        output.accept(ModBlocks.IRON_PLATE_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_BASALT_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_BLACKSTONE_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get());
                         // add future blocks/items here
                     })
                     .build());
