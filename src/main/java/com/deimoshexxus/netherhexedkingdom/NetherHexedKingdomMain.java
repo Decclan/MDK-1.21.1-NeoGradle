@@ -50,6 +50,8 @@ public class NetherHexedKingdomMain {
     public NetherHexedKingdomMain(IEventBus modEventBus, ModContainer modContainer) {
         // register lifecycle listeners
         modEventBus.addListener(this::commonSetup);
+        // Register the data generator listener
+        modEventBus.addListener(com.deimoshexxus.netherhexedkingdom.datagen.DataGenerators::gatherData);
 
         // register our content's deferred registers to the mod event bus
         BLOCKS.register(modEventBus);

@@ -1,8 +1,0 @@
-{
-	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
-	"textures": {
-		"2": "block/basalt_top",
-		"3": "block/bone_block_side",
-		"particle": "block/basalt_top"
-	}
-}

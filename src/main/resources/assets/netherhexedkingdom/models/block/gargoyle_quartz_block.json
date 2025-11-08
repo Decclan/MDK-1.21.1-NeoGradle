@@ -1,8 +1,0 @@
-{
-	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
-	"textures": {
-		"2": "block/chiseled_quartz_block_top",
-		"3": "block/black_concrete",
-		"particle": "block/chiseled_quartz_block_top"
-	}
-}
