@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "netherhexedkingdom:block/eternal_light_block_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "netherhexedkingdom:block/eternal_light_block"
+    },
+    "axis=z": {
+      "model": "netherhexedkingdom:block/eternal_light_block_horizontal",
+      "x": 90
+    }
+  }
+}

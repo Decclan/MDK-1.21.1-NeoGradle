@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "end": "netherhexedkingdom:block/eternal_light_block_end",
+    "side": "netherhexedkingdom:block/eternal_light_block_side"
+  }
+}
