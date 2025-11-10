@@ -83,14 +83,6 @@ public class NetherHexedKingdomMain {
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
     }
 
-    // Example: add items to an existing creative tab (if you need to)
-    private void addToVanillaCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        // sample: put a specific item into building blocks tab
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            // example: event.accept(ModItems.MILITUS_ALLOY_INGOT.get()); // if using RegistryObject style
-        }
-    }
-
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("Server starting - Nether Hexed Kingdom");

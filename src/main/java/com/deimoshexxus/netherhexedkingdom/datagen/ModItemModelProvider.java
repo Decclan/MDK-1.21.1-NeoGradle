@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -14,7 +15,20 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ModItems.MILITUS_ALLOY_NUGGET.get()); // Replace with your mod’s items
-        // Add more as you define new items
+        basicItem(ModItems.MILITUS_ALLOY_INGOT.get());
+        basicItem(ModItems.MILITUS_ALLOY_NUGGET.get());
+        basicItem(ModItems.IRON_CLUMP.get());
+        basicItem(ModItems.NETHERITE_FRAGMENT_BUNDLE.get());
+        basicItem(ModItems.NETHERITE_FRAGMENT.get());
+        basicItem(ModItems.NETHERITE_OXIDE.get());
+        basicItem(ModItems.IMPERIAL_COINS.get());
+
+        // Custom model block items
+        withExistingParent(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.getId().getPath(),
+                modLoc("block/blackstone_firestand_block"));
+        withExistingParent(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.getId().getPath(),
+                modLoc("block/human_skeleton_top_block"));
+        withExistingParent(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.getId().getPath(),
+                modLoc("block/human_skeleton_bottom_block"));
     }
 }

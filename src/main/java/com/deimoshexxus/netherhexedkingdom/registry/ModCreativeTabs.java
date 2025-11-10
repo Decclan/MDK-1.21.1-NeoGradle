@@ -25,10 +25,12 @@ public class ModCreativeTabs {
                         // Items
                         output.accept(ModItems.MILITUS_ALLOY_INGOT.get());
                         output.accept(ModItems.MILITUS_ALLOY_NUGGET.get());
+                        output.accept(ModItems.IRON_CLUMP.get());
                         output.accept(ModItems.NETHERITE_FRAGMENT_BUNDLE.get());
                         output.accept(ModItems.NETHERITE_FRAGMENT.get());
                         output.accept(ModItems.NETHERITE_OXIDE.get());
-                        output.accept(ModItems.IRON_CLUMP.get());
+                        output.accept(ModItems.IMPERIAL_COINS.get());
+
                         // Blocks
                         output.accept(ModBlocks.MILITUS_ALLOY_BLOCK.get());
                         output.accept(ModBlocks.MILITUS_ALLOY_ORE.get());
@@ -42,7 +44,7 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.GARGOYLE_BASALT_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_BLACKSTONE_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get());
-                        output.accept(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_GOLD_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get());
                         // add future blocks/items here
                     })
