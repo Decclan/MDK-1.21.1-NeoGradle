@@ -50,6 +50,8 @@ public class NetherHexedKingdomMain {
     public NetherHexedKingdomMain(IEventBus modEventBus, ModContainer modContainer) {
         // register lifecycle listeners
         modEventBus.addListener(this::commonSetup);
+        // Register the data generator listener
+        modEventBus.addListener(com.deimoshexxus.netherhexedkingdom.datagen.DataGenerators::gatherData);
 
         // register our content's deferred registers to the mod event bus
         BLOCKS.register(modEventBus);
@@ -79,14 +81,6 @@ public class NetherHexedKingdomMain {
 
         LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
-    }
-
-    // Example: add items to an existing creative tab (if you need to)
-    private void addToVanillaCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        // sample: put a specific item into building blocks tab
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            // example: event.accept(ModItems.MILITUS_ALLOY_INGOT.get()); // if using RegistryObject style
-        }
     }
 
     @SubscribeEvent
