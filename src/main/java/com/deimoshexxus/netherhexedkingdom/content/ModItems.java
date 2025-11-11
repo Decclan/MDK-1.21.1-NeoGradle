@@ -62,6 +62,9 @@ public class ModItems {
     // public static final DeferredItem<Item> HEXAN_ARMOR_HELMET = ITEMS.register("hexan_helmet", () -> new ArmorItem(...));
     // (Will be added after custom tool/armor tiers are defined)
 
+
+
+
     // --- Registry Helper ---
 
     private static DeferredItem<Item> registerItem(String name) {

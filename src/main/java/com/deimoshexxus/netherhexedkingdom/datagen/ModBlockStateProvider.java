@@ -2,9 +2,14 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
+import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ModBlockStateProvider extends BlockStateProvider {
@@ -22,15 +27,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.MILITUS_ALLOY_ORE.get(), cubeAll(ModBlocks.MILITUS_ALLOY_ORE.get()));
         simpleBlockWithItem(ModBlocks.MILITUS_ALLOY_BLOCK.get(), cubeAll(ModBlocks.MILITUS_ALLOY_BLOCK.get()));
         simpleBlockWithItem(ModBlocks.IRON_PLATE_BLOCK.get(), cubeAll(ModBlocks.IRON_PLATE_BLOCK.get()));
+        simpleBlockWithItem(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get()));
+        simpleBlockWithItem(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get()));
+        simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get(), cubeAll(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get()));
+        simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get(), cubeAll(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get()));
 
         // ----------------------
         // Pillar block
         // ----------------------
-        try {
-            axisBlockWithRenderType(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), "cutout");
-        } catch (NoSuchMethodError e) {
-            axisBlock((RotatedPillarBlock) ModBlocks.ETERNAL_LIGHT_BLOCK.get());
-        }
+
+        axisBlockWithRenderType(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), "cutout");
 
         // ----------------------
         // Custom manual blocks
@@ -40,44 +46,82 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 models().getExistingFile(modLoc("block/blackstone_firestand_block")));
 
         // ----------------------
-        // Symmetrical custom blocks
+        // Gargoyles (Originally South Facing)
         // ----------------------
-        simpleBlock(ModBlocks.GARGOYLE_GOLD_BLOCK.get(),
-                models().getExistingFile(modLoc("block/gargoyle_gold_block")));
-        simpleBlock(ModBlocks.GARGOYLE_BLACKSTONE_BLOCK.get(),
-                models().getExistingFile(modLoc("block/gargoyle_blackstone_block")));
-        simpleBlock(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get(),
-                models().getExistingFile(modLoc("block/gargoyle_quartz_block")));
-        simpleBlock(ModBlocks.GARGOYLE_BASALT_BLOCK.get(),
-                models().getExistingFile(modLoc("block/gargoyle_basalt_block")));
-        simpleBlock(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get(),
-                models().getExistingFile(modLoc("block/gargoyle_obsidian_block")));
+
+        // Horizontal rotatable gargoyle statues
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_GOLD_BLOCK.get(), "gargoyle_gold_block");
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_BLACKSTONE_BLOCK.get(), "gargoyle_blackstone_block");
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get(), "gargoyle_quartz_block");
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_BASALT_BLOCK.get(), "gargoyle_basalt_block");
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get(), "gargoyle_obsidian_block");
+        horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_AMETHYST_BLOCK.get(), "gargoyle_amethyst_block");
 
         // ----------------------
         // BlockBench-generated models
         // ----------------------
-        String topName = "human_skeleton_top_block";
-        String bottomName = "human_skeleton_bottom_block";
 
-//        // Tell the generator to create models using existing parents (BlockBench JSON)
-//        models().withExistingParent(topName, modLoc("block/" + topName)).renderType("cutout");
-//        models().withExistingParent(bottomName, modLoc("block/" + bottomName)).renderType("cutout");
+//        // Bind generated models to block states
+//        simpleBlock(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(),
+//                models().getExistingFile(modLoc("block/human_skeleton_top_block")));
+//        simpleBlock(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(),
+//                models().getExistingFile(modLoc("block/human_skeleton_bottom_block")));
 
-        // Bind generated models to block states
-        simpleBlock(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(),
-                models().getExistingFile(modLoc("block/" + topName)));
-        simpleBlock(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(),
-                models().getExistingFile(modLoc("block/" + bottomName)));
+        // Horizontal rotatable skeleton halves
+        horizontalRotatableBlock(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");
+        horizontalRotatableBlock(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), "human_skeleton_bottom_block");
 
-        // ----------------------
-        // Optional: Rotatable blocks
-        // ----------------------
-        // If any RotatableBlock requires rotation/facing state, use getVariantBuilder(...)
-        // Example:
-        // getVariantBuilder(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get())
-        //     .forAllStates(state -> ConfiguredModel.builder()
-        //         .modelFile(models().getExistingFile(modLoc("block/" + topName)))
-        //         .rotationY(calcRotationFromState(state))
-        //         .build());
     }
+
+    // ----------------------
+    // Optional: Rotatable blocks json builder helper
+    // ----------------------
+
+    private void horizontalRotatableBlock(Block block, String modelName) {
+        // Use the Variant builder directly and rotate by Y depending on horizontal facing
+        getVariantBuilder(block).forAllStates(state -> {
+            Direction dir = state.getValue(RotatableBlock.HORIZONTAL_FACING);
+            int yRot;
+            switch (dir) {
+                case SOUTH: yRot = 180; break;
+                case WEST:  yRot = 90;  break;
+                case EAST:  yRot = 270; break;
+                default:    yRot = 0;   // NORTH
+            }
+            return ConfiguredModel.builder()
+                    .modelFile(models().getExistingFile(modLoc("block/" + modelName)))
+                    .rotationY(yRot)
+                    .build();
+        });
+
+        // also generate a simple item model that references the block model
+        // this creates models/item/<name>.json that points to models/block/<name>
+        simpleBlockItem(block, models().getExistingFile(modLoc("block/" + modelName)));
+    }
+
+    private void horizontalRotatableBlockInverted(Block block, String modelName) {
+        // For models that are facing SOUTH in Blockbench by default.
+        getVariantBuilder(block).forAllStates(state -> {
+            Direction dir = state.getValue(RotatableBlock.HORIZONTAL_FACING);
+            int yRot;
+
+            // Invert direction: north ↔ south, east ↔ west
+            switch (dir) {
+                case NORTH: yRot = 180; break; // normally 0
+                case SOUTH: yRot = 0;   break; // normally 180
+                case WEST:  yRot = 270; break; // normally 90
+                case EAST:  yRot = 90;  break; // normally 270
+                default:    yRot = 0;
+            }
+
+            return ConfiguredModel.builder()
+                    .modelFile(models().getExistingFile(modLoc("block/" + modelName)))
+                    .rotationY(yRot)
+                    .build();
+        });
+
+        // Also generate the matching item model
+        simpleBlockItem(block, models().getExistingFile(modLoc("block/" + modelName)));
+    }
+
 }

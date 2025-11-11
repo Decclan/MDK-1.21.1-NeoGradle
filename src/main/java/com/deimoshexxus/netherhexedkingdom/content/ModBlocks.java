@@ -5,6 +5,7 @@ import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.sounds.SoundEvents;
@@ -80,9 +81,9 @@ public class ModBlocks {
                     .sound(SoundType.BONE_BLOCK)
                     .noOcclusion()));
 
-    // -------------------------
-    // Gargoyle Statues
-    // -------------------------
+// -------------------------
+// Gargoyle Statues
+// -------------------------
 
     public static final DeferredBlock<RotatableBlock> GARGOYLE_GOLD_BLOCK = register("gargoyle_gold_block",
             () -> new RotatableBlock(BlockBehaviour.Properties.of()
@@ -92,6 +93,7 @@ public class ModBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()
                     .requiresCorrectToolForDrops()));
+
 
     public static final DeferredBlock<RotatableBlock> GARGOYLE_BLACKSTONE_BLOCK = register("gargoyle_blackstone_block",
             () -> new RotatableBlock(BlockBehaviour.Properties.of()
@@ -124,6 +126,15 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<RotatableBlock> GARGOYLE_AMETHYST_BLOCK = register("gargoyle_amethyst_block",
+            () -> new RotatableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_MAGENTA)
+                    .strength(2f, 3f)
+                    .sound(SoundType.AMETHYST)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()));
+
 
     // -------------------------
     // Specialty Blocks
