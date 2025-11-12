@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
-		"2": "Blockbench-assets:block/polished_blackstone",
-		"3": "Blockbench-assets:block/black_concrete"
+		"2": "minecraft:block/polished_blackstone",
+		"3": "minecraft:block/black_concrete"
 	},
 	"elements": [
 		{

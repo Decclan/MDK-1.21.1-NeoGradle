@@ -20,6 +20,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        System.out.println(">>> Nether Hexed Kingdom blockstate datagen running");
 
         // ----------------------
         // Simple cube blocks
@@ -36,7 +37,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // Pillar block
         // ----------------------
 
-        axisBlockWithRenderType(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), "cutout");
+        axisBlock(ModBlocks.ETERNAL_LIGHT_BLOCK.get(),
+                modLoc("block/eternal_light_block_side"),
+                modLoc("block/eternal_light_block_end"));
+
+        // generate item model for the block
+        simpleBlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(),
+                models().cubeBottomTop("eternal_light_block",
+                        modLoc("block/eternal_light_block_side"),
+                        modLoc("block/eternal_light_block_side"),
+                        modLoc("block/eternal_light_block_end")));
 
         // ----------------------
         // Custom manual blocks
@@ -68,8 +78,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 //                models().getExistingFile(modLoc("block/human_skeleton_bottom_block")));
 
         // Horizontal rotatable skeleton halves
-        horizontalRotatableBlock(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");
-        horizontalRotatableBlock(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), "human_skeleton_bottom_block");
+        horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");
+        horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), "human_skeleton_bottom_block");
 
     }
 
@@ -109,8 +119,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
             switch (dir) {
                 case NORTH: yRot = 180; break; // normally 0
                 case SOUTH: yRot = 0;   break; // normally 180
-                case WEST:  yRot = 270; break; // normally 90
-                case EAST:  yRot = 90;  break; // normally 270
+                case WEST:  yRot = 90; break; // normally 90
+                case EAST:  yRot = 270;  break; // normally 270
                 default:    yRot = 0;
             }
 

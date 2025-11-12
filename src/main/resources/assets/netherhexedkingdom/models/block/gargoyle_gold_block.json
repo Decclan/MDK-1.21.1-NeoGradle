@@ -2,9 +2,9 @@
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"2": "Blockbench-assets:block/gold_block",
-		"3": "Blockbench-assets:block/red_concrete",
-		"particle": "Blockbench-assets:block/gold_block"
+		"2": "minecraft:block/gold_block",
+		"3": "minecraft:block/red_concrete",
+		"particle": "minecraft:block/gold_block"
 	},
 	"elements": [
 		{

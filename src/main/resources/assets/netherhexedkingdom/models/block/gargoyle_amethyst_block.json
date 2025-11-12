@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
-		"4": "Blockbench-assets:block/amethyst_block",
-		"7": "Blockbench-assets:block/gold_block"
+		"4": "minecraft:block/amethyst_block",
+		"7": "minecraft:block/gold_block"
 	},
 	"elements": [
 		{

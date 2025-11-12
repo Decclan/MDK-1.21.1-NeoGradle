@@ -38,7 +38,6 @@ public class ModItemModelProvider extends ItemModelProvider {
                 modLoc("block/gargoyle_amethyst_block"));
 
 
-
         withExistingParent(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.getId().getPath(),
                 modLoc("block/blackstone_firestand_block"));
         withExistingParent(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.getId().getPath(),

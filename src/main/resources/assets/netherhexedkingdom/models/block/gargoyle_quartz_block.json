@@ -3,9 +3,9 @@
 	"credit": "Made with Blockbench",
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
-		"2": "Blockbench-assets:block/chiseled_quartz_block_top",
-		"3": "Blockbench-assets:block/black_concrete",
-		"particle": "Blockbench-assets:block/chiseled_quartz_block_top"
+		"2": "minecraft:block/chiseled_quartz_block_top",
+		"3": "minecraft:block/black_concrete",
+		"particle": "minecraft:block/chiseled_quartz_block_top"
 	},
 	"elements": [
 		{

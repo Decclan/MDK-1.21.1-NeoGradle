@@ -81,6 +81,10 @@ public class NetherHexedKingdomMain {
 
         LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
+        LOGGER.info("SKE_TOP item present? {}", ModBlocks.HUMAN_SKELETON_TOP_BLOCK.getId());
+        LOGGER.info("SKE_BOTTOM item present? {}", ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.getId());
+
+
     }
 
     @SubscribeEvent

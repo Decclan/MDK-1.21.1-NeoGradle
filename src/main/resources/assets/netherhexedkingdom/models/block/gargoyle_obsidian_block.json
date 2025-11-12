@@ -3,9 +3,9 @@
 	"credit": "Made with Blockbench",
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
-		"2": "Blockbench-assets:block/obsidian",
-		"3": "Blockbench-assets:block/magenta_concrete",
-		"particle": "Blockbench-assets:block/obsidian"
+		"2": "minecraft:block/obsidian",
+		"3": "minecraft:block/magenta_concrete",
+		"particle": "minecraft:block/obsidian"
 	},
 	"elements": [
 		{
