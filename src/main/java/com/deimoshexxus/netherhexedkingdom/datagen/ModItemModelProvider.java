@@ -23,7 +23,21 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NETHERITE_OXIDE.get());
         basicItem(ModItems.IMPERIAL_COINS.get());
 
-        // Custom model block items
+
+        withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_gold_block"));
+        withExistingParent(ModBlocks.GARGOYLE_BLACKSTONE_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_blackstone_block"));
+        withExistingParent(ModBlocks.GARGOYLE_QUARTZ_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_quartz_block"));
+        withExistingParent(ModBlocks.GARGOYLE_BASALT_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_basalt_block"));
+        withExistingParent(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_obsidian_block"));
+        withExistingParent(ModBlocks.GARGOYLE_AMETHYST_BLOCK.getId().getPath(),
+                modLoc("block/gargoyle_amethyst_block"));
+
+
         withExistingParent(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.getId().getPath(),
                 modLoc("block/blackstone_firestand_block"));
         withExistingParent(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.getId().getPath(),

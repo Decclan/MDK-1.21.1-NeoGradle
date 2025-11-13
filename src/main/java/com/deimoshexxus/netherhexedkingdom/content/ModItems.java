@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.food.FoodProperties;
 import net.neoforged.bus.api.IEventBus;
@@ -61,6 +62,19 @@ public class ModItems {
     // public static final DeferredItem<Item> MILITUS_SWORD = ITEMS.register("militus_sword", () -> new SwordItem(...));
     // public static final DeferredItem<Item> HEXAN_ARMOR_HELMET = ITEMS.register("hexan_helmet", () -> new ArmorItem(...));
     // (Will be added after custom tool/armor tiers are defined)
+
+
+    public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
+            ITEMS.register("eternal_light_block",
+                    () -> new BlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), new Item.Properties()));
+
+//    public static final DeferredItem<Item> HUMAN_SKELETON_TOP_ITEM =
+//            ITEMS.register("human_skeleton_top_block",
+//                    () -> new BlockItem(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), new Item.Properties()));
+//
+//    public static final DeferredItem<Item> HUMAN_SKELETON_BOTTOM_ITEM =
+//            ITEMS.register("human_skeleton_bottom_block",
+//                    () -> new BlockItem(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), new Item.Properties()));
 
     // --- Registry Helper ---
 

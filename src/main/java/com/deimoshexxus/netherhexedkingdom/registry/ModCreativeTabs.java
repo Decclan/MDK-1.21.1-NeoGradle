@@ -37,6 +37,8 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get());
                         output.accept(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get());
                         output.accept(ModBlocks.ETERNAL_LIGHT_BLOCK.get());
+                        output.accept(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get());
+                        output.accept(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get());
                         output.accept(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.get());
                         output.accept(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get());
                         output.accept(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get());
@@ -46,6 +48,7 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.GARGOYLE_QUARTZ_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_GOLD_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get());
+                        output.accept(ModBlocks.GARGOYLE_AMETHYST_BLOCK.get());
                         // add future blocks/items here
                     })
                     .build());
