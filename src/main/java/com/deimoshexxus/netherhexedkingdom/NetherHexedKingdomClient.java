@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom;
 
+import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -9,6 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = NetherHexedKingdomMain.MODID, dist = Dist.CLIENT)
@@ -27,5 +29,8 @@ public class NetherHexedKingdomClient {
         // Some client setup code
         NetherHexedKingdomMain.LOGGER.info("HELLO FROM CLIENT SETUP");
         NetherHexedKingdomMain.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        event.enqueueWork(() -> {
+            EntityRenderers.register(ModEntities.HEXED_ZOMBIE.get(), com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieRenderer::new);
+        });
     }
 }

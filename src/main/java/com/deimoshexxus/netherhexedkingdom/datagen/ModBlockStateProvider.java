@@ -55,6 +55,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.get(),
                 models().getExistingFile(modLoc("block/blackstone_firestand_block")));
 
+
+        // ----------------------
+        // BlockBench-generated models
+        // ----------------------
         // ----------------------
         // Gargoyles (Originally South Facing)
         // ----------------------
@@ -66,16 +70,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_BASALT_BLOCK.get(), "gargoyle_basalt_block");
         horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get(), "gargoyle_obsidian_block");
         horizontalRotatableBlockInverted(ModBlocks.GARGOYLE_AMETHYST_BLOCK.get(), "gargoyle_amethyst_block");
-
-        // ----------------------
-        // BlockBench-generated models
-        // ----------------------
-
-//        // Bind generated models to block states
-//        simpleBlock(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(),
-//                models().getExistingFile(modLoc("block/human_skeleton_top_block")));
-//        simpleBlock(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(),
-//                models().getExistingFile(modLoc("block/human_skeleton_bottom_block")));
 
         // Horizontal rotatable skeleton halves
         horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");

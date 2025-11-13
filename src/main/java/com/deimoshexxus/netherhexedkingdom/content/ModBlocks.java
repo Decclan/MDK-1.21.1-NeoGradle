@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.content.custom.HumanSkeletonBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -67,15 +68,15 @@ public class ModBlocks {
     // Skeleton Statues
     // -------------------------
 
-    public static final DeferredBlock<RotatableBlock> HUMAN_SKELETON_TOP_BLOCK = register("human_skeleton_top_block",
-            () -> new RotatableBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<HumanSkeletonBlock> HUMAN_SKELETON_TOP_BLOCK = register("human_skeleton_top_block",
+            () -> new HumanSkeletonBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.CLAY)
                     .strength(1f, 1f)
                     .sound(SoundType.BONE_BLOCK)
                     .noOcclusion()));
 
-    public static final DeferredBlock<RotatableBlock> HUMAN_SKELETON_BOTTOM_BLOCK = register("human_skeleton_bottom_block",
-            () -> new RotatableBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<HumanSkeletonBlock> HUMAN_SKELETON_BOTTOM_BLOCK = register("human_skeleton_bottom_block",
+            () -> new HumanSkeletonBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.CLAY)
                     .strength(1f, 1f)
                     .sound(SoundType.BONE_BLOCK)

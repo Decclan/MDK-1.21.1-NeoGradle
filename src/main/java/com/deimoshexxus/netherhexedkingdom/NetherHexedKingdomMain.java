@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom;
 
+import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -62,6 +63,8 @@ public class NetherHexedKingdomMain {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
+        // register entities' deferred register
+        ModEntities.register(modEventBus);
 
         // register this class to NeoForge event bus for server / other events
         NeoForge.EVENT_BUS.register(this);
@@ -81,9 +84,6 @@ public class NetherHexedKingdomMain {
 
         LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
-        LOGGER.info("SKE_TOP item present? {}", ModBlocks.HUMAN_SKELETON_TOP_BLOCK.getId());
-        LOGGER.info("SKE_BOTTOM item present? {}", ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.getId());
-
 
     }
 
