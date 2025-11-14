@@ -3,9 +3,16 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import java.util.Objects;
 
 public class ModItemModelProvider extends ItemModelProvider {
 
@@ -22,7 +29,18 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NETHERITE_FRAGMENT.get());
         basicItem(ModItems.NETHERITE_OXIDE.get());
         basicItem(ModItems.IMPERIAL_COINS.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
 
+
+//        public ItemModelBuilder spawnEggItem(Item item) {
+//            return spawnEggItem(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
+//        }
+//
+//        public ItemModelBuilder spawnEggItem(ResourceLocation item) {
+//            return getBuilder(item.toString())
+//                    .parent(new ModelFile.UncheckedModelFile("item/template_spawn_egg"));
+//        }
+        
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
                 modLoc("block/gargoyle_gold_block"));

@@ -3,6 +3,7 @@ package com.deimoshexxus.netherhexedkingdom.content;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
@@ -18,8 +19,10 @@ public class ModEntities {
             ENTITY_TYPES.register("hexed_zombie", () ->
                     EntityType.Builder.of(HexedZombieEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.95F)
-                            .build("hexed_zombie")
+                            .build(NetherHexedKingdomMain.MODID + ":hexed_zombie")
             );
+
+
 
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);

@@ -30,6 +30,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.NETHERITE_FRAGMENT.get());
                         output.accept(ModItems.NETHERITE_OXIDE.get());
                         output.accept(ModItems.IMPERIAL_COINS.get());
+                        output.accept(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
 
                         // Blocks
                         output.accept(ModBlocks.MILITUS_ALLOY_BLOCK.get());

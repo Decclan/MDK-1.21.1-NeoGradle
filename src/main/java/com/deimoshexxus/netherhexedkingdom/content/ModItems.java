@@ -4,7 +4,9 @@ import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -63,18 +65,23 @@ public class ModItems {
     // public static final DeferredItem<Item> HEXAN_ARMOR_HELMET = ITEMS.register("hexan_helmet", () -> new ArmorItem(...));
     // (Will be added after custom tool/armor tiers are defined)
 
-
+    // redundant?
     public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
             ITEMS.register("eternal_light_block",
                     () -> new BlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), new Item.Properties()));
 
-//    public static final DeferredItem<Item> HUMAN_SKELETON_TOP_ITEM =
-//            ITEMS.register("human_skeleton_top_block",
-//                    () -> new BlockItem(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), new Item.Properties()));
-//
-//    public static final DeferredItem<Item> HUMAN_SKELETON_BOTTOM_ITEM =
-//            ITEMS.register("human_skeleton_bottom_block",
-//                    () -> new BlockItem(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), new Item.Properties()));
+    // --- Entity Eggs ---
+
+    public static final DeferredHolder<Item, SpawnEggItem> HEXED_ZOMBIE_SPAWN_EGG =
+            ITEMS.register("hexed_zombie_spawn_egg", () ->
+                    new SpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE.get(),
+                            0x4B503D,
+                            0x8A9C88,
+                            new Item.Properties()
+                    )
+            );
+
 
     // --- Registry Helper ---
 
