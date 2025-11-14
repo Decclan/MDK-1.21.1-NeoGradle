@@ -30,6 +30,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NETHERITE_OXIDE.get());
         basicItem(ModItems.IMPERIAL_COINS.get());
         spawnEggItem(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
 
 
 //        public ItemModelBuilder spawnEggItem(Item item) {
@@ -40,7 +42,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 //            return getBuilder(item.toString())
 //                    .parent(new ModelFile.UncheckedModelFile("item/template_spawn_egg"));
 //        }
-        
+
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
                 modLoc("block/gargoyle_gold_block"));

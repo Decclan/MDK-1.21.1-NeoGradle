@@ -82,6 +82,26 @@ public class ModItems {
                     )
             );
 
+    public static final DeferredHolder<Item, SpawnEggItem> HEXED_ZOMBIE_HUSK_SPAWN_EGG =
+            ITEMS.register("hexed_zombie_husk_spawn_egg", () ->
+                    new SpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE_HUSK.get(),
+                            0x4B503D,
+                            0x8A9C88,
+                            new Item.Properties()
+                    )
+            );
+
+    public static final DeferredHolder<Item, SpawnEggItem> HEXAN_GUARD_SPAWN_EGG =
+            ITEMS.register("hexan_guard_spawn_egg", () ->
+                    new SpawnEggItem(
+                            ModEntities.HEXAN_GUARD.get(),
+                            0x4B503D,
+                            0x8A9C88,
+                            new Item.Properties()
+                    )
+            );
+
 
     // --- Registry Helper ---
 
