@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
-import net.minecraft.core.BlockPos;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -8,7 +9,9 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -16,11 +19,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.animal.Turtle;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
@@ -28,79 +33,133 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathType;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class HexanGuardEntity extends AbstractSkeleton {
 
-    // ---------------------------
-    // Variant Enum
-    // ---------------------------
-    public enum Variant {
-        MELEE,
-        RANGED;
+    private static final float BREAK_DOOR_CHANCE = 0.3F;
+    private static final Predicate<Difficulty> DOOR_BREAKING_PREDICATE = p_34284_ -> p_34284_ == Difficulty.NORMAL;
+    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
+    private boolean canBreakDoors;
 
-        public static Variant fromId(int id) {
-            return values()[id % values().length];
-        }
-
-        public int getId() {
-            return this.ordinal();
-        }
+    public enum Variant { MELEE, RANGED;
+        public static Variant fromId(int id) { return values()[Math.floorMod(id, values().length)]; }
+        public int getId() { return this.ordinal(); }
     }
 
-    // Synced variant field
     private static final EntityDataAccessor<Integer> DATA_VARIANT =
             SynchedEntityData.defineId(HexanGuardEntity.class, EntityDataSerializers.INT);
 
     public HexanGuardEntity(EntityType<? extends AbstractSkeleton> type, Level level) {
         super(type, level);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+    }
+
+    // safe clear helper
+    private static void clearGoalsSafe(GoalSelector selector) {
+        var snapshot = List.copyOf(selector.getAvailableGoals());
+        for (var wrapped : snapshot) {
+            if (wrapped == null) continue;
+            var g = wrapped.getGoal();
+            if (g == null) continue;
+            selector.removeGoal(g);
+        }
     }
 
     // ---------------------------------
-    // Synched Data
+    // Synched data
     // ---------------------------------
-
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_VARIANT, Variant.MELEE.getId());
     }
 
+    public boolean canBreakDoors() {
+        return this.canBreakDoors;
+    }
+
+    /**
+     * Sets or removes EntityAIBreakDoor task
+     */
+    public void setCanBreakDoors(boolean canBreakDoors) {
+        if (this.supportsBreakDoorGoal() && GoalUtils.hasGroundPathNavigation(this)) {
+            if (this.canBreakDoors != canBreakDoors) {
+                this.canBreakDoors = canBreakDoors;
+                ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(canBreakDoors);
+                if (canBreakDoors) {
+                    this.goalSelector.addGoal(1, this.breakDoorGoal);
+                } else {
+                    this.goalSelector.removeGoal(this.breakDoorGoal);
+                }
+            }
+        } else if (this.canBreakDoors) {
+            this.goalSelector.removeGoal(this.breakDoorGoal);
+            this.canBreakDoors = false;
+        }
+    }
+
+    protected boolean supportsBreakDoorGoal() {
+        return true;
+    }
+
 
     public Variant getVariant() {
         return Variant.fromId(this.entityData.get(DATA_VARIANT));
     }
-
-    public void setVariant(Variant v) {
-        this.entityData.set(DATA_VARIANT, v.getId());
-    }
+    public void setVariant(Variant v) { this.entityData.set(DATA_VARIANT, v.getId()); }
 
     // ---------------------------------
-    // NBT Save/Load
+    // Save / load NBT
     // ---------------------------------
-
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("Variant", this.getVariant().getId());
+        tag.putInt("Variant", getVariant().getId());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.setVariant(Variant.fromId(tag.getInt("Variant")));
+        if (tag.contains("Variant")) this.setVariant(Variant.fromId(tag.getInt("Variant")));
     }
 
-    // ---------------------------------
-    // Spawning + variant assignment
-    // ---------------------------------
+    // ---------------------------
+    // Prevent vanilla auto-equipping
+    // ---------------------------
+    @Override
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
+        // Do nothing — we set equipment explicitly in finalizeSpawn
+    }
 
-    // Call externally by: hexanGuard.setVariant(HexanGuardEntity.Variant.MELEE);
+    // Keep vanilla skeleton initialisation but we will replace attack goals dynamically
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        if (this.level() != null && !this.level().isClientSide()) {
+            NetherHexedKingdomMain.LOGGER.debug("HexanGuard.registerGoals() on server for {}", this.getUUID());
+        }
+    }
+
+    @Override
+    public void reassessWeaponGoal() {
+        // prevent vanilla skeleton from forcing its own weapon logic
+    }
+
+    @Override
+    protected SoundEvent getStepSound() {
+        return SoundEvents.SKELETON_STEP; // safer than returning null
+    }
+
+    // ---------------------------
+    // Spawning + variant assignment
+    // ---------------------------
     @Override
     public SpawnGroupData finalizeSpawn(
             ServerLevelAccessor level,
@@ -110,40 +169,39 @@ public class HexanGuardEntity extends AbstractSkeleton {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 
-        // Random variant if none set
-        this.setVariant(this.random.nextBoolean() ? Variant.MELEE : Variant.RANGED);
+        // ALWAYS assign variant randomly (70% melee / 30% ranged)
+        this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
 
-        // Equip based on the variant
+        // Apply gear and goals AFTER vanilla spawn logic
         applyVariantEquipment();
-
-        // Goals based on variant
         setupGoalsForVariant();
+
+        NetherHexedKingdomMain.LOGGER.debug(
+                "Finalized spawn for HexanGuard variant={} at {}",
+                this.getVariant(), this.blockPosition()
+        );
 
         return data;
     }
 
-    // Equip weapons/armor based on variant
-    private void applyVariantEquipment() {
+    // ---------------------------
+    // Equipment application
+    // ---------------------------
+    public void applyVariantEquipment() {
         RandomSource r = this.random;
 
-        switch (this.getVariant()) {
+        // Clear hands first (be explicit)
+        this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        this.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
 
+        switch (getVariant()) {
             case MELEE -> {
-                // --- Armor ---
-                this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
-                this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
+                this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.MILITUS_ALLOY_CHESTPLATE));
+                this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.MILITUS_ALLOY_LEGGINGS));
+                if (r.nextFloat() < 0.70F) this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
+                if (r.nextFloat() < 0.70F) this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
 
-                if (r.nextFloat() < 0.70F) {
-                    this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
-                }
-
-                // --- Shield ---
-                if (r.nextFloat() < 0.70F) {
-                    this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
-                }
-
-                // --- Weapon: stone sword / stone axe / gold sword (equal chance) ---
-                int pick = r.nextInt(3); // 0,1,2
+                int pick = r.nextInt(3);
                 ItemStack weapon = switch (pick) {
                     case 0 -> new ItemStack(Items.STONE_SWORD);
                     case 1 -> new ItemStack(Items.IRON_AXE);
@@ -151,101 +209,69 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 };
                 this.setItemSlot(EquipmentSlot.MAINHAND, weapon);
             }
-
             case RANGED -> {
-                // --- Armor ---
-                this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
-                this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
-
-                if (r.nextFloat() < 0.30F) {
-                    this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
-                }
-
-                // --- Weapon ---
+                this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.MILITUS_ALLOY_CHESTPLATE));
+                this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.MILITUS_ALLOY_LEGGINGS));
+                if (r.nextFloat() < 0.30F) this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
             }
         }
 
-        // prevent natural drops from giving excessive gear
-        this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
-        this.setDropChance(EquipmentSlot.OFFHAND, 0.0F);
-        this.setDropChance(EquipmentSlot.HEAD, 0.0F);
-        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
-        this.setDropChance(EquipmentSlot.LEGS, 0.0F);
+        // Prevent natural drops
+        for (EquipmentSlot slot : EquipmentSlot.values()) this.setDropChance(slot, 0.0F);
+        NetherHexedKingdomMain.LOGGER.debug("Applied equipment for HexanGuard variant={} main={} off={}",
+                getVariant(), this.getItemInHand(InteractionHand.MAIN_HAND), this.getItemInHand(InteractionHand.OFF_HAND));
     }
 
-    // ---------------------------------
-    // Variant-Aware Goals
-    // ---------------------------------
-
+    // ---------------------------
+    // Goals (variant aware)
+    // ---------------------------
     private void setupGoalsForVariant() {
-        // wipe goals
-        this.goalSelector.getAvailableGoals().forEach(g -> this.goalSelector.removeGoal(g.getGoal()));
-        this.targetSelector.getAvailableGoals().forEach(g -> this.targetSelector.removeGoal(g.getGoal()));
+        if (this.level() == null || this.level().isClientSide()) {
+            NetherHexedKingdomMain.LOGGER.debug("setupGoalsForVariant on client - ignoring");
+            return;
+        }
 
-        // Shared Targeting
+        // safe clear
+        clearGoalsSafe(this.goalSelector);
+        clearGoalsSafe(this.targetSelector);
+
+        NetherHexedKingdomMain.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+
+        // shared targeting
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Piglin.class, true));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PiglinBrute.class, true));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.targetSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(6, new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE));
+        this.targetSelector.addGoal(6, new FollowMobGoal(this,0.0D, 0.0F, 0.0F));
 
-        // Variant-specific logic
-        if (this.getVariant() == Variant.MELEE) {
-
+        // variant attack
+        if (getVariant() == Variant.MELEE) {
             this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
-
         } else {
-
             this.goalSelector.addGoal(1, new RangedBowAttackGoal<>(this, 1.0D, 20, 15.0F));
-
         }
 
-        // Shared navigation
+        // shared nav & avoids
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
-        // Avoids
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 8.0F, 1.0, 1.2));
         this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, ZombifiedPiglin.class, 6.0F, 1.0, 1.2));
     }
 
-    @Override
-    protected void registerGoals() {
-        // Override to replace AbstractSkeleton from injecting bow goals.
-    }
-
-    // ---------------------------------
-    // Sounds
-    // ---------------------------------
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return SoundEvents.SKELETON_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.SKELETON_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return SoundEvents.SKELETON_DEATH;
-    }
-
-    @Override
-    protected SoundEvent getStepSound() {
-        return SoundEvents.SKELETON_STEP;
-    }
-
-    // ---------------------------------
-    // Attributes
-    // ---------------------------------
+    // Sounds & attributes
+    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SKELETON_AMBIENT; }
+    @Override protected SoundEvent getHurtSound(DamageSource d) { return SoundEvents.SKELETON_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.SKELETON_DEATH; }
 
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractSkeleton.createAttributes()
+                //.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0)
                 .add(Attributes.MAX_HEALTH, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.24D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)

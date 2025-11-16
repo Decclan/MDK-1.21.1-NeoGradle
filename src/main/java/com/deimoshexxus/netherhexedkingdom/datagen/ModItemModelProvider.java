@@ -33,15 +33,11 @@ public class ModItemModelProvider extends ItemModelProvider {
         spawnEggItem(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
         spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
 
-
-//        public ItemModelBuilder spawnEggItem(Item item) {
-//            return spawnEggItem(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
-//        }
-//
-//        public ItemModelBuilder spawnEggItem(ResourceLocation item) {
-//            return getBuilder(item.toString())
-//                    .parent(new ModelFile.UncheckedModelFile("item/template_spawn_egg"));
-//        }
+        basicItem(ModItems.MILITUS_ALLOY_HELMET.get());
+        basicItem(ModItems.MILITUS_ALLOY_CHESTPLATE.get());
+        basicItem(ModItems.MILITUS_ALLOY_LEGGINGS.get());
+        basicItem(ModItems.MILITUS_ALLOY_BOOTS.get());
+        basicItem(ModItems.MILITUS_ALLOY_HORSE_ARMOR.get());
 
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),

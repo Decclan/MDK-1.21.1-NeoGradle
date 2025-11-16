@@ -1,10 +1,14 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
+import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.AnimalArmorItem;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -72,35 +76,68 @@ public class ModItems {
 
     // --- Entity Eggs ---
 
-    public static final DeferredHolder<Item, SpawnEggItem> HEXED_ZOMBIE_SPAWN_EGG =
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_SPAWN_EGG =
             ITEMS.register("hexed_zombie_spawn_egg", () ->
-                    new SpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE.get(),
-                            0x4B503D,
-                            0x8A9C88,
+                    new DeferredSpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE,
+                            0x6b0626,
+                            0x8a8270,
                             new Item.Properties()
                     )
             );
 
-    public static final DeferredHolder<Item, SpawnEggItem> HEXED_ZOMBIE_HUSK_SPAWN_EGG =
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_HUSK_SPAWN_EGG =
             ITEMS.register("hexed_zombie_husk_spawn_egg", () ->
-                    new SpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE_HUSK.get(),
-                            0x4B503D,
-                            0x8A9C88,
+                    new DeferredSpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE_HUSK,
+                            0x4f0634,
+                            0xaba28c,
                             new Item.Properties()
                     )
             );
 
-    public static final DeferredHolder<Item, SpawnEggItem> HEXAN_GUARD_SPAWN_EGG =
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXAN_GUARD_SPAWN_EGG =
             ITEMS.register("hexan_guard_spawn_egg", () ->
-                    new SpawnEggItem(
-                            ModEntities.HEXAN_GUARD.get(),
+                    new DeferredSpawnEggItem(
+                            ModEntities.HEXAN_GUARD,
                             0x4B503D,
-                            0x8A9C88,
+                            0x6b1706,
                             new Item.Properties()
                     )
             );
+
+    // --- Armor ---
+
+    public static final DeferredHolder<Item, ArmorItem> MILITUS_ALLOY_HELMET =
+            ITEMS.register("militus_alloy_helmet", () ->
+                    new ArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
+                            ArmorItem.Type.HELMET,
+                            new Item.Properties()));
+
+    public static final DeferredHolder<Item, ArmorItem> MILITUS_ALLOY_CHESTPLATE =
+            ITEMS.register("militus_alloy_chestplate", () ->
+                    new ArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
+                            ArmorItem.Type.CHESTPLATE,
+                            new Item.Properties()));
+
+    public static final DeferredHolder<Item, ArmorItem> MILITUS_ALLOY_LEGGINGS =
+            ITEMS.register("militus_alloy_leggings", () ->
+                    new ArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
+                            ArmorItem.Type.LEGGINGS,
+                            new Item.Properties()));
+
+    public static final DeferredHolder<Item, ArmorItem> MILITUS_ALLOY_BOOTS =
+            ITEMS.register("militus_alloy_boots", () ->
+                    new ArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
+                            ArmorItem.Type.BOOTS,
+                            new Item.Properties()));
+
+    public static final DeferredHolder<Item, AnimalArmorItem> MILITUS_ALLOY_HORSE_ARMOR =
+            ITEMS.register("militus_alloy_horse_armor", () ->
+                    new AnimalArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
+                            AnimalArmorItem.BodyType.EQUESTRIAN,
+                            false,
+                            new Item.Properties().stacksTo(1)));
 
 
     // --- Registry Helper ---

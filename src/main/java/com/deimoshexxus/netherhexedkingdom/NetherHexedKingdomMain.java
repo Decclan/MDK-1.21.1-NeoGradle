@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -65,6 +66,8 @@ public class NetherHexedKingdomMain {
         ModCreativeTabs.register(modEventBus);
         // register entities' deferred register
         ModEntities.register(modEventBus);
+        ModArmorMaterials.MATERIALS.register(modEventBus);
+
 
         // register this class to NeoForge event bus for server / other events
         NeoForge.EVENT_BUS.register(this);

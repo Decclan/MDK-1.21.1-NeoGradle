@@ -27,7 +27,6 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
 
     private static LayerDefinition createLayer(float deformation) {
         CubeDeformation def = new CubeDeformation(deformation);
-        // Note: second param to createMesh is offset (usually 0f)
         MeshDefinition mesh = HumanoidModel.createMesh(def, 0.0F);
         PartDefinition root = mesh.getRoot();
 
@@ -50,7 +49,6 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
         );
 
         // HORNS — map the two small boxes from Blockbench
-        // Right horn (Blockbench had a box at x=4, y=-10, z=-1 size 1x4x1)
         head.addOrReplaceChild(
                 "horn_right",
                 CubeListBuilder.create()
@@ -59,7 +57,6 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
                 PartPose.ZERO
         );
 
-        // Left horn (Blockbench had a box at x=-5, y=-10, z=-1 size 1x4x1)
         head.addOrReplaceChild(
                 "horn_left",
                 CubeListBuilder.create()
@@ -77,28 +74,45 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
                 PartPose.ZERO
         );
 
-        // RIGHT ARM — 3x12x3 as in your Blockbench export
-        root.addOrReplaceChild(
+        // RIGHT ARM — return the PartDefinition so we can add item anchor children
+        PartDefinition rightArm = root.addOrReplaceChild(
                 "right_arm",
                 CubeListBuilder.create()
                         .texOffs(40, 16)
-                        // coordinates match Blockbench: addBox(-2, -2, -1, 3,12,3)
                         .addBox(-2.0F, -2.0F, -1.0F, 3, 12, 3),
                 PartPose.offset(-5.0F, 2.0F, 0.0F)
         );
 
-        // LEFT ARM — mirrored, 3x12x3
-        root.addOrReplaceChild(
+        // LEFT ARM — mirrored
+        PartDefinition leftArm = root.addOrReplaceChild(
                 "left_arm",
                 CubeListBuilder.create()
                         .texOffs(40, 16)
                         .mirror()
-                        // Blockbench used addBox(-1, -2, -1, 3,12,3) for mirrored arm
                         .addBox(-1.0F, -2.0F, -1.0F, 3, 12, 3),
                 PartPose.offset(5.0F, 2.0F, 0.0F)
         );
 
-        // RIGHT LEG — 3x12x3
+        // --- ITEM ANCHORS (these are REQUIRED so held items show up correctly) ---
+        // Left item anchor uses Blockbench offset from your export:
+        leftArm.addOrReplaceChild(
+                "leftItem",
+                CubeListBuilder.create(),
+                PartPose.offset(1.0F, 7.0F, 1.0F)
+        );
+
+        // Right item anchor — mirror of left. Blockbench didn't provide rightItem but we add a sensible anchor.
+        rightArm.addOrReplaceChild(
+                "rightItem",
+                CubeListBuilder.create(),
+                PartPose.offset(0.0F, 7.0F, 1.0F) // tweak to taste (try -1.0F if item sits too far in)
+        );
+
+        // Optional sleeves used by armor layer baking (keeps armor attachments consistent)
+        rightArm.addOrReplaceChild("right_sleeve", CubeListBuilder.create(), PartPose.ZERO);
+        leftArm.addOrReplaceChild("left_sleeve", CubeListBuilder.create(), PartPose.ZERO);
+
+        // RIGHT LEG
         root.addOrReplaceChild(
                 "right_leg",
                 CubeListBuilder.create()
@@ -107,7 +121,7 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
                 PartPose.offset(-2.0F, 12.0F, 0.0F)
         );
 
-        // LEFT LEG — mirrored, 3x12x3
+        // LEFT LEG — mirrored
         root.addOrReplaceChild(
                 "left_leg",
                 CubeListBuilder.create()
@@ -122,7 +136,6 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        // Use vanilla humanoid animations — this will also apply attack/arm poses, bow etc.
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 }
