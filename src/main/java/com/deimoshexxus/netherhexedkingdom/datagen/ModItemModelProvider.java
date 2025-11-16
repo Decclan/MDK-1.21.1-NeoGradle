@@ -3,9 +3,16 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import java.util.Objects;
 
 public class ModItemModelProvider extends ItemModelProvider {
 
@@ -22,6 +29,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NETHERITE_FRAGMENT.get());
         basicItem(ModItems.NETHERITE_OXIDE.get());
         basicItem(ModItems.IMPERIAL_COINS.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
+
+        basicItem(ModItems.MILITUS_ALLOY_HELMET.get());
+        basicItem(ModItems.MILITUS_ALLOY_CHESTPLATE.get());
+        basicItem(ModItems.MILITUS_ALLOY_LEGGINGS.get());
+        basicItem(ModItems.MILITUS_ALLOY_BOOTS.get());
+        basicItem(ModItems.MILITUS_ALLOY_HORSE_ARMOR.get());
 
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
