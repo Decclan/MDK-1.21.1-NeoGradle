@@ -1,8 +1,8 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
+import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
@@ -48,7 +49,7 @@ import java.util.UUID;
 
 public class HexanGuardEntity extends AbstractSkeleton {
 
-    public enum Variant { MELEE, RANGED;
+    public enum Variant { MELEE, RANGED, GRENADIER;
         public static Variant fromId(int id) { return values()[Math.floorMod(id, values().length)]; }
         public int getId() { return this.ordinal(); }
     }
@@ -132,15 +133,6 @@ public class HexanGuardEntity extends AbstractSkeleton {
         }
     }
 
-    /** Assign leader by UUID only (useful during load) */
-    public void setSquadLeader(UUID uuid) {
-        this.entityData.set(SQUAD_LEADER_UUID, Optional.ofNullable(uuid));
-        // entity id unknown at this time -> leave entity id as -1; it can be resolved later
-        int existingId = this.entityData.get(SQUAD_LEADER_ENTITY_ID);
-        if (existingId == -1) this.entityData.set(SQUAD_LEADER_ENTITY_ID, -1);
-        this.entityData.set(IS_SQUAD_LEADER, false);
-    }
-
     // ---------------------------------
     // Save / load NBT
     // ---------------------------------
@@ -189,7 +181,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     protected void registerGoals() {
         super.registerGoals();
         if (this.level() != null && !this.level().isClientSide()) {
-            NetherHexedKingdomMain.LOGGER.debug("HexanGuard.registerGoals() on server for {}", this.getUUID());
+            //NetherHexedKingdomMain.LOGGER.debug("HexanGuard.registerGoals() on server for {}", this.getUUID());
         }
     }
 
@@ -215,17 +207,27 @@ public class HexanGuardEntity extends AbstractSkeleton {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 
-        // ALWAYS assign variant randomly (70% melee / 30% ranged)
-        this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
+        // Assign variant randomly (70% melee / 30% ranged)
+        //this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
+
+        float roll = random.nextFloat();
+
+        if (roll < 0.1F)  //0.6
+            setVariant(Variant.MELEE);
+        else if (roll < 0.2F)  //0.85
+            setVariant(Variant.RANGED);
+        else
+            setVariant(Variant.GRENADIER);  // 15% chance
+
 
         // Apply gear and goals AFTER vanilla spawn logic
         applyVariantEquipment();
         setupGoalsForVariant();
 
-        // Try to find a leader nearby (12-block radius)
+        // Try to find a leader nearby (16-block radius)
         List<HexanGuardEntity> nearby = level.getEntitiesOfClass(
                 HexanGuardEntity.class,
-                this.getBoundingBox().inflate(12),
+                this.getBoundingBox().inflate(16),
                 e -> e.isSquadLeader()
         );
 
@@ -233,25 +235,21 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.setAsSquadLeader();
         } else {
             HexanGuardEntity leader = nearby.get(0);
-            this.setSquadLeader(leader); // IMPORTANT: pass the entity -> sets uuid+entityId
+            this.setSquadLeader(leader); // pass the entity -> sets uuid+entityId
         }
 
         // Leader-only combat buffs
         if (this.isSquadLeader()) {
             // Gold helmet
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
             // Buffs
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
         }
-
-        NetherHexedKingdomMain.LOGGER.debug(
-                "Finalized spawn for HexanGuard variant={} at {}",
-                this.getVariant(), this.blockPosition()
-        );
-
+        //NetherHexedKingdomMain.LOGGER.debug("Finalized spawn for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
         return data;
     }
 
@@ -286,6 +284,16 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 if (r.nextFloat() < 0.30F) this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
             }
+            case GRENADIER -> {
+                this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.MILITUS_ALLOY_CHESTPLATE));
+                this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.MILITUS_ALLOY_LEGGINGS));
+                if (r.nextFloat() < 0.50F)
+                    this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
+
+                // show something unique in hand (optional)
+                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FIRE_CHARGE));
+            }
+
         }
 
         // Prevent natural drops
@@ -299,7 +307,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     // ---------------------------
     private void setupGoalsForVariant() {
         if (this.level() == null || this.level().isClientSide()) {
-            NetherHexedKingdomMain.LOGGER.debug("setupGoalsForVariant on client - ignoring");
+            //NetherHexedKingdomMain.LOGGER.debug("setupGoalsForVariant on client - ignoring");
             return;
         }
 
@@ -307,7 +315,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
         clearGoalsSafe(this.goalSelector);
         clearGoalsSafe(this.targetSelector);
 
-        NetherHexedKingdomMain.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+        //NetherHexedKingdomMain.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
 
         // shared targeting
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -321,6 +329,8 @@ public class HexanGuardEntity extends AbstractSkeleton {
         if (getVariant() == Variant.MELEE) {
             this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
             this.goalSelector.addGoal(2, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
+        }else if (getVariant() == Variant.GRENADIER) {
+            this.goalSelector.addGoal(1, new ThrowGrenadeGoal(this));
         } else {
             this.goalSelector.addGoal(1, new RangedBowAttackGoal<>(this, 1.0D, 20, 16.0F));
         }
@@ -331,9 +341,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(8, new FollowMobGoal(this, 1.0D, 2.0F, 16.0F));
+        // only follow leader?
+        //this.goalSelector.addGoal(8, new FollowMobGoal(this, 1.0D, 2.0F, 16.0F));
         this.goalSelector.addGoal(8, new FollowSquadLeaderGoal(this, 1.0D, 3.0F));
-
     }
 
     // Sounds & attributes
