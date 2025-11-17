@@ -17,7 +17,7 @@ public class GrenadeRenderer extends ThrownItemRenderer<GrenadeProjectileEntity>
                        net.minecraft.client.renderer.MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         // optional scale
-        float scale = 0.6F;
+        float scale = 1.1F;
         poseStack.scale(scale, scale, scale);
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);

@@ -1,6 +1,5 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities.ai;
 
-import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import com.deimoshexxus.netherhexedkingdom.content.entities.GrenadeProjectileEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,19 +9,16 @@ import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 
 /**
- * Throws a grenade at the current target. Simple prediction + cooldown.
- * - Uses GrenadeProjectileEntity(Level, LivingEntity, Vec3)
- * - Adjust SPEED to tune arc / travel time
+ * Goal that throws a grenade at the current target using a ballistic solver.
  */
 public class ThrowGrenadeGoal extends Goal {
     private final HexanGuardEntity guard;
     private LivingEntity target;
     private int cooldownTicks = 0;
 
-    // config
-    private final int cooldownBase;     // ticks between throws
-    private final double maxRangeSq;    // squared max throw range
-    private final double projectileSpeed; // magnitude of initial velocity
+    private final int cooldownBase;      // base ticks between throws
+    private final double maxRangeSq;     // squared max throw range
+    private final double projectileSpeed; // initial speed magnitude
 
     public ThrowGrenadeGoal(HexanGuardEntity guard, int cooldownTicks, double maxRange, double projectileSpeed) {
         this.guard = guard;
@@ -33,8 +29,8 @@ public class ThrowGrenadeGoal extends Goal {
     }
 
     public ThrowGrenadeGoal(HexanGuardEntity guard) {
-        // defaults: 60 ticks cooldown (3s), 20 block max, 0.6 speed
-        this(guard, 60, 20.0D, 0.6D);
+        // defaults: 40 ticks cooldown (~2s), 24 block range, speed 1.0
+        this(guard, 40, 24.0D, 1.0D);
     }
 
     @Override
@@ -42,12 +38,10 @@ public class ThrowGrenadeGoal extends Goal {
         if (guard.getVariant() == null) return false;
         if (guard.getVariant() != HexanGuardEntity.Variant.GRENADIER) return false;
 
-        target = guard.getTarget(); // uses mob target system
-        if (target == null) return false;
-        if (!target.isAlive()) return false;
+        target = guard.getTarget();
+        if (target == null || !target.isAlive()) return false;
 
-        double distSq = guard.distanceToSqr(target);
-        return distSq <= maxRangeSq;
+        return guard.distanceToSqr(target) <= maxRangeSq;
     }
 
     @Override
@@ -59,8 +53,8 @@ public class ThrowGrenadeGoal extends Goal {
 
     @Override
     public void start() {
-        // optionally reset cooldown so they don't immediately throw on spawn
-        if (cooldownTicks <= 0) cooldownTicks = guard.getRandom().nextInt(cooldownBase);
+        // small random initial delay so multiple grenadiers don't sync perfectly
+        if (cooldownTicks <= 0) cooldownTicks = guard.level().getRandom().nextInt(cooldownBase);
     }
 
     @Override
@@ -72,45 +66,38 @@ public class ThrowGrenadeGoal extends Goal {
     public void tick() {
         if (target == null || !target.isAlive()) return;
 
-        // Look at target
+        // keep looking at the target
         guard.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-        // Cooldown handling
         if (cooldownTicks > 0) {
             cooldownTicks--;
             return;
         }
 
-        // Source position (slightly from eye level)
+        // source position (eye level)
         Vec3 source = new Vec3(guard.getX(), guard.getEyeY() - 0.2D, guard.getZ());
 
-        // Target prediction: aim at target eye position plus a fraction of its motion
+        // predict target movement: simple linear lead scaled by distance
         Vec3 targetPos = new Vec3(target.getX(), target.getEyeY(), target.getZ());
         Vec3 targetMotion = target.getDeltaMovement();
-
-        // Simple linear prediction factor: depends on distance; tune multiplier if needed
         double distance = source.distanceTo(targetPos);
-        double predictionFactor = Math.min(1.0D, distance / 20.0D); // scale from 0..1
-        Vec3 predicted = targetPos.add(targetMotion.scale(5.0D * predictionFactor)); // 5 ticks lead scaled by distance
+        double leadFactor = Math.min(1.0D, distance / 20.0D);
+        Vec3 predicted = targetPos.add(targetMotion.scale(5.0D * leadFactor));
 
-        // Direction vector
-        Vec3 dir = predicted.subtract(source);
+        // create projectile with ballistic solver
+        GrenadeProjectileEntity proj = GrenadeProjectileEntity.createThrownAtTarget(
+                guard.level(),
+                guard,
+                predicted,
+                this.projectileSpeed,
+                0.12D
+        );
 
-        // Normalize + scale to projectileSpeed
-        Vec3 velocity = dir.normalize().scale(projectileSpeed);
-
-        // Create projectile using constructor that takes (Level, LivingEntity, Vec3)
-        GrenadeProjectileEntity proj = new GrenadeProjectileEntity(guard.level(), guard, velocity);
-
-        // Ensure spawn position is correct
+        // position and spawn
         proj.setPos(source.x(), source.y(), source.z());
-
-        // Optionally set item (fire charge look) or other properties on projectile
-        // proj.setItem(new ItemStack(Items.FIRE_CHARGE)); // if desired
-
         guard.level().addFreshEntity(proj);
 
-        // reset cooldown (you can add some variance)
-        cooldownTicks = cooldownBase + guard.getRandom().nextInt(cooldownBase / 2);
+        // reset cooldown with small variance
+        cooldownTicks = cooldownBase + guard.level().getRandom().nextInt(Math.max(1, cooldownBase / 2));
     }
 }
