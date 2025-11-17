@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.client.renderer.GrenadeRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.HexanGuardRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieHuskRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieRenderer;
@@ -17,6 +18,7 @@ public class ModEntityRenderers {
         event.registerEntityRenderer(ModEntities.HEXED_ZOMBIE.get(), HexedZombieRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXED_ZOMBIE_HUSK.get(), HexedZombieHuskRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXAN_GUARD.get(), HexanGuardRenderer::new);
+        event.registerEntityRenderer(ModEntities.GRENADE.get(), GrenadeRenderer::new);
     }
 }
 

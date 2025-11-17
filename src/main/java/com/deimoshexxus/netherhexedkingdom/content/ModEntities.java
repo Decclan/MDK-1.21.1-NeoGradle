@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.content.entities.GrenadeProjectileEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieHuskEntity;
@@ -37,6 +38,18 @@ public class ModEntities {
                             .sized(0.6F, 1.9F)
                             .build(NetherHexedKingdomMain.MODID + ":hexan_guard")
             );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<GrenadeProjectileEntity>> GRENADE =
+            ENTITY_TYPES.register("grenade", () ->
+                    EntityType.Builder.<GrenadeProjectileEntity>of(GrenadeProjectileEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .fireImmune()
+                            .clientTrackingRange(8)
+                            .updateInterval(10)
+                            .build(NetherHexedKingdomMain.MODID + ":grenade")
+            );
+
+
 
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);

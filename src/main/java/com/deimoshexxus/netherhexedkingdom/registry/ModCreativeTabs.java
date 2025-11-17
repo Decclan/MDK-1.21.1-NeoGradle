@@ -20,7 +20,7 @@ public class ModCreativeTabs {
             CREATIVE_TABS.register("nether_hexed_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + NetherHexedKingdomMain.MODID)) // e.g. "Nether Hexed Kingdom"
                     .withTabsBefore(CreativeModeTabs.COMBAT)
-                    .icon(() -> ModItems.MILITUS_ALLOY_INGOT.get().getDefaultInstance()) // Placeholder item
+                    .icon(() -> ModItems.MILITUS_ALLOY_HELMET.get().getDefaultInstance()) // Placeholder item
                     .displayItems((parameters, output) -> {
                         // Items
                         output.accept(ModItems.MILITUS_ALLOY_INGOT.get());
