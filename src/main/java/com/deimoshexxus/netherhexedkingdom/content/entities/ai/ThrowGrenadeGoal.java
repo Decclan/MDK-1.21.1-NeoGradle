@@ -1,7 +1,10 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities.ai;
 
+import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.entities.GrenadeProjectileEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
@@ -29,8 +32,8 @@ public class ThrowGrenadeGoal extends Goal {
     }
 
     public ThrowGrenadeGoal(HexanGuardEntity guard) {
-        // defaults: 40 ticks cooldown (~2s), 24 block range, speed 1.0
-        this(guard, 40, 24.0D, 1.0D);
+        // defaults: 30 ticks cooldown (~2s), 24 block range, speed 1.0
+        this(guard, 30, 24.0D, 1.0D);
     }
 
     @Override
@@ -92,6 +95,21 @@ public class ThrowGrenadeGoal extends Goal {
                 this.projectileSpeed,
                 0.12D
         );
+
+        // arm swing animation
+        guard.swing(InteractionHand.MAIN_HAND, true);
+
+        // throw sound placeholder
+//        guard.level().playSound(
+//                null,
+//                guard.getX(),
+//                guard.getY(),
+//                guard.getZ(),
+//                ModSounds.GUARD_THROW_GRENADE.get(),
+//                SoundSource.HOSTILE,
+//                1.0F,
+//                1.0F
+//        );
 
         // position and spawn
         proj.setPos(source.x(), source.y(), source.z());

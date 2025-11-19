@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
+import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
 import net.minecraft.nbt.CompoundTag;
@@ -207,17 +208,17 @@ public class HexanGuardEntity extends AbstractSkeleton {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 
-        // Assign variant randomly (70% melee / 30% ranged)
+        // Assign variant randomly (60% melee / 20% ranged / 20% grenadier)
         //this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
 
         float roll = random.nextFloat();
 
-        if (roll < 0.1F)  //0.6
+        if (roll < 0.6F)  //0.6
             setVariant(Variant.MELEE);
-        else if (roll < 0.2F)  //0.85
+        else if (roll < 0.8F)  //0.8
             setVariant(Variant.RANGED);
         else
-            setVariant(Variant.GRENADIER);  // 15% chance
+            setVariant(Variant.GRENADIER);  // 20% chance
 
 
         // Apply gear and goals AFTER vanilla spawn logic
@@ -240,6 +241,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
 
         // Leader-only combat buffs
         if (this.isSquadLeader()) {
+            this.setVariant(Variant.MELEE);
+            applyVariantEquipment();
+            setupGoalsForVariant();
             // Gold helmet
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
@@ -290,7 +294,6 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 if (r.nextFloat() < 0.50F)
                     this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
 
-                // show something unique in hand (optional)
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FIRE_CHARGE));
             }
 
@@ -347,9 +350,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
     }
 
     // Sounds & attributes
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SKELETON_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource d) { return SoundEvents.SKELETON_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SKELETON_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return ModSounds.GUARD_AMBIENT.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource d) { return ModSounds.GUARD_HURT.get(); }
+    @Override protected SoundEvent getDeathSound() { return ModSounds.GUARD_DEATH.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractSkeleton.createAttributes()
