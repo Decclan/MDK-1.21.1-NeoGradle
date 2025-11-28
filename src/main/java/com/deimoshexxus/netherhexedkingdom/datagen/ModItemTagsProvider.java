@@ -1,8 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
-import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;

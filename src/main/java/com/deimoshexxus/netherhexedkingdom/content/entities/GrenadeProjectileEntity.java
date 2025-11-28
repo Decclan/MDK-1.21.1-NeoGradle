@@ -164,10 +164,24 @@ public class GrenadeProjectileEntity extends Fireball {
     public void tick() {
         super.tick();
 
+        // only modify server-side motion
         if (!this.level().isClientSide()) {
             Vec3 motion = this.getDeltaMovement();
             motion = motion.add(0.0D, -GRAVITY, 0.0D);
             this.setDeltaMovement(motion);
+
+            // play a fizzing sound occasionally
+            if (this.tickCount % 4 == 0) { // every 4 ticks (~0.2s)
+                this.level().playSound(
+                        null, // null = everyone nearby hears it
+                        this.getX(), this.getY(), this.getZ(),
+                        net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, // placeholder sound
+                        net.minecraft.sounds.SoundSource.NEUTRAL,
+                        0.5F, // volume
+                        1.0F  // pitch
+                );
+            }
         }
     }
+
 }

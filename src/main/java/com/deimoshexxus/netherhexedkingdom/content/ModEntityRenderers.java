@@ -1,6 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.GrenadeRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.HexanGuardRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieHuskRenderer;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = NetherHexedKingdomMain.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = NetherHexedKingdom.MODID, value = Dist.CLIENT)
 public class ModEntityRenderers {
 
     @SubscribeEvent

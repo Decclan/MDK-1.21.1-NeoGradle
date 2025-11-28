@@ -1,6 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.minecraft.data.DataGenerator;
@@ -13,7 +13,7 @@ public final class DataGenerators {
     /**
      * NOTE: do NOT rely on @EventBusSubscriber here. Instead call:
      *   modEventBus.addListener(DataGenerators::gatherData);
-     * from your mod constructor (NetherHexedKingdomMain).
+     * from your mod constructor (NetherHexedKingdom).
      */
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
@@ -47,7 +47,7 @@ public final class DataGenerators {
                     output,
                     lookupProvider,                      // CompletableFuture<HolderLookup.Provider>
                     blockTagsProvider.contentsGetter(), // CompletableFuture<TagsProvider.TagLookup<Block>>
-                    NetherHexedKingdomMain.MODID,
+                    NetherHexedKingdom.MODID,
                     existingFileHelper
             ));
         }

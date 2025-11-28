@@ -1,11 +1,10 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -16,7 +15,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
     public ModBlockTagsProvider(PackOutput output,
                                 CompletableFuture<HolderLookup.Provider> lookupProvider,
                                 ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, NetherHexedKingdomMain.MODID, existingFileHelper);
+        super(output, lookupProvider, NetherHexedKingdom.MODID, existingFileHelper);
     }
 
     @Override

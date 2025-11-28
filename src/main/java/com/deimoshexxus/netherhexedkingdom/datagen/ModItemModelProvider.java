@@ -1,23 +1,16 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
-import java.util.Objects;
 
 public class ModItemModelProvider extends ItemModelProvider {
 
     public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, NetherHexedKingdomMain.MODID, existingFileHelper);
+        super(output, NetherHexedKingdom.MODID, existingFileHelper);
     }
 
     @Override

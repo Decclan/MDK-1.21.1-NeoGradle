@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
+import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
 import net.minecraft.nbt.CompoundTag;
@@ -181,7 +182,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     protected void registerGoals() {
         super.registerGoals();
         if (this.level() != null && !this.level().isClientSide()) {
-            //NetherHexedKingdomMain.LOGGER.debug("HexanGuard.registerGoals() on server for {}", this.getUUID());
+            //NetherHexedKingdom.LOGGER.debug("HexanGuard.registerGoals() on server for {}", this.getUUID());
         }
     }
 
@@ -192,7 +193,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
 
     @Override
     protected SoundEvent getStepSound() {
-        return SoundEvents.SKELETON_STEP; // safer than returning null
+        return ModSounds.GUARD_STEP.get(); // safer than returning null
     }
 
     // ---------------------------
@@ -249,7 +250,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
         }
-        //NetherHexedKingdomMain.LOGGER.debug("Finalized spawn for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+        //NetherHexedKingdom.LOGGER.debug("Finalized spawn for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
         return data;
     }
 
@@ -298,7 +299,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
 
         // Prevent natural drops
         for (EquipmentSlot slot : EquipmentSlot.values()) this.setDropChance(slot, 0.0F);
-//        NetherHexedKingdomMain.LOGGER.debug("Applied equipment for HexanGuard variant={} main={} off={}",
+//        NetherHexedKingdom.LOGGER.debug("Applied equipment for HexanGuard variant={} main={} off={}",
 //                getVariant(), this.getItemInHand(InteractionHand.MAIN_HAND), this.getItemInHand(InteractionHand.OFF_HAND));
     }
 
@@ -307,7 +308,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     // ---------------------------
     private void setupGoalsForVariant() {
         if (this.level() == null || this.level().isClientSide()) {
-            //NetherHexedKingdomMain.LOGGER.debug("setupGoalsForVariant on client - ignoring");
+            //NetherHexedKingdom.LOGGER.debug("setupGoalsForVariant on client - ignoring");
             return;
         }
 
@@ -315,7 +316,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
         clearGoalsSafe(this.goalSelector);
         clearGoalsSafe(this.targetSelector);
 
-        //NetherHexedKingdomMain.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+        //NetherHexedKingdom.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
 
         // shared targeting
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -347,9 +348,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
     }
 
     // Sounds & attributes
-    @Override protected SoundEvent getAmbientSound() { return SoundEvents.SKELETON_AMBIENT; }
-    @Override protected SoundEvent getHurtSound(DamageSource d) { return SoundEvents.SKELETON_HURT; }
-    @Override protected SoundEvent getDeathSound() { return SoundEvents.SKELETON_DEATH; }
+    @Override protected SoundEvent getAmbientSound() { return ModSounds.GUARD_AMBIENT.get(); }
+    @Override protected SoundEvent getHurtSound(DamageSource d) { return ModSounds.GUARD_HURT.get(); }
+    @Override protected SoundEvent getDeathSound() { return ModSounds.GUARD_DEATH.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractSkeleton.createAttributes()
