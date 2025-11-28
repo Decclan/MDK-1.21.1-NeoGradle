@@ -1,21 +1,15 @@
 package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,11 +18,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
@@ -39,8 +29,8 @@ import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
  * Main mod class for Nether Hexed Kingdom
  * Matches META-INF/neoforge.mods.toml modId value.
  */
-@Mod(NetherHexedKingdomMain.MODID)
-public class NetherHexedKingdomMain {
+@Mod(NetherHexedKingdom.MODID)
+public class NetherHexedKingdom {
     public static final String MODID = "netherhexedkingdom";
     public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -49,7 +39,7 @@ public class NetherHexedKingdomMain {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public NetherHexedKingdomMain(IEventBus modEventBus, ModContainer modContainer) {
+    public NetherHexedKingdom(IEventBus modEventBus, ModContainer modContainer) {
         // register lifecycle listeners
         modEventBus.addListener(this::commonSetup);
         // Register the data generator listener
@@ -64,6 +54,7 @@ public class NetherHexedKingdomMain {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
         // register entities' deferred register
         ModEntities.register(modEventBus);
         ModArmorMaterials.MATERIALS.register(modEventBus);

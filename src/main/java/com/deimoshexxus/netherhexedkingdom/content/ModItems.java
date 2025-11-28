@@ -1,9 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
@@ -20,7 +18,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public class ModItems {
 
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(NetherHexedKingdomMain.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(NetherHexedKingdom.MODID);
 
     // --- Ores, Metals & Fragments ---
 
@@ -131,7 +129,6 @@ public class ModItems {
                     new ArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,
                             ArmorItem.Type.BOOTS,
                             new Item.Properties()));
-
     public static final DeferredHolder<Item, AnimalArmorItem> MILITUS_ALLOY_HORSE_ARMOR =
             ITEMS.register("militus_alloy_horse_armor", () ->
                     new AnimalArmorItem(ModArmorMaterials.MILITUS_ALLOY_MATERIAL,

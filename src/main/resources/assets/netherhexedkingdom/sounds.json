@@ -1,42 +1,43 @@
-{ 
-    "netherhexedkingdom.entity.hexan_guard_ambient":
-    {
-        "category": "entity",
-        "sounds": [
-        		{ "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_ambient", "stream": false},
-        		{ "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_hurt", "stream": false }
-        	]
-    },
-        
-    "netherhexedkingdom.entity.hexan_guard_hurt":
-    {
-        "category": "entity",
-        "sounds": [
-        		{ "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_hurt", "stream": false }
-        	]
-    },
-    
-    "netherhexedkingdom.entity.hexan_guard_death":
-    {
-        "category": "entity",
-        "sounds": [
-        		{ "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_death", "stream": false }
-        	]
-    },
-    
-    "netherhexedkingdom.entity.volcan_daemon_ambient":
-    {
-        "category": "entity",
-        "sounds": [
-        		{ "name": "netherhexedkingdom:entity/volcan_daemon/volcan_daemon_ambient", "stream": false }
-        	]
-    },
-    
-    "netherhexedkingdom.entity.volcan_daemon_attack":
-    {
-        "category": "entity",
-        "sounds": [
-        		{ "name": "netherhexedkingdom:entity/volcan_daemon/volcan_daemon_attack", "stream": false }
-        	]
-    }
+{
+  "entity.hexan_guard.hexan_guard_ambient": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_ambient" }
+    ]
+  },
+
+  "entity.hexan_guard.hexan_guard_step": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_step" }
+    ]
+  },
+
+  "entity.hexan_guard.hexan_guard_hurt": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_hurt" }
+    ]
+  },
+
+  "entity.hexan_guard.hexan_guard_death": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/hexan_guard/hexan_guard_death" }
+    ]
+  },
+
+  "entity.volcan_daemon.volcan_daemon_ambient": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/volcan_daemon/volcan_daemon_ambient" }
+    ]
+  },
+
+  "entity.volcan_daemon.volcan_daemon_attack": {
+    "category": "entity",
+    "sounds": [
+      { "name": "netherhexedkingdom:entity/volcan_daemon/volcan_daemon_attack" }
+    ]
+  }
 }

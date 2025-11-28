@@ -1,6 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieHuskEntity;
@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = NetherHexedKingdomMain.MODID)
+@EventBusSubscriber(modid = NetherHexedKingdom.MODID)
 public class ModEntityAttributes {
 
     @SubscribeEvent

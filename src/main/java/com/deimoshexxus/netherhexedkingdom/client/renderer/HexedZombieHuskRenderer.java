@@ -1,7 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.client.renderer;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieHuskEntity;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -13,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public class HexedZombieHuskRenderer extends MobRenderer<HexedZombieHuskEntity, ZombieModel<HexedZombieHuskEntity>> {
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(NetherHexedKingdomMain.MODID, "textures/entity/zombie/hexed_zombie_husk.png");
+            ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "textures/entity/zombie/hexed_zombie_husk.png");
 
     public HexedZombieHuskRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new ZombieModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), 0.5F);

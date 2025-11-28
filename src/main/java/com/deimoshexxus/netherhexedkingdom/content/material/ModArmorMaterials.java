@@ -1,6 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.material;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class ModArmorMaterials {
 
     public static final DeferredRegister<ArmorMaterial> MATERIALS =
-            DeferredRegister.create(Registries.ARMOR_MATERIAL, NetherHexedKingdomMain.MODID);
+            DeferredRegister.create(Registries.ARMOR_MATERIAL, NetherHexedKingdom.MODID);
 
     // Between Chainmail and Iron
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> MILITUS_ALLOY_MATERIAL =
@@ -32,7 +32,7 @@ public class ModArmorMaterials {
                     () -> Ingredient.of(ModItems.MILITUS_ALLOY_INGOT),   // repair ingredient
                     List.of(new ArmorMaterial.Layer(
                             ResourceLocation.fromNamespaceAndPath(
-                                    NetherHexedKingdomMain.MODID,
+                                    NetherHexedKingdom.MODID,
                                     "militus_alloy"
                             )
                     )),

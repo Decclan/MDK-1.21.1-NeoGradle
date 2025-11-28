@@ -1,17 +1,13 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdomMain;
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.custom.HumanSkeletonBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -24,9 +20,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS =
-            DeferredRegister.createBlocks(NetherHexedKingdomMain.MODID);
+            DeferredRegister.createBlocks(NetherHexedKingdom.MODID);
     public static final DeferredRegister.Items ITEMS =
-            DeferredRegister.createItems(NetherHexedKingdomMain.MODID);
+            DeferredRegister.createItems(NetherHexedKingdom.MODID);
 
     // -------------------------
     // Metallic & Ore Blocks

@@ -3,7 +3,6 @@ package com.deimoshexxus.netherhexedkingdom;
 import com.deimoshexxus.netherhexedkingdom.client.ModModelLayers;
 import com.deimoshexxus.netherhexedkingdom.client.model.HexanGuardModel;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -16,9 +15,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
-@Mod(value = NetherHexedKingdomMain.MODID, dist = Dist.CLIENT)
+@Mod(value = NetherHexedKingdom.MODID, dist = Dist.CLIENT)
 // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-@EventBusSubscriber(modid = NetherHexedKingdomMain.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = NetherHexedKingdom.MODID, value = Dist.CLIENT)
 public class NetherHexedKingdomClient {
     public NetherHexedKingdomClient(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
