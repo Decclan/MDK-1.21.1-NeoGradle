@@ -5,6 +5,7 @@ import com.deimoshexxus.netherhexedkingdom.content.entities.GrenadeProjectileEnt
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
 import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieHuskEntity;
+import com.deimoshexxus.netherhexedkingdom.content.entities.GargoylePossessedEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -48,7 +49,12 @@ public class ModEntities {
                             .build(NetherHexedKingdom.MODID + ":grenade")
             );
 
-
+    public static final DeferredHolder<EntityType<?>, EntityType<GargoylePossessedEntity>> GARGOYLE_POSSESSED =
+            ENTITY_TYPES.register("gargoyle_possessed", () ->
+                    EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.CREATURE)
+                            .sized(0.8F, 0.95F)   // set size you want
+                            .build(NetherHexedKingdom.MODID + ":gargoyle_possessed")
+            );
 
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);

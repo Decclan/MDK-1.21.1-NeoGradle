@@ -53,7 +53,7 @@ public class NetherHexedKingdom {
         // register content classes (these will call BLOCKS/ITEMS/CREATIVE_MODE_TABS behind the scenes)
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
-        ModCreativeTabs.register(modEventBus);
+
         ModSounds.SOUNDS.register(modEventBus);
         // register entities' deferred register
         ModEntities.register(modEventBus);
@@ -66,6 +66,7 @@ public class NetherHexedKingdom {
         // register config object (if present)
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
+        ModCreativeTabs.register(modEventBus);
         // optionally register additional listeners (client-only render setup is done in ModBlocks if needed)
     }
 

@@ -33,6 +33,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
                         output.accept(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
                         output.accept(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
+                        output.accept(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
 
                         output.accept(ModItems.MILITUS_ALLOY_HELMET.get());
                         output.accept(ModItems.MILITUS_ALLOY_CHESTPLATE.get());

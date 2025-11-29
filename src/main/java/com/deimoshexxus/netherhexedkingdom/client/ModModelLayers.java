@@ -26,4 +26,11 @@ public class ModModelLayers {
                     ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "hexan_guard_armor_outer"),
                     "main"
             );
+
+    public static final ModelLayerLocation GARGOYLE_POSSESSED =
+            new ModelLayerLocation(
+                    ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "gargoyle_possessed"),
+                    "main"
+            );
+
 }

@@ -55,11 +55,6 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:suspicious_stew"
-        },
-        {
-          "type": "minecraft:item",
           "weight": 5,
           "name": "minecraft:poisonous_potato"
         },
