@@ -20,35 +20,39 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
         return createLayer(0.0F);
     }
 
-    /** Armor layer using CubeDeformation (pass 0.5F for inner, 1.0F for outer). */
+    /** Armor layers with deformation (inner: 0.5F, outer: 1.0F). */
     public static LayerDefinition createArmorLayer(float deformation) {
         return createLayer(deformation);
     }
 
     private static LayerDefinition createLayer(float deformation) {
         CubeDeformation def = new CubeDeformation(deformation);
-        MeshDefinition mesh = HumanoidModel.createMesh(def, 0.0F);
+
+        // Pass deformation to createMesh
+        MeshDefinition mesh = HumanoidModel.createMesh(def, deformation);
         PartDefinition root = mesh.getRoot();
 
-        // HEAD (main skull)
+        // =========================================================
+        // HEAD + HORNS
+        // =========================================================
         PartDefinition head = root.addOrReplaceChild(
                 "head",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
-                        .addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8),
+                        .addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, def), // <-- use def here
                 PartPose.ZERO
         );
 
-        // HAT / outer head layer (use deformation)
+        // Vanilla "hat" layer (required for armor)
         head.addOrReplaceChild(
                 "hat",
                 CubeListBuilder.create()
                         .texOffs(32, 0)
-                        .addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, def),
+                        .addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, def), // already used def (kept)
                 PartPose.ZERO
         );
 
-        // HORNS — map the two small boxes from Blockbench
+        // Horns (usually not inflated - keep these without def if you don't want armor to alter horns)
         head.addOrReplaceChild(
                 "horn_right",
                 CubeListBuilder.create()
@@ -56,86 +60,95 @@ public class HexanGuardModel<T extends Mob> extends HumanoidModel<T> {
                         .addBox(4.0F, -10.0F, -1.0F, 1, 4, 1),
                 PartPose.ZERO
         );
-
         head.addOrReplaceChild(
                 "horn_left",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(-5.0F, -10.0F, -1.0F, 1, 4, 1),
                 PartPose.ZERO
         );
 
-        // BODY (standard torso)
-        root.addOrReplaceChild(
+        // =========================================================
+        // BODY
+        // =========================================================
+        PartDefinition body = root.addOrReplaceChild(
                 "body",
                 CubeListBuilder.create()
                         .texOffs(16, 16)
-                        .addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4),
+                        .addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4, def), // <-- use def
                 PartPose.ZERO
         );
 
-        // RIGHT ARM — return the PartDefinition so we can add item anchor children
+        // REQUIRED: jacket – blank part used by armor layer
+        body.addOrReplaceChild("jacket", CubeListBuilder.create(), PartPose.ZERO);
+
+        // =========================================================
+        // ARMS
+        // =========================================================
         PartDefinition rightArm = root.addOrReplaceChild(
                 "right_arm",
                 CubeListBuilder.create()
                         .texOffs(40, 16)
-                        .addBox(-2.0F, -2.0F, -1.0F, 3, 12, 3),
+                        .addBox(-2.0F, -2.0F, -1.0F, 3, 12, 3, def), // <-- use def
                 PartPose.offset(-5.0F, 2.0F, 0.0F)
         );
 
-        // LEFT ARM — mirrored
         PartDefinition leftArm = root.addOrReplaceChild(
                 "left_arm",
                 CubeListBuilder.create()
                         .texOffs(40, 16)
                         .mirror()
-                        .addBox(-1.0F, -2.0F, -1.0F, 3, 12, 3),
+                        .addBox(-1.0F, -2.0F, -1.0F, 3, 12, 3, def), // <-- use def
                 PartPose.offset(5.0F, 2.0F, 0.0F)
         );
 
-        // --- ITEM ANCHORS (these are REQUIRED so held items show up correctly) ---
-        // Left item anchor uses Blockbench offset from your export:
-        leftArm.addOrReplaceChild(
-                "leftItem",
-                CubeListBuilder.create(),
-                PartPose.offset(1.0F, 7.0F, 1.0F)
-        );
+        // Item anchors for held items
+        rightArm.addOrReplaceChild("rightItem", CubeListBuilder.create(), PartPose.offset(0.0F, 7.0F, 1.0F));
+        leftArm.addOrReplaceChild("leftItem", CubeListBuilder.create(), PartPose.offset(1.0F, 7.0F, 1.0F));
 
-        // Right item anchor — mirror of left. Blockbench didn't provide rightItem but we add a sensible anchor.
-        rightArm.addOrReplaceChild(
-                "rightItem",
-                CubeListBuilder.create(),
-                PartPose.offset(0.0F, 7.0F, 1.0F) // tweak to taste (try -1.0F if item sits too far in)
-        );
-
-        // Optional sleeves used by armor layer baking (keeps armor attachments consistent)
+        // REQUIRED sleeves for armor
         rightArm.addOrReplaceChild("right_sleeve", CubeListBuilder.create(), PartPose.ZERO);
         leftArm.addOrReplaceChild("left_sleeve", CubeListBuilder.create(), PartPose.ZERO);
 
-        // RIGHT LEG
-        root.addOrReplaceChild(
+        // =========================================================
+        // LEGS
+        // =========================================================
+        PartDefinition rightLeg = root.addOrReplaceChild(
                 "right_leg",
                 CubeListBuilder.create()
                         .texOffs(0, 16)
-                        .addBox(-2.0F, 0.0F, -1.0F, 3, 12, 3),
+                        .addBox(-2.0F, 0.0F, -1.0F, 3, 12, 3, def), // <-- use def
                 PartPose.offset(-2.0F, 12.0F, 0.0F)
         );
 
-        // LEFT LEG — mirrored
-        root.addOrReplaceChild(
+        PartDefinition leftLeg = root.addOrReplaceChild(
                 "left_leg",
                 CubeListBuilder.create()
                         .texOffs(0, 16)
                         .mirror()
-                        .addBox(-1.0F, 0.0F, -1.0F, 3, 12, 3),
+                        .addBox(-1.0F, 0.0F, -1.0F, 3, 12, 3, def), // <-- use def
                 PartPose.offset(2.0F, 12.0F, 0.0F)
         );
+
+        // REQUIRED for armor layer (pants attachments)
+        rightLeg.addOrReplaceChild("right_pants", CubeListBuilder.create(), PartPose.ZERO);
+        leftLeg.addOrReplaceChild("left_pants", CubeListBuilder.create(), PartPose.ZERO);
+
+        // =========================================================
 
         return LayerDefinition.create(mesh, 64, 32);
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(
+            T entity,
+            float limbSwing,
+            float limbSwingAmount,
+            float ageInTicks,
+            float netHeadYaw,
+            float headPitch
+    ) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 }

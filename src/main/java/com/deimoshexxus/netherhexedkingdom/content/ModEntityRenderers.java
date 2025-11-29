@@ -1,10 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.client.renderer.GrenadeRenderer;
-import com.deimoshexxus.netherhexedkingdom.client.renderer.HexanGuardRenderer;
-import com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieHuskRenderer;
-import com.deimoshexxus.netherhexedkingdom.client.renderer.HexedZombieRenderer;
+import com.deimoshexxus.netherhexedkingdom.client.renderer.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +16,7 @@ public class ModEntityRenderers {
         event.registerEntityRenderer(ModEntities.HEXED_ZOMBIE_HUSK.get(), HexedZombieHuskRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXAN_GUARD.get(), HexanGuardRenderer::new);
         event.registerEntityRenderer(ModEntities.GRENADE.get(), GrenadeRenderer::new);
+        event.registerEntityRenderer(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedRenderer::new);
     }
 }
 

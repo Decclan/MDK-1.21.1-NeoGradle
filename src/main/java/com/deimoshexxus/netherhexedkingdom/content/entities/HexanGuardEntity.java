@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
+import com.deimoshexxus.netherhexedkingdom.content.entities.ai.AlertNearbyGuardsGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.animal.Cat;
@@ -41,6 +43,20 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
+
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.Entity;
+
+import java.util.List;
+import java.util.function.Predicate;
+
 
 import net.minecraft.nbt.CompoundTag;
 import javax.annotation.Nullable;
@@ -208,22 +224,14 @@ public class HexanGuardEntity extends AbstractSkeleton {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 
-        // Assign variant randomly (70% melee / 30% ranged)
-        //this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
-
-        float roll = random.nextFloat();
-
-        if (roll < 0.1F)  //0.6
+        // Assign random variant for non-leaders (50% melee / 20% ranged / 30% grenadier)
+        float roll = this.random.nextFloat();
+        if (roll < 0.5F)
             setVariant(Variant.MELEE);
-        else if (roll < 0.2F)  //0.85
+        else if (roll < 0.7F)
             setVariant(Variant.RANGED);
         else
-            setVariant(Variant.GRENADIER);  // 15% chance
-
-
-        // Apply gear and goals AFTER vanilla spawn logic
-        applyVariantEquipment();
-        setupGoalsForVariant();
+            setVariant(Variant.GRENADIER);
 
         // Try to find a leader nearby (16-block radius)
         List<HexanGuardEntity> nearby = level.getEntitiesOfClass(
@@ -233,24 +241,33 @@ public class HexanGuardEntity extends AbstractSkeleton {
         );
 
         if (nearby.isEmpty()) {
+            // No nearby leader: this entity becomes leader
             this.setAsSquadLeader();
+
+            // Force leader to MELEE variant to prevent grenade throws
+            this.setVariant(Variant.MELEE);
         } else {
+            // Assign this entity to an existing leader
             HexanGuardEntity leader = nearby.get(0);
-            this.setSquadLeader(leader); // pass the entity -> sets uuid+entityId
+            this.setSquadLeader(leader);
         }
 
-        // Leader-only combat buffs
+        // Apply equipment and goals based on final variant
+        applyVariantEquipment();
+        setupGoalsForVariant();
+
+        // Leader-only buffs
         if (this.isSquadLeader()) {
-            // Gold helmet
+            // Override head and main hand
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
-            // Buffs
+            // Apply permanent buffs
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
         }
-        //NetherHexedKingdom.LOGGER.debug("Finalized spawn for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+
         return data;
     }
 
@@ -291,7 +308,6 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 if (r.nextFloat() < 0.50F)
                     this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
 
-                // show something unique in hand (optional)
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FIRE_CHARGE));
             }
 
@@ -307,43 +323,60 @@ public class HexanGuardEntity extends AbstractSkeleton {
     // Goals
     // ---------------------------
     private void setupGoalsForVariant() {
-        if (this.level() == null || this.level().isClientSide()) {
-            //NetherHexedKingdom.LOGGER.debug("setupGoalsForVariant on client - ignoring");
+        if (this.level() == null || this.level().isClientSide) {
             return;
         }
 
-        // safe clear
+        // clear existing goals safely
         clearGoalsSafe(this.goalSelector);
         clearGoalsSafe(this.targetSelector);
 
-        //NetherHexedKingdom.LOGGER.debug("Setting up goals for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+        // -----------------------
+        // Targeting (targetSelector)
+        // -----------------------
+        // 1 = highest priority for target selection (retaliate + alert)
+        HurtByTargetGoal hurtBy = new HurtByTargetGoal(this);
+        // alert same type (HexanGuardEntity) so other guards get the attacker set
+        hurtBy.setAlertOthers(HexanGuardEntity.class);
+        this.targetSelector.addGoal(1, hurtBy);
 
-        // shared targeting
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Piglin.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PiglinBrute.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Villager.class, true));
+        // 2..n: prefer players, then hostile mobs / villagers / golems etc.
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, /*checkSight*/ true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, /*checkSight*/ true));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Villager.class, /*checkSight*/ true));
+        // explicit zombified-type targets or other monsters you want prioritized:
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Piglin.class, /*checkSight*/ true));
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, PiglinBrute.class, /*checkSight*/ true));
 
-        // variant attack
+        // Optional: keep your custom alert goal if you want a custom radius or additional logic.
+        // Run this after HurtByTarget which gives the guard a target (lower priority number = higher priority,
+        // so choose a higher number so it runs later).
+        this.targetSelector.addGoal(10, new AlertNearbyGuardsGoal<>(this, HexanGuardEntity.class, 10.0D));
+        this.targetSelector.addGoal(11, new AlertNearbyGuardsGoal<>(this, WitherSkeleton.class, 10.0D));
+
+        // -----------------------
+        // Goals
+        // -----------------------
+        // Movement and actions: lower numbers = higher priority
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+
+        // variant behavior
         if (getVariant() == Variant.MELEE) {
-            this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
-            this.goalSelector.addGoal(2, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
-        }else if (getVariant() == Variant.GRENADIER) {
-            this.goalSelector.addGoal(1, new ThrowGrenadeGoal(this));
-        } else {
-            this.goalSelector.addGoal(1, new RangedBowAttackGoal<>(this, 1.0D, 20, 16.0F));
+            this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2D, false));
+            this.goalSelector.addGoal(5, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
+        } else if (getVariant() == Variant.GRENADIER) {
+            this.goalSelector.addGoal(4, new ThrowGrenadeGoal(this));
+        } else { // ranged
+            this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0D, 20, 16.0F));
         }
 
-        // shared nav & avoids
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 8.0F, 1.0, 1.2));
-        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, ZombifiedPiglin.class, 6.0F, 1.0, 1.2));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        // only follow leader?
-        //this.goalSelector.addGoal(8, new FollowMobGoal(this, 1.0D, 2.0F, 16.0F));
+        // Avoidance/utility near bottom so attack goals can override when needed
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Cat.class, 8.0F, 1.0, 1.2));
+        this.goalSelector.addGoal(7, new AvoidEntityGoal<>(this, ZombifiedPiglin.class, 6.0F, 1.0, 1.2));
+        // Squad following (if you have leaders)
         this.goalSelector.addGoal(8, new FollowSquadLeaderGoal(this, 1.0D, 3.0F));
     }
 
@@ -360,4 +393,121 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 .add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
+
+// Put these inside your HexanGuardEntity class (replace the old methods)
+
+    private boolean isAllyForFriendlyFire(LivingEntity ent, LivingEntity target) {
+        if (ent == null) return false;
+        if (ent == this) return false;
+        if (ent == target) return false;
+        if (!ent.isAlive()) return false;
+
+        // Same-class guards count as allies
+        if (ent.getClass() == this.getClass()) return true;
+
+        // Scoreboard/team / vanilla allied check
+        if (ent.isAlliedTo(this)) return true;
+
+        // Optionally treat villagers and golems as allies (uncomment if desired)
+        // if (ent instanceof Villager || ent instanceof IronGolem) return true;
+
+        return false;
+    }
+
+    /**
+     * Quick corridor check: builds a thin AABB between shooter eyes and target eyes and
+     * tests for allied LivingEntity inside. If any ally is found, returns false (not clear).
+     *
+     * use from custom bow ranged attack if one is ever made:
+     * if (!guard.isClearShotTo(target, false)) {
+     *     // skip firing this tick
+     *     return;
+     * }
+     *
+     *
+     * @param target       target entity
+     * @param ignoreBlocks whether to skip block line-of-sight check
+     * @return true if the straight shot is "clear enough" (no allies in the corridor)
+     */
+
+
+    public boolean isClearShotTo(LivingEntity target, boolean ignoreBlocks) {
+        if (target == null || !target.isAlive()) return false;
+        if (this.level() == null) return false;
+
+        Vec3 start = new Vec3(this.getX(), this.getEyeY(), this.getZ());
+        Vec3 end = new Vec3(target.getX(), target.getEyeY(), target.getZ());
+
+        // Optional but cheap block clip — if a block blocks and is not extremely close to the target, consider blocked.
+        if (!ignoreBlocks) {
+            ClipContext cc = new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this);
+            HitResult hr = this.level().clip(cc);
+            if (hr.getType() == HitResult.Type.BLOCK && hr instanceof BlockHitResult) {
+                // if block hit is not practically on the target, treat as blocked
+                double hitDist = start.distanceTo(((BlockHitResult) hr).getLocation());
+                double totalDist = start.distanceTo(end);
+                if (hitDist < (totalDist - 1.0D)) { // allow block if it's basically at target (tolerance 1.0)
+                    return false;
+                }
+            }
+        }
+
+        // Thin corridor AABB along the shot line — small radius so we only catch entities directly in the path
+        double corridorRadius = 0.6D;
+        AABB corridor = new AABB(start, end).inflate(corridorRadius, corridorRadius, corridorRadius);
+
+        List<LivingEntity> ents = this.level().getEntitiesOfClass(
+                LivingEntity.class,
+                corridor,
+                (l) -> isAllyForFriendlyFire(l, target)
+        );
+
+        return ents.isEmpty();
+    }
+
+    /**
+     * Sampling check for arced or potentially wider paths (useful for grenade throws).
+     * Samples a few positions between shooter and target, building a small AABB at each sample
+     * and checking for allied entities nearby.
+     *
+     * @param target        target entity
+     * @param samples       number of sample points (e.g. 3)
+     * @param sampleRadius  radius of the small AABB at each sample (e.g. 0.6)
+     * @return true if no ally is found in any sample boxes
+     */
+    public boolean isClearShotBySampling(LivingEntity target, int samples, double sampleRadius) {
+        if (target == null || !target.isAlive()) return false;
+        if (this.level() == null) return false;
+        if (samples <= 0) samples = 1;
+        if (sampleRadius <= 0.0D) sampleRadius = 0.5D;
+
+        Vec3 start = new Vec3(this.getX(), this.getEyeY(), this.getZ());
+        Vec3 end = new Vec3(target.getX(), target.getEyeY(), target.getZ());
+        Vec3 dir = end.subtract(start);
+
+        // sample N points evenly spaced along the line (excluding exact endpoints)
+        for (int i = 1; i <= samples; ++i) {
+            double t = (double) i / (samples + 1);
+            Vec3 samplePos = start.add(dir.scale(t));
+
+            AABB box = new AABB(
+                    samplePos.x() - sampleRadius, samplePos.y() - sampleRadius, samplePos.z() - sampleRadius,
+                    samplePos.x() + sampleRadius, samplePos.y() + sampleRadius, samplePos.z() + sampleRadius
+            );
+
+            List<LivingEntity> found = this.level().getEntitiesOfClass(
+                    LivingEntity.class,
+                    box,
+                    (l) -> isAllyForFriendlyFire(l, target)
+            );
+
+            if (!found.isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 }

@@ -104,6 +104,16 @@ public class ModItems {
                     )
             );
 
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> GARGOYLE_POSSESSED_SPAWN_EGG =
+            ITEMS.register("gargoyle_possessed_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.GARGOYLE_POSSESSED,
+                            0xd69d00,
+                            0x992109,
+                            new Item.Properties()
+                    )
+            );
+
     // --- Armor ---
 
     public static final DeferredHolder<Item, ArmorItem> MILITUS_ALLOY_HELMET =

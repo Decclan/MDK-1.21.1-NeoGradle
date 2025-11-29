@@ -42,7 +42,7 @@ logoFile="hexedlogo192x64.png" #optional
 #credits="" #optional
 
 # A text field displayed in the mod UI
-authors="DeimosHexxus" #optional
+authors="Deimos Hexxus" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''Fragments of the long-lost nether kingdoms.'''

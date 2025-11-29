@@ -25,6 +25,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         spawnEggItem(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
         spawnEggItem(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
         spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
+        spawnEggItem(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
 
         basicItem(ModItems.MILITUS_ALLOY_HELMET.get());
         basicItem(ModItems.MILITUS_ALLOY_CHESTPLATE.get());
