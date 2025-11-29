@@ -208,22 +208,14 @@ public class HexanGuardEntity extends AbstractSkeleton {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 
-        // Assign variant randomly (60% melee / 20% ranged / 20% grenadier)
-        //this.setVariant(this.random.nextFloat() < 0.7F ? Variant.MELEE : Variant.RANGED);
-
-        float roll = random.nextFloat();
-
-        if (roll < 0.6F)  //0.6
+        // Assign random variant for non-leaders (60% melee / 20% ranged / 20% grenadier)
+        float roll = this.random.nextFloat();
+        if (roll < 0.6F)
             setVariant(Variant.MELEE);
-        else if (roll < 0.8F)  //0.8
+        else if (roll < 0.8F)
             setVariant(Variant.RANGED);
         else
-            setVariant(Variant.GRENADIER);  // 20% chance
-
-
-        // Apply gear and goals AFTER vanilla spawn logic
-        applyVariantEquipment();
-        setupGoalsForVariant();
+            setVariant(Variant.GRENADIER);
 
         // Try to find a leader nearby (16-block radius)
         List<HexanGuardEntity> nearby = level.getEntitiesOfClass(
@@ -233,27 +225,33 @@ public class HexanGuardEntity extends AbstractSkeleton {
         );
 
         if (nearby.isEmpty()) {
+            // No nearby leader: this entity becomes leader
             this.setAsSquadLeader();
+
+            // Force leader to MELEE variant to prevent grenade throws
+            this.setVariant(Variant.MELEE);
         } else {
+            // Assign this entity to an existing leader
             HexanGuardEntity leader = nearby.get(0);
-            this.setSquadLeader(leader); // pass the entity -> sets uuid+entityId
+            this.setSquadLeader(leader);
         }
 
-        // Leader-only combat buffs
+        // Apply equipment and goals based on final variant
+        applyVariantEquipment();
+        setupGoalsForVariant();
+
+        // Leader-only buffs
         if (this.isSquadLeader()) {
-            this.setVariant(Variant.MELEE);
-            applyVariantEquipment();
-            setupGoalsForVariant();
-            // Gold helmet
+            // Override head and main hand
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
-            // Buffs
+            // Apply permanent buffs
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
             this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
             this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
         }
-        //NetherHexedKingdom.LOGGER.debug("Finalized spawn for HexanGuard variant={} at {}", this.getVariant(), this.blockPosition());
+
         return data;
     }
 

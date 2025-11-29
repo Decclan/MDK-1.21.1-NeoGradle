@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -175,7 +176,7 @@ public class GrenadeProjectileEntity extends Fireball {
                 this.level().playSound(
                         null, // null = everyone nearby hears it
                         this.getX(), this.getY(), this.getZ(),
-                        net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, // placeholder sound
+                        SoundEvents.CREEPER_PRIMED, // placeholder sound
                         net.minecraft.sounds.SoundSource.NEUTRAL,
                         0.5F, // volume
                         1.0F  // pitch
