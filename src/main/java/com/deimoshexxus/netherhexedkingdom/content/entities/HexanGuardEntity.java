@@ -262,12 +262,11 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
-            // Apply permanent buffs
-            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
-            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
+            // Apply permanent buffs - is this causing suspicious effect holder bug???
+//            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
+//            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
+//            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
         }
-
         return data;
     }
 
@@ -310,13 +309,12 @@ public class HexanGuardEntity extends AbstractSkeleton {
 
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FIRE_CHARGE));
             }
-
         }
 
         // Prevent natural drops
         for (EquipmentSlot slot : EquipmentSlot.values()) this.setDropChance(slot, 0.0F);
 //        NetherHexedKingdom.LOGGER.debug("Applied equipment for HexanGuard variant={} main={} off={}",
-//                getVariant(), this.getItemInHand(InteractionHand.MAIN_HAND), this.getItemInHand(InteractionHand.OFF_HAND));
+//        getVariant(), this.getItemInHand(InteractionHand.MAIN_HAND), this.getItemInHand(InteractionHand.OFF_HAND));
     }
 
     // ---------------------------

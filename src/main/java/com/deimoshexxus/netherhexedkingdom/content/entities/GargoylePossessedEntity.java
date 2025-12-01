@@ -1,16 +1,24 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoylePlayTamedGoal;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
@@ -38,11 +46,21 @@ import java.util.function.Predicate;
  *      event.put(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedEntity.createAttributes().build());
  */
 public class GargoylePossessedEntity extends TamableAnimal {
+
+    private static final EntityDataAccessor<Boolean> DATA_SITTING =
+            SynchedEntityData.defineId(GargoylePossessedEntity.class, EntityDataSerializers.BOOLEAN);
+
     // constructor required by EntityType
     public GargoylePossessedEntity(EntityType<? extends GargoylePossessedEntity> type, Level level) {
         super(type, level);
         this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
         this.setPersistenceRequired(); // so tame pets don't despawn
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_SITTING, false);
     }
 
     // ---------- Attributes ---------- //
@@ -65,47 +83,73 @@ public class GargoylePossessedEntity extends TamableAnimal {
     // ---------- Goals ---------- //
     @Override
     protected void registerGoals() {
-        // Basic movement / look
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this)); // sit when ordered
+        // ------ NORMAL GOALS ------
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1D, 2.0F, 10.0F));
+        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.9D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(8, new GargoylePlayTamedGoal(this, 0.7D, 10.0D));
 
-        // Targeting: defend owner, retaliate, attack owner's targets
+        // ------ TARGETING GOALS ------
+        // defend owner + owner's pets
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+
+        // revenge on mobs that hurt it
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
 
-        // Prioritise zombified entities (explicit)
+        // base hostile-mob targeting (ONLY when tamed)
         this.targetSelector.addGoal(4,
-                new NearestAttackableTargetGoal<>(this, Zombie.class, true));
+                new NearestAttackableTargetGoal<>(this, Monster.class, true));
 
-        // Fallback: attack living entities with predicate that excludes owner & friendly tamed entities
-        Predicate<LivingEntity> generalTargetPredicate = (living) -> {
-            if (living == null) return false;
-            if (living == this) return false;
-            if (!living.isAlive()) return false;
-            // don't attack your owner
-            if (this.isOwnedBy(living)) return false;
-            // don't attack other same-species gargoyles
-            if (living.getClass() == this.getClass()) return false;
-            // don't attack animals owned by same owner
-            if (living instanceof TamableAnimal) {
-                TamableAnimal ta = (TamableAnimal) living;
-                if (ta.isTame() && this.getOwner() != null) {
-                    LivingEntity otherOwner = ta.getOwner();
-                    if (otherOwner != null && otherOwner.getUUID().equals(this.getOwner().getUUID())) return false;
+        // fallback clean predicate (no more attacking animals or friendly targets)
+        Predicate<LivingEntity> tamedTargetPredicate = (target) -> {
+            if (target == null || !target.isAlive()) return false;
+
+            // If not tamed, behave normally and attack anything hostile
+            if (!this.isTame()) return target instanceof Monster;
+
+            // When tamed:
+            // never attack owner
+            if (this.isOwnedBy(target)) return false;
+
+            // never attack owner's pets
+            if (target instanceof TamableAnimal ta && ta.isTame()) {
+                LivingEntity otherOwner = ta.getOwner();
+                if (otherOwner != null && this.getOwner() != null &&
+                        otherOwner.getUUID().equals(this.getOwner().getUUID())) {
+                    return false;
                 }
             }
-            // okay otherwise
-            return true;
+            // never attack the same species
+            if (target.getClass() == this.getClass()) return false;
+            // never attack passive animals
+            if (target instanceof Animal) return false;
+            // never attack villagers
+            if (target instanceof Villager) return false;
+            // DO attack monsters
+            if (target instanceof Monster) return true;
+            // DO attack anything actively attacking owner or owner's pets
+            if (target.getLastHurtByMob() != null) {
+                LivingEntity last = target.getLastHurtByMob();
+                if (last == this.getOwner()) return true;
+
+                if (last instanceof TamableAnimal ta && ta.isTame() &&
+                        this.getOwner() != null &&
+                        ta.getOwner() != null &&
+                        ta.getOwner().getUUID().equals(this.getOwner().getUUID())) {
+                    return true;
+                }
+            }
+            return false;
         };
 
+        // fallback target selector using fixed predicate
         this.targetSelector.addGoal(5,
-                new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, generalTargetPredicate::test));
+                new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, tamedTargetPredicate));
     }
 
     // ---------- Taming / Interaction ---------- //
@@ -151,6 +195,17 @@ public class GargoylePossessedEntity extends TamableAnimal {
         }
 
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public boolean isInSittingPose() {
+        return this.entityData.get(DATA_SITTING);
+    }
+
+    @Override
+    public void setOrderedToSit(boolean sitting) {
+        super.setOrderedToSit(sitting);
+        this.entityData.set(DATA_SITTING, sitting);
     }
 
     // ---------- WantsToAttack guard: don't attack owner or owner's tamed pets ---------- //
