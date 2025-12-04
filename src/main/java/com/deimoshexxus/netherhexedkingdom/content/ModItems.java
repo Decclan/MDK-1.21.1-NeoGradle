@@ -146,7 +146,6 @@ public class ModItems {
                             false,
                             new Item.Properties().stacksTo(1)));
 
-
     // --- Registry Helper ---
 
     private static DeferredItem<Item> registerItem(String name) {

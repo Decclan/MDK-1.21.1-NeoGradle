@@ -262,7 +262,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
-            // Apply permanent buffs - is this causing suspicious effect holder bug???
+            // this causing suspicious effect holder bug. init enchanted armour/weapon instead
 //            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
 //            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
 //            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I

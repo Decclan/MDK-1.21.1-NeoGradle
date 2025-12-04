@@ -32,49 +32,45 @@ public class GargoylePossessedModel<T extends Entity> extends EntityModel<T> {
     private final ModelPart gargoyle_model;
     private final ModelPart body;
     private final ModelPart head;
+    private final float headDefault;
+    private final float headDefaultRot;
+    private final float bodyDefaultY;
     private final ModelPart eyes;
     private final ModelPart teeth;
     private final ModelPart frontLeftLeg;
     private final ModelPart frontRightLeg;
     private final ModelPart backLeftLeg;
+    private final float backLeftLegDefault;
     private final ModelPart backRightLeg;
+    private final float backRightLegDefault;
     private final ModelPart tail;
+    private final float tailDefaultY;
     private final ModelPart rightWing;
     private final ModelPart leftWing;
-
-    // keep with other fields
-    private final float gargoyleModelDefaultY;
-    private final float frontLeftLegDefaultX;
-    private final float frontRightLegDefaultX;
-    private final float backLeftLegDefaultX;
-    private final float backRightLegDefaultX;
-    private final float tailDefaultX;
-    private final float leftWingDefaultZ;
-    private final float rightWingDefaultZ;
+    private final float rightWingDefault;
+    private final float leftWingDefault;
 
     public GargoylePossessedModel(ModelPart root) {
         this.gargoyle_model = root.getChild("gargoyle_model");
         this.body = this.gargoyle_model.getChild("body");
+        this.bodyDefaultY = this.body.y;
         this.head = this.body.getChild("head");
+        this.headDefault = this.head.y;
+        this.headDefaultRot = this.head.x;
         this.eyes = this.head.getChild("eyes");
         this.teeth = this.head.getChild("teeth");
         this.frontLeftLeg = this.gargoyle_model.getChild("frontLeftLeg");
         this.frontRightLeg = this.gargoyle_model.getChild("frontRightLeg");
         this.backLeftLeg = this.gargoyle_model.getChild("backLeftLeg");
+        this.backLeftLegDefault = this.backLeftLeg.y;
         this.backRightLeg = this.gargoyle_model.getChild("backRightLeg");
+        this.backRightLegDefault = this.backRightLeg.y;
         this.tail = this.gargoyle_model.getChild("tail");
+        this.tailDefaultY = this.tail.y;
         this.rightWing = this.gargoyle_model.getChild("rightWing");
         this.leftWing = this.gargoyle_model.getChild("leftWing");
-
-        // store defaults so we can return to exactly what Blockbench exported
-        this.gargoyleModelDefaultY = this.gargoyle_model.y;
-        this.frontLeftLegDefaultX = this.frontLeftLeg.xRot;
-        this.frontRightLegDefaultX = this.frontRightLeg.xRot;
-        this.backLeftLegDefaultX = this.backLeftLeg.xRot;
-        this.backRightLegDefaultX = this.backRightLeg.xRot;
-        this.tailDefaultX = this.tail.xRot;
-        this.leftWingDefaultZ = this.leftWing.zRot;
-        this.rightWingDefaultZ = this.rightWing.zRot;
+        this.rightWingDefault = this.rightWing.y;
+        this.leftWingDefault = this.leftWing.y;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -172,54 +168,115 @@ public class GargoylePossessedModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        // -------------------------------
-        // HEAD ANIMATION (unchanged)
-        // -------------------------------
-        final float DEG_TO_RAD = (float) Math.PI / 180F;
-        float yawRad = netHeadYaw * DEG_TO_RAD;
-        float pitchRad = headPitch * DEG_TO_RAD;
-        pitchRad = Mth.clamp(pitchRad, -0.75F, 0.75F);
+    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+                          float netHeadYaw, float headPitch) {
 
+        // 1) Reset to base pose (must exist and restore Blockbench base each frame)
+        resetPose();
+
+        // 2) Head look + idle
+        // Convert degrees (from vanilla head yaw/pitch) to radians because model rotations use radians
+        final float DEG_TO_RAD = (float) Math.PI / 180F;
+
+        // Limit horizontal rotation (left/right)
+        float clampedYaw = Mth.clamp(netHeadYaw, -45F, 45F);
+
+        // Horizontal head rotation (left/right)
+        float yawRad = clampedYaw * DEG_TO_RAD;
+
+        // Vertical head rotation (up/down) - clamp to prevent extreme motion
+        float pitchRad = Mth.clamp(headPitch * DEG_TO_RAD, -0.75F, 0.75F);
+
+        // Apply vanilla-style head look rotations
         this.head.yRot = yawRad;
         this.head.xRot = pitchRad;
 
-        this.head.xRot += Mth.sin(ageInTicks * 0.067F) * 0.06F; // slow up/down bob
-        this.head.yRot += Mth.sin(ageInTicks * 0.09F) * 0.04F;  // tiny left/right sway
+        // Add subtle idle movement (breathing / twitching):
+        this.head.xRot += Mth.sin(ageInTicks * 0.067F) * 0.06F; // small up/down bob
+        this.head.yRot += Mth.sin(ageInTicks * 0.09F) * 0.04F;  // small left/right drift
 
-        // -------------------------------
-        // SITTING LOGIC (corrected signs + smooth blending)
-        // -------------------------------
+        // 3) Determine sitting state
         boolean sitting = false;
         if (entity instanceof GargoylePossessedEntity gargoyle) {
             sitting = gargoyle.isInSittingPose();
         }
 
-        // Targets (relative to stored defaults)
-        float targetGargoyleY   = sitting ? this.gargoyleModelDefaultY - 2.0F  : this.gargoyleModelDefaultY;
-        // IMPORTANT: front legs use a POSITIVE offset to tuck under for this model
-        float targetFrontLeftX  = sitting ? this.frontLeftLegDefaultX  + 1.10F : this.frontLeftLegDefaultX;
-        float targetFrontRightX = sitting ? this.frontRightLegDefaultX + 1.10F : this.frontRightLegDefaultX;
-        // back legs use a NEGATIVE offset to tuck inwards for this model
-        float targetBackLeftX   = sitting ? this.backLeftLegDefaultX   - 1.10F : this.backLeftLegDefaultX;
-        float targetBackRightX  = sitting ? this.backRightLegDefaultX  - 1.10F : this.backRightLegDefaultX;
+        if (sitting) {
+            // ====== HIND-LEG SITTING POSE ======
+            float sitOffset = 2.0F;
 
-        float targetTailX       = sitting ? this.tailDefaultX - 0.5F : this.tailDefaultX;
-        float targetLeftWingZ   = sitting ? this.leftWingDefaultZ - 0.3F : this.leftWingDefaultZ;
-        float targetRightWingZ  = sitting ? this.rightWingDefaultZ + 0.3F : this.rightWingDefaultZ;
+            // Lower the body (NOT the model root) so hips contact the ground
+            this.body.y = this.bodyDefaultY + 2.0F; // tune between ~1.5F - 3.0F as needed
 
-        // Blend factor (0 = instant snap to current, 1 = immediate target). 0.4 gives a short smoothing.
-        float blend = 0.4F;
+            // Slight lean BACK so the hindquarters take the weight
+            this.body.xRot = -0.45F;
 
-        this.gargoyle_model.y = Mth.lerp(blend, this.gargoyle_model.y, targetGargoyleY);
-        this.frontLeftLeg.xRot  = Mth.lerp(blend, this.frontLeftLeg.xRot,  targetFrontLeftX);
-        this.frontRightLeg.xRot = Mth.lerp(blend, this.frontRightLeg.xRot, targetFrontRightX);
-        this.backLeftLeg.xRot   = Mth.lerp(blend, this.backLeftLeg.xRot,   targetBackLeftX);
-        this.backRightLeg.xRot  = Mth.lerp(blend, this.backRightLeg.xRot,  targetBackRightX);
+            // FRONT LEGS: mostly vertical (small inward/outward lean possible)
+            this.frontLeftLeg.xRot  = -0.25F;
+            this.frontRightLeg.xRot = -0.25F;
 
-        this.tail.xRot = Mth.lerp(blend, this.tail.xRot, targetTailX);
-        this.leftWing.zRot  = Mth.lerp(blend, this.leftWing.zRot,  targetLeftWingZ);
-        this.rightWing.zRot = Mth.lerp(blend, this.rightWing.zRot, targetRightWingZ);
+            // HIND LEGS: folded under the body to support — values chosen for your pivot setup
+            this.backLeftLeg.xRot = -1.55F;
+            this.backLeftLeg.y = this.backLeftLegDefault + 3.5F;
+            this.backRightLeg.xRot  = -1.55F;//1.25
+            this.backRightLeg.y = this.backRightLegDefault + 3.5F;
+
+            // Tail relaxed and slightly under the body to help visual balance
+            this.tail.y = this.tailDefaultY + 3.5F;
+            this.tail.xRot = 0.85F;
+
+            // Wings relaxed, small inward rotation + backward
+            this.leftWing.zRot = -0.25F;
+            this.leftWing.xRot = -0.55F;
+            this.rightWing.zRot =  0.25F;
+            this.rightWing.xRot = -0.55F;
+
+            this.head.xRot = 0.55F;
+
+
+        } else {
+            // ====== STANDING / WALKING ======
+            float speed = 1.5F;
+            float degree = 1.0F;
+
+            // Simple walk cycle (quadrupedal phase offsets)
+            this.frontLeftLeg.xRot  = Mth.cos(limbSwing * speed) * degree * limbSwingAmount;
+            this.frontRightLeg.xRot = Mth.cos(limbSwing * speed + (float) Math.PI) * degree * limbSwingAmount;
+            this.backLeftLeg.xRot   = Mth.cos(limbSwing * speed + (float) Math.PI) * degree * limbSwingAmount;
+            this.backRightLeg.xRot  = Mth.cos(limbSwing * speed) * degree * limbSwingAmount;
+
+            // Wing idle when in air (optional)
+            if (!entity.onGround()) {
+                this.leftWing.zRot  = Mth.sin(ageInTicks * 0.6F) * 0.45F;
+                this.rightWing.zRot = -Mth.sin(ageInTicks * 0.6F) * 0.45F;
+            }
+        }
+    }
+
+    private void resetPose() {
+        // restore root offset (Blockbench exported root Y)
+        this.gargoyle_model.y = 24.0F;
+
+        // restore body translation (important — prevents detach)
+        this.body.y = this.bodyDefaultY;
+        this.body.xRot = 0.0F;
+
+        this.frontLeftLeg.xRot = 0.0F;
+        this.frontRightLeg.xRot = 0.0F;
+
+        this.backLeftLeg.xRot = 0.0F;
+        this.backLeftLeg.y = this.backLeftLegDefault;
+        this.backRightLeg.xRot = 0.0F;
+        this.backRightLeg.y = this.backRightLegDefault;
+
+        this.tail.y = this.tailDefaultY;
+        this.tail.xRot = 0.0F;
+
+        this.leftWing.zRot = 0.0F;
+        this.rightWing.zRot = 0.0F;
+
+        this.head.xRot = 0.0F;
+        this.head.yRot = 0.0F;
     }
 
     @Override
