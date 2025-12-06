@@ -2,10 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
-import net.minecraft.world.item.AnimalArmorItem;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -29,6 +26,10 @@ public class ModItems {
     public static final DeferredItem<Item> NETHERITE_FRAGMENT = registerItem("netherite_fragment");
     public static final DeferredItem<Item> NETHERITE_OXIDE = registerItem("netherite_oxide");
     public static final DeferredItem<Item> IMPERIAL_COINS = registerItem("imperial_coins");
+    public static final DeferredItem<BlockItem> POISON_GAS_ITEM =
+            ITEMS.register("poison_gas",
+                    () -> new BlockItem(ModBlocks.GAS_SOURCE.get(), new Item.Properties()));
+
 
 //    public static final DeferredItem<Item> ANCIENT_FRAGMENT = registerItem("ancient_fragment");
 //    public static final DeferredItem<Item> ANCIENT_CORE = registerItem("ancient_core");

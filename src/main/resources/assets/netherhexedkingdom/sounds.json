@@ -39,5 +39,16 @@
     "sounds": [
       { "name": "netherhexedkingdom:entity/volcan_daemon/volcan_daemon_attack" }
     ]
+  },
+
+  "blocks.gas_ambient": {
+    "category": "block",
+    "subtitle": "subtitles.netherhexedkingdom.gas_ambient",
+    "sounds": [
+      {
+        "name": "netherhexedkingdom:blocks/gas_ambient",
+        "stream": false
+      }
+    ]
   }
 }

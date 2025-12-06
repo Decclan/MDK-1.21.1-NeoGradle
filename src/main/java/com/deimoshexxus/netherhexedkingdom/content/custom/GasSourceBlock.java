@@ -1,9 +1,15 @@
 package com.deimoshexxus.netherhexedkingdom.content.custom;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
+import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.utils.GasUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Set;
 
@@ -151,6 +159,27 @@ public class GasSourceBlock extends Block {
                 }
             }
         }
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
+//        if (rand.nextInt(20) == 0) { // ~once per second
+//            Minecraft mc = Minecraft.getInstance();
+//            if (mc.player != null && mc.level != null) {
+//                SimpleSoundInstance sound = new SimpleSoundInstance(
+//                        ModSounds.GAS_AMBIENT.get(),
+//                        SoundSource.BLOCKS,
+//                        0.25f,
+//                        1.0f,
+//                        mc.level.random,
+//                        pos.getX() + 0.5,
+//                        pos.getY() + 0.5,
+//                        pos.getZ() + 0.5
+//                );
+//                mc.getSoundManager().play(sound);
+//            }
+//        }
     }
 
     @Override

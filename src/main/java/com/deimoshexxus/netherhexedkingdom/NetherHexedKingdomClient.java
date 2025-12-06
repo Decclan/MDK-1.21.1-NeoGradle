@@ -66,6 +66,9 @@ public class NetherHexedKingdomClient {
 
             EntityRenderers.register(ModEntities.GARGOYLE_POSSESSED.get(),
                     com.deimoshexxus.netherhexedkingdom.client.renderer.GargoylePossessedRenderer::new);
+
+
+            com.deimoshexxus.netherhexedkingdom.client.GasSourceAmbientHandler.register();
         });
     }
 }

@@ -37,22 +37,6 @@ public class GasChildBlock extends Block {
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block, BlockPos fromPos, boolean moving) {
-//        if (level.isClientSide()) return;
-//
-//        boolean stillConnected = false;
-//        for (int down = 1; down <= MAX_SOURCE_SEARCH; down++) {
-//            BlockPos below = pos.below(down);
-//            if (!level.isLoaded(below)) break;
-//            if (level.getBlockState(below).is(ModBlocks.GAS_SOURCE.get())) {
-//                if (GasUtil.isReachableFromSource((ServerLevel) level, below, pos, MAX_SOURCE_SEARCH, RADIUS)) {
-//                    stillConnected = true;
-//                    break;
-//                }
-//            }
-//        }
-//        if (!stillConnected) {
-//            level.removeBlock(pos, false);
-//        }
     }
 
     @Override

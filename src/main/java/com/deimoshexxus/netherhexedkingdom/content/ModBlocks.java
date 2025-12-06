@@ -181,10 +181,11 @@ public class ModBlocks {
                     .replaceable()
                     .noCollission()   // entities can move through
                     .noOcclusion()    // invisible for pathfinding, light
-                    .strength(0.0F)
+                    .strength(0.5F)
                     //.strength(-1.0F, 3600000.0F) // unbreakable by players
                     .randomTicks()    // schedule ticks if needed
-                    .lightLevel(state -> 11)
+                    .lightLevel(state -> 8)
+                    .sound(SoundType.WOOL)
             ));
 
     public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas",
@@ -192,8 +193,9 @@ public class ModBlocks {
                     .replaceable()
                     .noCollission()
                     .noOcclusion()
-                    .strength(0.0F)
+                    .strength(0.5F)
                     .randomTicks()
+                    .sound(SoundType.WOOL)
             ));
 
     // -------------------------
