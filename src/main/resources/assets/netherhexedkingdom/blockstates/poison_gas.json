@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "distance=0": { "model": "netherhexedkingdom:block/poison_gas_0" },
+    "distance=1": { "model": "netherhexedkingdom:block/poison_gas_1" },
+    "distance=2": { "model": "netherhexedkingdom:block/poison_gas_2" },
+    "distance=3": { "model": "netherhexedkingdom:block/poison_gas_3" },
+    "distance=4": { "model": "netherhexedkingdom:block/poison_gas_4" },
+    "distance=5": { "model": "netherhexedkingdom:block/poison_gas_5" },
+    "distance=6": { "model": "netherhexedkingdom:block/poison_gas_6" }
+  }
+}

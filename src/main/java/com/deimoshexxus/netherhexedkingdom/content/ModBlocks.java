@@ -1,8 +1,10 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.custom.GasChildBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.HumanSkeletonBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -173,6 +175,24 @@ public class ModBlocks {
                     .strength(4f, 8f)
                     .sound(SoundType.NETHER_BRICKS)
                     .requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<Block> GAS_SOURCE = register("poison_gas_source",
+            () -> new GasSourceBlock(BlockBehaviour.Properties.of()
+                    .air()
+                    .noCollission()   // entities can move through
+                    .noOcclusion()    // invisible for pathfinding, light
+                    .strength(-1.0F, 3600000.0F) // unbreakable by players
+                    .randomTicks()    // schedule ticks if needed
+            ));
+
+    public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas",
+            () -> new GasChildBlock(BlockBehaviour.Properties.of()
+                    .air()
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(-1.0F, 3600000.0F) // unbreakable
+                    .randomTicks()
+            ));
 
     // -------------------------
     // Registry Helpers

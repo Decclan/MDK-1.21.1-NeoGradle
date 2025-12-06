@@ -54,5 +54,11 @@ public class ModItemModelProvider extends ItemModelProvider {
                 modLoc("block/human_skeleton_top_block"));
         withExistingParent(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.getId().getPath(),
                 modLoc("block/human_skeleton_bottom_block"));
+
+        // Simple "generated" item model that points to a texture
+        singleTexture(ModBlocks.GAS_SOURCE.getId().getPath(),
+                mcLoc("item/generated"), // Use generated item template
+                "layer0", modLoc("block/poison_gas")); // pick a representative child variant
+
     }
 }
