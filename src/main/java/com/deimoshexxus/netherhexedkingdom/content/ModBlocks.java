@@ -178,19 +178,21 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> GAS_SOURCE = register("poison_gas_source",
             () -> new GasSourceBlock(BlockBehaviour.Properties.of()
-                    .air()
+                    .replaceable()
                     .noCollission()   // entities can move through
                     .noOcclusion()    // invisible for pathfinding, light
-                    .strength(-1.0F, 3600000.0F) // unbreakable by players
+                    .strength(0.0F)
+                    //.strength(-1.0F, 3600000.0F) // unbreakable by players
                     .randomTicks()    // schedule ticks if needed
+                    .lightLevel(state -> 11)
             ));
 
     public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas",
             () -> new GasChildBlock(BlockBehaviour.Properties.of()
-                    .air()
+                    .replaceable()
                     .noCollission()
                     .noOcclusion()
-                    .strength(-1.0F, 3600000.0F) // unbreakable
+                    .strength(0.0F)
                     .randomTicks()
             ));
 

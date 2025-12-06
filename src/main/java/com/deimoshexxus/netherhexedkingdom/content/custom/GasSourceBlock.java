@@ -13,21 +13,13 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
 
-/**
- * Gas source block with two fixes:
- *  - won't remove gas children that are reachable from other nearby sources (avoids oscillation)
- *  - cannot be replaced by placed blocks (overrides canBeReplaced)
- */
 public class GasSourceBlock extends Block {
     public static final IntegerProperty DISTANCE = GasUtil.DISTANCE;
 
-    private static final int MAX_HEIGHT = 6;
-    private static final int HORIZONTAL_RADIUS = 3;
+    private static final int MAX_HEIGHT = GasUtil.DEFAULT_MAX_HEIGHT;
+    private static final int HORIZONTAL_RADIUS = GasUtil.DEFAULT_RADIUS;
     private static final int TICK_DELAY = 20;
 
     public GasSourceBlock(BlockBehaviour.Properties props) {
@@ -40,10 +32,10 @@ public class GasSourceBlock extends Block {
         builder.add(DISTANCE);
     }
 
-    // Prevent placement from replacing the source: return false so placement can't overwrite it
     @Override
-    public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-        return false;
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext ctx) {
+        // If the player is placing anything except the gas source → allow replacement
+        return ctx.getItemInHand().getItem() != this.asItem();
     }
 
     @Override
@@ -56,9 +48,7 @@ public class GasSourceBlock extends Block {
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean moving) {
-        if (!level.isClientSide()) {
-            level.scheduleTick(pos, this, 2);
-        }
+        if (!level.isClientSide()) level.scheduleTick(pos, this, 2);
     }
 
     @Override
@@ -68,219 +58,116 @@ public class GasSourceBlock extends Block {
     }
 
     private void createGasCloud(ServerLevel level, BlockPos sourcePos) {
-        final int maxH = MAX_HEIGHT;
-        final int radius = HORIZONTAL_RADIUS;
+        // --- (1) Place plus-shape (cardinal) children at y = source ---
 
-        // 1-block horizontal spread at source level (unchanged)
-        BlockPos base = sourcePos;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
-                BlockPos spreadPos = base.offset(dx, 0, dz);
-                BlockState current = level.getBlockState(spreadPos);
-                if (current.is(ModBlocks.GAS_SOURCE.get())) continue;
-                if (isPassableOrGas(level, spreadPos) || current.is(ModBlocks.GAS_CHILD.get())) {
-                    BlockState desired = ModBlocks.GAS_CHILD.get().defaultBlockState().setValue(DISTANCE, 1);
-                    if (!current.equals(desired)) level.setBlock(spreadPos, desired, 2);
-                }
-            }
-        }
+        int[][] PATTERN_OFFSETS = {
+                {0, -1}, // north
+                {0,  1}, // south
+                {-1, 0}, // west
+                {1,  0}  // east
+        };
 
-        // Tall rounded cloud above
-        Set<BlockPos> reachable = computeReachablePositions(level, sourcePos, maxH, radius);
+        for (int[] off : PATTERN_OFFSETS) {
+            int dx = off[0];
+            int dz = off[1];
+            BlockPos p = sourcePos.offset(dx, 0, dz);
 
-        for (BlockPos target : reachable) {
-            if (target.equals(sourcePos)) continue;
-            int dist = target.getY() - sourcePos.getY();
-            if (dist < 1 || dist > maxH) continue;
-            BlockState current = level.getBlockState(target);
+            BlockState current = level.getBlockState(p);
             if (current.is(ModBlocks.GAS_SOURCE.get())) continue;
-            if (canGasOccupy(current)) {
-                BlockState desired = ModBlocks.GAS_CHILD.get().defaultBlockState().setValue(DISTANCE, dist);
-                if (!current.equals(desired)) level.setBlock(target, desired, 2);
+
+            if (GasUtil.isPassableOrGas(level, p) || current.is(ModBlocks.GAS_CHILD.get())) {
+                BlockState desired = ModBlocks.GAS_CHILD.get().defaultBlockState().setValue(DISTANCE, 1);
+                if (!current.equals(desired)) level.setBlock(p, desired, 2);
             }
         }
 
-        // Cleanup unreachable children, BUT only remove them if NO nearby source can claim them.
-        int cleanup = radius + 1;
+        // --- (2) BFS reachability determines what positions the gas may occupy ---
+        Set<BlockPos> reachable =
+                GasUtil.computeReachablePositions(level, sourcePos, MAX_HEIGHT, HORIZONTAL_RADIUS);
+
+        // --- (3) Use the mushroom-cloud pattern placement ---
+        placePatternCloud(level, sourcePos, reachable);
+
+        // --- (4) Cleanup: remove gas children not reachable AND not claimed by any source ---
+        int cleanup = HORIZONTAL_RADIUS + 1;
+
         for (int dx = -cleanup; dx <= cleanup; dx++) {
             for (int dz = -cleanup; dz <= cleanup; dz++) {
-                for (int dy = 1; dy <= maxH; dy++) {
+                for (int dy = 1; dy <= MAX_HEIGHT; dy++) {
+
                     BlockPos check = sourcePos.offset(dx, dy, dz);
-                    if (!level.getBlockState(check).is(ModBlocks.GAS_CHILD.get())) continue;
-                    if (reachable.contains(check)) continue; // this source still claims it
-                    // If any other nearby source claims it, do not remove
-                    if (isClaimedByAnySource(level, check)) continue;
+                    BlockState current = level.getBlockState(check);
+
+                    if (!current.is(ModBlocks.GAS_CHILD.get())) continue;
+
+                    // keep if reachable
+                    if (reachable.contains(check)) continue;
+
+                    // keep if another source claims it
+                    if (GasUtil.isClaimedByAnySource(level, check, MAX_HEIGHT, HORIZONTAL_RADIUS))
+                        continue;
+
+                    // otherwise remove
                     level.removeBlock(check, false);
                 }
             }
         }
     }
 
-    private Set<BlockPos> computeReachablePositions(ServerLevel level, BlockPos sourcePos,
-                                                    int maxHeight, int horizontalRadius) {
 
-        Set<BlockPos> visited = new HashSet<>();
-        Queue<BlockPos> queue = new ArrayDeque<>();
+    private void placePatternCloud(ServerLevel level, BlockPos sourcePos, Set<BlockPos> reachable) {
 
-        int baseY = sourcePos.getY();
+        for (int h = 1; h <= GasUtil.MAX_GAS_HEIGHT; h++) {
 
-        // seeds around source at Y+1
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                BlockPos seed = sourcePos.offset(dx, 1, dz);
-                if (isWithinRoundedVolume(sourcePos, seed, maxHeight, horizontalRadius)
-                        && isPassableOrGas(level, seed)) {
-                    visited.add(seed);
-                    queue.add(seed);
-                }
-            }
-        }
+            String[] layer = GasUtil.GAS_CLOUD_PATTERN[h];
+            int half = 2; // center index for 5x5 grid
 
-        BlockPos directAbove = sourcePos.above(1);
-        if (!visited.contains(directAbove) && isPassableOrGas(level, directAbove)) {
-            visited.add(directAbove);
-            queue.add(directAbove);
-        }
+            for (int row = 0; row < 5; row++) {
+                for (int col = 0; col < 5; col++) {
 
-        while (!queue.isEmpty()) {
-            BlockPos cur = queue.remove();
-            int dy = cur.getY() - baseY;
+                    char c = layer[row].charAt(col);
+                    if (c != 'G') continue;
 
-            if (dy < 1 || dy > maxHeight) continue;
-            if (!isWithinRoundedVolume(sourcePos, cur, maxHeight, horizontalRadius)) continue;
+                    int dx = col - half;
+                    int dz = row - half;
+                    BlockPos target = sourcePos.offset(dx, h, dz);
 
-            BlockPos[] neighbors = new BlockPos[]{
-                    cur.north(), cur.south(), cur.east(), cur.west(), cur.above(), cur.below()
-            };
+                    // Respect BFS connectivity
+                    if (!reachable.contains(target)) continue;
 
-            for (BlockPos nb : neighbors) {
-                if (nb.getY() <= baseY) continue;
-                if (!isWithinRoundedVolume(sourcePos, nb, maxHeight, horizontalRadius)) continue;
-                if (visited.contains(nb)) continue;
-                if (isPassableOrGas(level, nb)) {
-                    visited.add(nb);
-                    queue.add(nb);
-                }
-            }
-        }
-        return visited;
-    }
+                    BlockState current = level.getBlockState(target);
 
-    private static boolean isPassableOrGas(ServerLevel level, BlockPos pos) {
-        BlockState bs = level.getBlockState(pos);
-        return bs.isAir() || bs.canBeReplaced() || bs.is(ModBlocks.GAS_CHILD.get());
-    }
+                    // Do not replace solids or sources
+                    if (!GasUtil.canGasOccupy(current)) continue;
 
-    private static boolean canGasOccupy(BlockState state) {
-        if (state.is(ModBlocks.GAS_SOURCE.get()) || state.is(ModBlocks.GAS_CHILD.get())) return false;
-        return state.isAir() || state.canBeReplaced();
-    }
+                    int dist = h;
+                    BlockState desired = ModBlocks.GAS_CHILD.get()
+                            .defaultBlockState()
+                            .setValue(DISTANCE, dist);
 
-    private static boolean isWithinRoundedVolume(BlockPos origin, BlockPos pos,
-                                                 int maxHeight, int horizontalRadius) {
-        int dx = pos.getX() - origin.getX();
-        int dz = pos.getZ() - origin.getZ();
-        int dy = pos.getY() - origin.getY();
-
-        double nx = (dx * dx) / (double) (horizontalRadius * horizontalRadius);
-        double nz = (dz * dz) / (double) (horizontalRadius * horizontalRadius);
-        double ny = (dy * dy) / (double) (maxHeight * maxHeight);
-
-        return (nx + nz + ny) <= 1.0;
-    }
-
-    /**
-     * Check whether any nearby source (within a small search box) can reach the position.
-     * If yes, the child at 'pos' should not be removed by this source's cleanup.
-     */
-    private boolean isClaimedByAnySource(ServerLevel level, BlockPos pos) {
-        int searchRadius = HORIZONTAL_RADIUS + 1;
-        // we'll look for candidate sources within horizontal box and up to MAX_HEIGHT below the checked position
-        for (int dx = -searchRadius; dx <= searchRadius; dx++) {
-            for (int dz = -searchRadius; dz <= searchRadius; dz++) {
-                for (int down = 0; down <= MAX_HEIGHT; down++) {
-                    BlockPos candidate = pos.offset(dx, -down, dz);
-                    if (candidate.getY() > pos.getY()) continue;
-                    if (!level.isLoaded(candidate)) continue;
-                    if (!level.getBlockState(candidate).is(ModBlocks.GAS_SOURCE.get())) continue;
-                    // candidate is a source — check if it can reach pos
-                    if (isReachableFromSource(level, candidate, pos)) return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Bounded reachability check: can the source at sourcePos reach targetPos using the
-     * same rules as computeReachablePositions? This is a small BFS limited by horizontal radius and height.
-     */
-    private boolean isReachableFromSource(ServerLevel level, BlockPos sourcePos, BlockPos targetPos) {
-        final int maxH = MAX_HEIGHT;
-        final int radius = HORIZONTAL_RADIUS;
-
-        int dy = targetPos.getY() - sourcePos.getY();
-        if (dy < 1 || dy > maxH) return false;
-
-        java.util.Queue<BlockPos> queue = new java.util.ArrayDeque<>();
-        java.util.Set<BlockPos> visited = new java.util.HashSet<>();
-
-        BlockPos start = sourcePos.above(1);
-        if (isPassableOrGas(level, start)) {
-            queue.add(start);
-            visited.add(start);
-        } else {
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    BlockPos seed = sourcePos.offset(dx, 1, dz);
-                    if (isPassableOrGas(level, seed)) {
-                        queue.add(seed);
-                        visited.add(seed);
+                    if (!current.equals(desired)) {
+                        level.setBlock(target, desired, 2);
                     }
                 }
             }
         }
-
-        while (!queue.isEmpty()) {
-            BlockPos cur = queue.remove();
-            if (cur.equals(targetPos)) return true;
-
-            int curDy = cur.getY() - sourcePos.getY();
-            if (curDy < 1 || curDy > maxH) continue;
-            if (!isWithinRoundedVolume(sourcePos, cur, maxH, radius)) continue;
-
-            BlockPos[] neighbors = new BlockPos[]{
-                    cur.north(), cur.south(), cur.east(), cur.west(), cur.above(), cur.below()
-            };
-
-            for (BlockPos nb : neighbors) {
-                if (nb.getY() <= sourcePos.getY()) continue;
-                if (!isWithinRoundedVolume(sourcePos, nb, maxH, radius)) continue;
-                if (visited.contains(nb)) continue;
-                if (isPassableOrGas(level, nb)) {
-                    visited.add(nb);
-                    queue.add(nb);
-                }
-            }
-        }
-
-        return false;
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        // On explicit removal of the source (player placed block), remove children that belonged only to this source.
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
             for (int y = 1; y <= MAX_HEIGHT; y++) {
                 for (int dx = -HORIZONTAL_RADIUS; dx <= HORIZONTAL_RADIUS; dx++) {
                     for (int dz = -HORIZONTAL_RADIUS; dz <= HORIZONTAL_RADIUS; dz++) {
                         BlockPos target = pos.offset(dx, y, dz);
-                        if (serverLevel.getBlockState(target).is(ModBlocks.GAS_CHILD.get())) {
-                            // only remove if no other source claims it
-                            if (!isClaimedByAnySource(serverLevel, target)) {
-                                serverLevel.removeBlock(target, false);
-                            }
-                        }
+                        if (!serverLevel.getBlockState(target).is(ModBlocks.GAS_CHILD.get())) continue;
+
+                        // if any other source (excluding this one) claims it, keep it
+                        if (GasUtil.isClaimedByAnySource(serverLevel, target, MAX_HEIGHT, HORIZONTAL_RADIUS, pos)) continue;
+
+                        // otherwise remove it — this source was its owner
+                        serverLevel.removeBlock(target, false);
                     }
                 }
             }
