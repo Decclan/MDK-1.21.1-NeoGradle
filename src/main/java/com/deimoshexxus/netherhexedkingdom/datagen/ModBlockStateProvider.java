@@ -3,6 +3,7 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -30,6 +31,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get()));
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get(), cubeAll(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get()));
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get(), cubeAll(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get()));
+        generateGasBlock(ModBlocks.GAS_SOURCE.get(), "poison_gas_source");
+        generateGasBlock(ModBlocks.GAS_CHILD.get(), "poison_gas");
 
         // ----------------------
         // Pillar block
@@ -76,7 +79,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     // ----------------------
-    // Optional: Rotatable blocks json builder helper
+    // Helpers
     // ----------------------
 
     private void horizontalRotatableBlock(Block block, String modelName) {
@@ -121,9 +124,23 @@ public class ModBlockStateProvider extends BlockStateProvider {
                     .rotationY(yRot)
                     .build();
         });
-
         // Also generate the matching item model
         simpleBlockItem(block, models().getExistingFile(modLoc("block/" + modelName)));
     }
+
+    private void generateGasBlock(Block block, String baseName) {
+        getVariantBuilder(block).forAllStates(state -> {
+            int distance = state.getValue(GasSourceBlock.DISTANCE);
+
+            // Use cubeAll so the model has geometry (a cube) and is not invisible.
+            return ConfiguredModel.builder()
+                    .modelFile(models()
+                            .cubeAll(baseName + "_" + distance, modLoc("block/poison_gas_" + distance))
+                            .renderType("minecraft:translucent") // adds "render_type":"minecraft:translucent"
+                    )
+                    .build();
+        });
+    }
+
 
 }
