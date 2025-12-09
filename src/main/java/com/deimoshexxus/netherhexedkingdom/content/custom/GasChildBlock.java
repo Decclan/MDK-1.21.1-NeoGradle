@@ -45,12 +45,15 @@ public class GasChildBlock extends Block {
         if (!(entity instanceof LivingEntity le)) return;
         if (le.isSpectator()) return;
 
-        int duration = 60; // ticks (3 seconds)
+        int duration = 120; // ticks (6 seconds)
         if (!le.hasEffect(MobEffects.POISON)) {
             le.addEffect(new MobEffectInstance(MobEffects.POISON, duration, 0, false, true, true));
         }
         if (!le.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
             le.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 0, false, true, true));
+        }
+        if (!le.hasEffect(MobEffects.CONFUSION)) {
+            le.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 0, false, true, true));
         }
     }
 

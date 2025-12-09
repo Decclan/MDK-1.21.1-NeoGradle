@@ -40,6 +40,8 @@ public class ModCreativeTabs {
                         output.accept(ModItems.MILITUS_ALLOY_BOOTS.get());
                         output.accept(ModItems.MILITUS_ALLOY_HORSE_ARMOR.get());
                         output.accept(ModItems.POISON_GAS_ITEM.get());
+                        output.accept(ModItems.LINGZHI_MUSHROOM_ITEM.get());
+                        output.accept(ModItems.LINGZHI_MUSHROOM_FOOD.get());
 
 
                         // Blocks
@@ -60,6 +62,8 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.GARGOYLE_GOLD_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_AMETHYST_BLOCK.get());
+                        output.accept(ModBlocks.MASONIAE_MUSHROOM.get());
+                        output.accept(ModBlocks.LINGZHI_MUSHROOM.get());
                         //output.accept(ModBlocks.GAS_SOURCE.get());
                         // add future blocks/items here
                     })

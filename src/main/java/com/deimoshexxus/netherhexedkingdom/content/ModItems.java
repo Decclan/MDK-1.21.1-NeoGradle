@@ -2,6 +2,9 @@ package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
@@ -64,9 +67,67 @@ public class ModItems {
 //
 //    // --- Placeholder for Future Equipment ---
 
-    // public static final DeferredItem<Item> MILITUS_SWORD = ITEMS.register("militus_sword", () -> new SwordItem(...));
-    // public static final DeferredItem<Item> HEXAN_ARMOR_HELMET = ITEMS.register("hexan_helmet", () -> new ArmorItem(...));
-    // (Will be added after custom tool/armor tiers are defined)
+
+    // --- Consumables ---
+
+    public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",
+            () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(),
+                    new Item.Properties()
+                            .food(new FoodProperties.Builder()
+                                    .nutrition(4)
+                                    .saturationModifier(0.6f)
+                                    .alwaysEdible()
+                                    //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+                                    .build()
+                            )
+            )
+    );
+
+    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_FOOD = ITEMS.register("lingzhi_mushroom_food",
+            () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
+                    new Item.Properties()
+                            .food(new FoodProperties.Builder()
+                                    .nutrition(4)
+                                    .saturationModifier(0.6f)
+                                    .alwaysEdible()
+                                    //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+                                    .build()
+                            )
+            )
+    );
+
+    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_ITEM =
+            ITEMS.register("lingzhi_mushroom",
+                    () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
+                            new Item.Properties()
+                    ));
+
+
+//    public static final DeferredItem<Item> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",
+//            () -> new Item(new Item.Properties()
+//                    .food(new FoodProperties.Builder()
+//                            .nutrition(4)
+//                            .saturationModifier(0.6f)
+//                            .alwaysEdible()
+//                            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+//                            .build())
+//                    .stacksTo(64)));
+//
+//    public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_BLOCK_ITEM = NetherHexedKingdom.ITEMS.register("masoniae_mushroom",
+//            () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(), new Item.Properties()
+//                    .food(new FoodProperties.Builder()
+//                            .nutrition(4)
+//                            .saturationModifier(0.6f)
+//                            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f)
+//                            .build()
+//                    )
+//            )
+//    );
+
+
+//    public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_ITEM =
+//            ITEMS.register("masoniae_mushroom",
+//                    () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(), new Item.Properties()));
 
     // redundant?
     public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
@@ -114,6 +175,8 @@ public class ModItems {
                             new Item.Properties()
                     )
             );
+
+
 
     // --- Armor ---
 

@@ -4,8 +4,6 @@ import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.AbstractSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;

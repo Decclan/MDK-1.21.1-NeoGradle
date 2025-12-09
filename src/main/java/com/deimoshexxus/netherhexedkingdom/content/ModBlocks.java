@@ -1,10 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.custom.GasChildBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.HumanSkeletonBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -197,6 +194,34 @@ public class ModBlocks {
                     .randomTicks()
                     .sound(SoundType.WOOL)
             ));
+
+//    public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
+//            () -> new Block(BlockBehaviour.Properties.of()
+//                    .mapColor(MapColor.PLANT)
+//                    .strength(0.2f)
+//                    .sound(SoundType.FUNGUS)
+//                    .noOcclusion()));
+
+    public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .strength(0.2f)
+                    .sound(SoundType.FUNGUS)
+                    .noOcclusion()
+                    .randomTicks()
+            ));
+
+    public static final DeferredBlock<BracketFungusBlock> LINGZHI_MUSHROOM =
+            register("lingzhi_mushroom",
+                    () -> new BracketFungusBlock(BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.PLANT)
+                            .strength(0.5f)
+                            .sound(SoundType.FUNGUS)
+                            .noOcclusion()
+                            .randomTicks()
+                    ));
+
+
 
     // -------------------------
     // Registry Helpers

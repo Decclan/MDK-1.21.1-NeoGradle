@@ -33,6 +33,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.MILITUS_ALLOY_BOOTS.get());
         basicItem(ModItems.MILITUS_ALLOY_HORSE_ARMOR.get());
 
+        basicItem(ModItems.LINGZHI_MUSHROOM_FOOD.get());
+
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
                 modLoc("block/gargoyle_gold_block"));
@@ -59,6 +61,11 @@ public class ModItemModelProvider extends ItemModelProvider {
         singleTexture(ModItems.POISON_GAS_ITEM.getId().getPath(),
                 mcLoc("item/generated"),
                 "layer0", modLoc("item/poison_gas"));
+
+        withExistingParent(ModItems.LINGZHI_MUSHROOM_ITEM.getId().getPath(),
+                modLoc("block/lingzhi_mushroom_stage2"));
+
+
 
     }
 }

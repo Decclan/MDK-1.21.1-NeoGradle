@@ -164,22 +164,6 @@ public class GasSourceBlock extends Block {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
-//        if (rand.nextInt(20) == 0) { // ~once per second
-//            Minecraft mc = Minecraft.getInstance();
-//            if (mc.player != null && mc.level != null) {
-//                SimpleSoundInstance sound = new SimpleSoundInstance(
-//                        ModSounds.GAS_AMBIENT.get(),
-//                        SoundSource.BLOCKS,
-//                        0.25f,
-//                        1.0f,
-//                        mc.level.random,
-//                        pos.getX() + 0.5,
-//                        pos.getY() + 0.5,
-//                        pos.getZ() + 0.5
-//                );
-//                mc.getSoundManager().play(sound);
-//            }
-//        }
     }
 
     @Override
