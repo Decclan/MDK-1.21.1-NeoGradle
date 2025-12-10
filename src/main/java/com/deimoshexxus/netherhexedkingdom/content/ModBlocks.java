@@ -185,7 +185,7 @@ public class ModBlocks {
                     .sound(SoundType.WOOL)
             ));
 
-    public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas",
+    public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas_child",
             () -> new GasChildBlock(BlockBehaviour.Properties.of()
                     .replaceable()
                     .noCollission()

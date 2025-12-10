@@ -3,12 +3,16 @@ package com.deimoshexxus.netherhexedkingdom.content.custom;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -19,17 +23,25 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BracketFungusBlock extends HorizontalDirectionalBlock {
+public class BracketFungusBlock extends HorizontalDirectionalBlock implements BonemealableBlock {
+    private static final Block[] VALID_HOSTS = {
+            Blocks.STRIPPED_CRIMSON_STEM,
+            Blocks.STRIPPED_WARPED_STEM,
+            Blocks.CRIMSON_STEM,    //.get(),
+            Blocks.WARPED_STEM    //.get()
+    };
+
+
     public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
 
     // Model coordinates (px) match datagen element: from(4,10,12) to(12,12,16)
     // Normalised 0..1:
-    private static final double X1 = 4.0D / 16.0D;   // 0.25
-    private static final double X2 = 12.0D / 16.0D;  // 0.75
-    private static final double Y1 = 4.0D / 16.0D;  // 0.625
-    private static final double Y2 = 6.0D / 16.0D;  // 0.75
-    private static final double Z1 = 12.0D / 16.0D;  // 0.75 (near south face)
-    private static final double Z_OUT = 4.0D / 16.0D; // 0.25 (outward thickness)
+    private static final double X1 = 4.0D / 16.0D;
+    private static final double X2 = 12.0D / 16.0D;
+    private static final double Y1 = 3.0D / 16.0D; // was 4.0
+    private static final double Y2 = 5.0D / 16.0D; // was 6.0
+    private static final double Z1 = 12.0D / 16.0D; // (near south face)
+    private static final double Z_OUT = 5.0D / 16.0D; // (outward thickness)
 
     // Shapes that correspond to the model when rotated:
     private static final VoxelShape SHAPE_SOUTH = Shapes.box(X1, Y1, Z1, X2, Y2, 1.0D);
@@ -43,6 +55,13 @@ public class BracketFungusBlock extends HorizontalDirectionalBlock {
                 .setValue(FACING, Direction.SOUTH) // default SOUTH to match authored model orientation
                 .setValue(AGE, 0)
         );
+    }
+
+    private boolean isValidHost(BlockState state) {
+        for (Block host : VALID_HOSTS) {
+            if (state.is(host)) return true;
+        }
+        return false;
     }
 
     @Override
@@ -72,12 +91,45 @@ public class BracketFungusBlock extends HorizontalDirectionalBlock {
      * Survival: there must be a solid block on the opposite side of the facing (the support).
      * Example: FACING = EAST -> support is at pos.relative(WEST).
      */
+
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction facing = state.getValue(FACING);
         BlockPos supportPos = pos.relative(facing);
+
         BlockState supportState = level.getBlockState(supportPos);
-        return supportState.isSolid();
+
+        return isValidHost(supportState);
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+        return state.getValue(AGE) < 2;
+    }
+
+    @Override
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+        // 45% chance like cocoa
+        return random.nextFloat() < 0.45f;
+    }
+
+    @Override
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        int age = state.getValue(AGE);
+        if (age < 2) {
+            level.setBlock(pos, state.setValue(AGE, age + 1), 2);
+        }
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        int age = state.getValue(AGE);
+
+        if (age < 2 && random.nextInt(5) == 0) { // 20% chance per tick
+            if (canSurvive(state, level, pos)) {
+                level.setBlock(pos, state.setValue(AGE, age + 1), 2);
+            }
+        }
     }
 
     /**

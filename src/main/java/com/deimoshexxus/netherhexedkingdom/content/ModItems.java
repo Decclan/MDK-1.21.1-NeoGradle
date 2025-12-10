@@ -29,8 +29,7 @@ public class ModItems {
     public static final DeferredItem<Item> NETHERITE_FRAGMENT = registerItem("netherite_fragment");
     public static final DeferredItem<Item> NETHERITE_OXIDE = registerItem("netherite_oxide");
     public static final DeferredItem<Item> IMPERIAL_COINS = registerItem("imperial_coins");
-    public static final DeferredItem<BlockItem> POISON_GAS_ITEM =
-            ITEMS.register("poison_gas",
+    public static final DeferredItem<BlockItem> POISON_GAS_ITEM = ITEMS.register("poison_gas_source",
                     () -> new BlockItem(ModBlocks.GAS_SOURCE.get(), new Item.Properties()));
 
 
@@ -83,24 +82,23 @@ public class ModItems {
             )
     );
 
-    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_FOOD = ITEMS.register("lingzhi_mushroom_food",
+    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_ITEM = ITEMS.register("lingzhi_mushroom",
             () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
                     new Item.Properties()
                             .food(new FoodProperties.Builder()
                                     .nutrition(4)
                                     .saturationModifier(0.6f)
                                     .alwaysEdible()
-                                    //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
                                     .build()
                             )
             )
     );
 
-    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_ITEM =
-            ITEMS.register("lingzhi_mushroom",
-                    () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
-                            new Item.Properties()
-                    ));
+//    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_ITEM =
+//            ITEMS.register("lingzhi_mushroom",
+//                    () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
+//                            new Item.Properties()
+//                    ));
 
 
 //    public static final DeferredItem<Item> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",

@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ModBlockStateProvider extends BlockStateProvider {
@@ -164,25 +165,24 @@ public class ModBlockStateProvider extends BlockStateProvider {
             models()
                     .withExistingParent(baseName + "_stage" + i, "minecraft:block/block")
                     .renderType("minecraft:cutout")
-                    .texture("texture", modLoc("block/" + baseName + "_stage" + i))
 
-                    // inside your loop in generateBracketFungus(...)
+                    // Main texture
+                    .texture("texture",  modLoc("block/" + baseName + "_stage" + i))
+                    .texture("particle", "#texture")
+
                     .element()
-                    // Full 16x16 plane at Y = 10 (thin 0.01 height)
-                    // This is the visual plane — it maps the texture at full 16x16 resolution.
-                    .from(0.0F, 4.0F, 0.0F)
-                    .to(16.0F, 4.01F, 16.0F)
+                    .from(0, 4, 0)
+                    .to(16, 4.01F, 16)
 
-                    // UP face uses the full texture
                     .face(Direction.UP)
                     .texture("#texture")
                     .uvs(0, 0, 16, 16)
                     .end()
 
-                    // DOWN face mirrors UP — same UVs
                     .face(Direction.DOWN)
                     .texture("#texture")
                     .uvs(0, 0, 16, 16)
+                    .rotation(ModelBuilder.FaceRotation.UPSIDE_DOWN)
                     .end()
                     .end();
         }
