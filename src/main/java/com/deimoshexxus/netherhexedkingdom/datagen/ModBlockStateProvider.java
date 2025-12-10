@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
+import com.deimoshexxus.netherhexedkingdom.content.custom.BracketFungusBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
 import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
 import net.minecraft.core.Direction;
@@ -9,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ModBlockStateProvider extends BlockStateProvider {
@@ -35,9 +37,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
         generateGasBlock(ModBlocks.GAS_CHILD.get(), "poison_gas");
 
         // ----------------------
+        // Vegetation
+        // ----------------------
+        generateMushroom(ModBlocks.MASONIAE_MUSHROOM.get(), "masoniae_mushroom");
+        generateBracketFungus(ModBlocks.LINGZHI_MUSHROOM.get(), "lingzhi_mushroom", 3);
+
+        // ----------------------
         // Pillar block
         // ----------------------
-
         axisBlock(ModBlocks.ETERNAL_LIGHT_BLOCK.get(),
                 modLoc("block/eternal_light_block_side"),
                 modLoc("block/eternal_light_block_end"));
@@ -56,10 +63,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.BLACKSTONE_FIRESTAND_BLOCK.get(),
                 models().getExistingFile(modLoc("block/blackstone_firestand_block")));
 
-
-        // ----------------------
-        // BlockBench-generated models
-        // ----------------------
         // ----------------------
         // Gargoyles (Originally South Facing)
         // ----------------------
@@ -75,6 +78,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // Horizontal rotatable skeleton halves
         horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");
         horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), "human_skeleton_bottom_block");
+
+
 
     }
 
@@ -128,16 +133,76 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(block, models().getExistingFile(modLoc("block/" + modelName)));
     }
 
-    private void generateGasBlock(Block block, String baseName) {
+    private void generateGasBlock(Block block, String name) {
         getVariantBuilder(block).forAllStates(state -> {
             int distance = state.getValue(GasSourceBlock.DISTANCE);
 
             // Use cubeAll so the model has geometry (a cube) and is not invisible.
             return ConfiguredModel.builder()
                     .modelFile(models()
-                            .cubeAll(baseName + "_" + distance, modLoc("block/poison_gas_" + distance))
+                            .cubeAll(name + "_" + distance, modLoc("block/poison_gas_" + distance))
                             .renderType("minecraft:translucent") // adds "render_type":"minecraft:translucent"
                     )
+                    .build();
+        });
+    }
+
+    private void generateMushroom(Block block, String name) {
+        // Blockstate: simple plant-like “cross”
+        simpleBlock(block,
+                models().cross(name, modLoc("block/" + name)).renderType("minecraft:cutout_mipped"));
+
+        // Item model: also uses cross
+        simpleBlockItem(block,
+                models().cross(name, modLoc("block/" + name))
+                        .renderType("minecraft:cutout")); // optional; item models usually handle this
+    }
+
+    private void generateBracketFungus(Block block, String baseName, int stages) {
+
+        for (int i = 0; i < stages; i++) {
+
+            models()
+                    .withExistingParent(baseName + "_stage" + i, "minecraft:block/block")
+                    .renderType("minecraft:cutout")
+
+                    // Main texture
+                    .texture("texture",  modLoc("block/" + baseName + "_stage" + i))
+                    .texture("particle", "#texture")
+
+                    .element()
+                    .from(0, 4, 0)
+                    .to(16, 4.01F, 16)
+
+                    .face(Direction.UP)
+                    .texture("#texture")
+                    .uvs(0, 0, 16, 16)
+                    .end()
+
+                    .face(Direction.DOWN)
+                    .texture("#texture")
+                    .uvs(0, 0, 16, 16)
+                    .rotation(ModelBuilder.FaceRotation.UPSIDE_DOWN)
+                    .end()
+                    .end();
+        }
+
+        // Blockstate rotation based on FACING
+        getVariantBuilder(block).forAllStates(state -> {
+            int age = state.getValue(BracketFungusBlock.AGE);
+            Direction dir = state.getValue(BracketFungusBlock.FACING);
+
+            int yRot = switch (dir) {
+                case SOUTH -> 0;
+                case WEST  -> 90;
+                case NORTH -> 180;
+                case EAST  -> 270;
+                default -> 0;
+            };
+
+            return ConfiguredModel.builder()
+                    .modelFile(models().getExistingFile(modLoc("block/" + baseName + "_stage" + age)))
+                    .rotationY(yRot)
                     .build();
         });
     }

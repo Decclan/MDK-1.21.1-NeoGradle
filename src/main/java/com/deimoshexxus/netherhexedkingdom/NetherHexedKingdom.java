@@ -3,6 +3,7 @@ package com.deimoshexxus.netherhexedkingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
+import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -58,6 +59,7 @@ public class NetherHexedKingdom {
         // register entities' deferred register
         ModEntities.register(modEventBus);
         ModArmorMaterials.MATERIALS.register(modEventBus);
+        //ModWorldFeatures.PLACED_FEATURES.register(modEventBus);
 
 
         // register this class to NeoForge event bus for server / other events

@@ -1,10 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.custom.GasChildBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.HumanSkeletonBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -178,21 +175,53 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> GAS_SOURCE = register("poison_gas_source",
             () -> new GasSourceBlock(BlockBehaviour.Properties.of()
-                    .air()
+                    .replaceable()
                     .noCollission()   // entities can move through
                     .noOcclusion()    // invisible for pathfinding, light
-                    .strength(-1.0F, 3600000.0F) // unbreakable by players
+                    .strength(0.5F)
+                    //.strength(-1.0F, 3600000.0F) // unbreakable by players
                     .randomTicks()    // schedule ticks if needed
+                    .lightLevel(state -> 8)
+                    .sound(SoundType.WOOL)
             ));
 
-    public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas",
+    public static final DeferredBlock<Block> GAS_CHILD = register("poison_gas_child",
             () -> new GasChildBlock(BlockBehaviour.Properties.of()
-                    .air()
+                    .replaceable()
                     .noCollission()
                     .noOcclusion()
-                    .strength(-1.0F, 3600000.0F) // unbreakable
+                    .strength(0.5F)
+                    .randomTicks()
+                    .sound(SoundType.WOOL)
+            ));
+
+//    public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
+//            () -> new Block(BlockBehaviour.Properties.of()
+//                    .mapColor(MapColor.PLANT)
+//                    .strength(0.2f)
+//                    .sound(SoundType.FUNGUS)
+//                    .noOcclusion()));
+
+    public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .strength(0.2f)
+                    .sound(SoundType.FUNGUS)
+                    .noOcclusion()
                     .randomTicks()
             ));
+
+    public static final DeferredBlock<BracketFungusBlock> LINGZHI_MUSHROOM =
+            register("lingzhi_mushroom",
+                    () -> new BracketFungusBlock(BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.PLANT)
+                            .strength(0.5f)
+                            .sound(SoundType.FUNGUS)
+                            .noOcclusion()
+                            .randomTicks()
+                    ));
+
+
 
     // -------------------------
     // Registry Helpers

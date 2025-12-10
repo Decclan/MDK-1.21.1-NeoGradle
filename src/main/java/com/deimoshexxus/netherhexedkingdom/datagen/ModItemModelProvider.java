@@ -33,6 +33,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.MILITUS_ALLOY_BOOTS.get());
         basicItem(ModItems.MILITUS_ALLOY_HORSE_ARMOR.get());
 
+        //basicItem(ModItems.LINGZHI_MUSHROOM_FOOD.get());
+
 
         withExistingParent(ModBlocks.GARGOYLE_GOLD_BLOCK.getId().getPath(),
                 modLoc("block/gargoyle_gold_block"));
@@ -56,9 +58,18 @@ public class ModItemModelProvider extends ItemModelProvider {
                 modLoc("block/human_skeleton_bottom_block"));
 
         // Simple "generated" item model that points to a texture
-        singleTexture(ModBlocks.GAS_SOURCE.getId().getPath(),
-                mcLoc("item/generated"), // Use generated item template
-                "layer0", modLoc("block/poison_gas")); // pick a representative child variant
+        singleTexture(ModItems.POISON_GAS_ITEM.getId().getPath(),
+                mcLoc("item/generated"),
+                "layer0", modLoc("item/poison_gas_source"));
+
+        singleTexture(ModItems.LINGZHI_MUSHROOM_ITEM.getId().getPath(),
+                mcLoc("item/generated"),
+                "layer0", modLoc("item/lingzhi_mushroom"));
+
+//        withExistingParent(ModItems.LINGZHI_MUSHROOM_ITEM.getId().getPath(),
+//                modLoc("block/lingzhi_mushroom_stage2"));
+
+
 
     }
 }

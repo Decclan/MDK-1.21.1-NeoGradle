@@ -1,6 +1,8 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
+import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -18,6 +20,10 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     // The "minecraft:mineable/pickaxe" item tag
     public static final TagKey<Item> MINEABLE_WITH_PICKAXE =
             TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "mineable/pickaxe"));
+
+    public static final TagKey<Item> FUNGI_ITEMS =
+            TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "fungi"));
+
 
     /**
      * Correct constructor signature for NeoForge 1.21.x:
@@ -45,6 +51,11 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
         // Add standalone items if necessary
         // tag(MINEABLE_WITH_PICKAXE).add(ModItems.MILITUS_ALLOY_INGOT.get());
+
+        tag(FUNGI_ITEMS)
+                .add(ModItems.LINGZHI_MUSHROOM_ITEM.get())
+                .add(ModItems.MASONIAE_MUSHROOM_ITEM.get());
+                //.add(ModItems.LINGZHI_MUSHROOM_FOOD.get());
     }
 
     @Override

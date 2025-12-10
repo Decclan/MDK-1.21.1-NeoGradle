@@ -4,6 +4,7 @@ import com.deimoshexxus.netherhexedkingdom.client.ModModelLayers;
 import com.deimoshexxus.netherhexedkingdom.client.model.HexanGuardModel;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,6 +16,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.neoforged.neoforge.common.world.BiomeModifiers;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = NetherHexedKingdom.MODID, dist = Dist.CLIENT)
@@ -66,6 +69,9 @@ public class NetherHexedKingdomClient {
 
             EntityRenderers.register(ModEntities.GARGOYLE_POSSESSED.get(),
                     com.deimoshexxus.netherhexedkingdom.client.renderer.GargoylePossessedRenderer::new);
+
+            com.deimoshexxus.netherhexedkingdom.client.GasSourceAmbientHandler.register();
+
         });
     }
 }

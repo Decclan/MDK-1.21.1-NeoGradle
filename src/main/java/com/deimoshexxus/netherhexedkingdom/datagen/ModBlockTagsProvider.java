@@ -32,6 +32,12 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.MILITUS_ALLOY_BLOCK.get())
                 .add(ModBlocks.MILITUS_ALLOY_ORE.get());
+
+        tag(BlockTags.REPLACEABLE)
+                .add(ModBlocks.LINGZHI_MUSHROOM.get());
+
+        tag(BlockTags.FLOWERS)
+                .add(ModBlocks.LINGZHI_MUSHROOM.get());
     }
 
     @Override

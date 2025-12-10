@@ -25,15 +25,17 @@ public class ModSounds {
     public static final Supplier<SoundEvent> GUARD_DEATH =
             register("entity.hexan_guard.hexan_guard_death");
 
-    // optional
     public static final Supplier<SoundEvent> GUARD_THROW_GRENADE =
             register("entity.hexan_guard.throw_grenade");
 
-    private static Supplier<SoundEvent> register(String name) {
+    public static final Supplier<SoundEvent> GAS_AMBIENT =
+            register("blocks.gas_ambient");
+
+    private static Supplier<SoundEvent> register(String path) {
         return SOUNDS.register(
-                name,     // registry name
+                path, // registry name
                 () -> SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, name)
+                        ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, path)
                 )
         );
     }
