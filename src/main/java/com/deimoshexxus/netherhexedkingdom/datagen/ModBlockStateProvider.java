@@ -2,16 +2,35 @@ package com.deimoshexxus.netherhexedkingdom.datagen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
-import com.deimoshexxus.netherhexedkingdom.content.custom.BracketFungusBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.RotatableBlock;
-import com.deimoshexxus.netherhexedkingdom.content.custom.GasSourceBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.blocks.BracketFungusBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.blocks.RotatableBlock;
+import com.deimoshexxus.netherhexedkingdom.content.custom.blocks.GasSourceBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+
+// JSON
+import com.google.gson.JsonObject;
+
+// Utility: to save .mcmeta files
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
+
+
 
 public class ModBlockStateProvider extends BlockStateProvider {
 
@@ -41,6 +60,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // ----------------------
         generateMushroom(ModBlocks.MASONIAE_MUSHROOM.get(), "masoniae_mushroom");
         generateBracketFungus(ModBlocks.LINGZHI_MUSHROOM.get(), "lingzhi_mushroom", 3);
+        generateGlowingMushroom(ModBlocks.SOULGLOW_MUSHROOM.get(), "soul_glow_mushroom");
 
         // ----------------------
         // Pillar block
@@ -86,28 +106,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
     // ----------------------
     // Helpers
     // ----------------------
-
-    private void horizontalRotatableBlock(Block block, String modelName) {
-        // Use the Variant builder directly and rotate by Y depending on horizontal facing
-        getVariantBuilder(block).forAllStates(state -> {
-            Direction dir = state.getValue(RotatableBlock.HORIZONTAL_FACING);
-            int yRot;
-            switch (dir) {
-                case SOUTH: yRot = 180; break;
-                case WEST:  yRot = 90;  break;
-                case EAST:  yRot = 270; break;
-                default:    yRot = 0;   // NORTH
-            }
-            return ConfiguredModel.builder()
-                    .modelFile(models().getExistingFile(modLoc("block/" + modelName)))
-                    .rotationY(yRot)
-                    .build();
-        });
-
-        // also generate a simple item model that references the block model
-        // this creates models/item/<name>.json that points to models/block/<name>
-        simpleBlockItem(block, models().getExistingFile(modLoc("block/" + modelName)));
-    }
 
     private void horizontalRotatableBlockInverted(Block block, String modelName) {
         // For models that are facing SOUTH in Blockbench by default.
@@ -158,16 +156,36 @@ public class ModBlockStateProvider extends BlockStateProvider {
                         .renderType("minecraft:cutout")); // optional; item models usually handle this
     }
 
-    private void generateBracketFungus(Block block, String baseName, int stages) {
+    private void generateGlowingMushroom(Block block, String name) {
+        ModelFile modelFile = models().getExistingFile(modLoc("block/" + name));
+        simpleBlock(block, modelFile);
+        simpleBlockItem(block, modelFile);
+    }
+
+//    private void generateGlowingMushroom(Block block, String name) {
+//        // Use NeoForge model builder to generate the JSON automatically
+//        ModelFile modelFile = models()
+//                .withExistingParent(name, mcLoc("block/cross"))
+//                .texture("cross", modLoc("block/" + name))
+//                .renderType("minecraft:cutout_mipped");
+//
+//        // Generate blockstate JSON pointing to the model
+//        simpleBlock(block, modelFile);
+//
+//        // Generate item model referencing the same model
+//        simpleBlockItem(block, modelFile);
+//    }
+
+    private void generateBracketFungus(Block block, String name, int stages) {
 
         for (int i = 0; i < stages; i++) {
 
             models()
-                    .withExistingParent(baseName + "_stage" + i, "minecraft:block/block")
+                    .withExistingParent(name + "_stage" + i, "minecraft:block/block")
                     .renderType("minecraft:cutout")
 
                     // Main texture
-                    .texture("texture",  modLoc("block/" + baseName + "_stage" + i))
+                    .texture("texture",  modLoc("block/" + name + "_stage" + i))
                     .texture("particle", "#texture")
 
                     .element()
@@ -201,7 +219,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
             };
 
             return ConfiguredModel.builder()
-                    .modelFile(models().getExistingFile(modLoc("block/" + baseName + "_stage" + age)))
+                    .modelFile(models().getExistingFile(modLoc("block/" + name + "_stage" + age)))
                     .rotationY(yRot)
                     .build();
         });

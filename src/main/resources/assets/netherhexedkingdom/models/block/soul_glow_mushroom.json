@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "netherhexedkingdom:block/soul_glow_mushroom"
+  },
+  "render_type": "minecraft:translucent",
+  "emissive_textures": {
+    "cross": true
+  }
+}

@@ -1,7 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.custom.*;
+import com.deimoshexxus.netherhexedkingdom.content.custom.blocks.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -206,7 +206,18 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
                     .strength(0.2f)
+                    .noCollission()
                     .sound(SoundType.FUNGUS)
+                    .noOcclusion()
+                    .randomTicks()
+            ));
+
+    public static final DeferredBlock<Block> SOULGLOW_MUSHROOM = register("soul_glow_mushroom",
+            () -> new SoulGlowMushroomBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .sound(SoundType.FUNGUS)
+                    .noCollission()
+                    .lightLevel(state -> 6)
                     .noOcclusion()
                     .randomTicks()
             ));
@@ -215,7 +226,7 @@ public class ModBlocks {
             register("lingzhi_mushroom",
                     () -> new BracketFungusBlock(BlockBehaviour.Properties.of()
                             .mapColor(MapColor.PLANT)
-                            .strength(0.5f)
+                            .strength(0.4f)
                             .sound(SoundType.FUNGUS)
                             .noOcclusion()
                             .randomTicks()

@@ -1,15 +1,9 @@
-package com.deimoshexxus.netherhexedkingdom.content.custom;
+package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
-import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.utils.GasUtil;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
