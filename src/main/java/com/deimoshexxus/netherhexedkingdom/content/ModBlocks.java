@@ -216,6 +216,7 @@ public class ModBlocks {
             () -> new SoulGlowMushroomBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
                     .sound(SoundType.FUNGUS)
+                    .instabreak()
                     .noCollission()
                     .lightLevel(state -> 6)
                     .noOcclusion()

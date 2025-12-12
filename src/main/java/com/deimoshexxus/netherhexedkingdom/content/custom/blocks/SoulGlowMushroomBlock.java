@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -7,6 +8,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -16,18 +21,32 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class SoulGlowMushroomBlock extends Block {
+import javax.annotation.Nullable;
+
+public class SoulGlowMushroomBlock extends BushBlock implements EntityBlock {
 
     private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 5.0D, 12.0D);
     //private static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 13.0D, 13.0D);
+    public static final MapCodec<SoulGlowMushroomBlock> CODEC = simpleCodec(SoulGlowMushroomBlock::new);
 
-    public SoulGlowMushroomBlock(BlockBehaviour.Properties props) {
-        super(BlockBehaviour.Properties.of()
-                .strength(0.2F)
-                .noOcclusion()
-                .instabreak()
-                .lightLevel(state -> 5) // emits light
-        );
+    @Override
+    public MapCodec<SoulGlowMushroomBlock> codec() {
+        return CODEC;
+    }
+
+    public SoulGlowMushroomBlock(Properties props) {
+        super(props);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new SoulGlowMushroomBlockEntity(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
