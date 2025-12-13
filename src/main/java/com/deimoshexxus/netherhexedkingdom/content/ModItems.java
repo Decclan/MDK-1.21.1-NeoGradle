@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.custom.items.SoulGlowMushroomItem;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -76,7 +77,20 @@ public class ModItems {
                                     .nutrition(4)
                                     .saturationModifier(0.6f)
                                     .alwaysEdible()
+                                    //do not use here, results in suspicious holder bug
                                     //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+                                    .build()
+                            )
+            )
+    );
+
+    public static final DeferredItem<BlockItem> SOULGLOW_MUSHROOM_ITEM = ITEMS.register("soul_glow_mushroom",
+            () -> new SoulGlowMushroomItem(ModBlocks.SOULGLOW_MUSHROOM.get(),
+                    new Item.Properties()
+                            .food(new FoodProperties.Builder()
+                                    .nutrition(1)
+                                    .saturationModifier(2.6f)
+                                    .alwaysEdible()
                                     .build()
                             )
             )
@@ -86,8 +100,8 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
                     new Item.Properties()
                             .food(new FoodProperties.Builder()
-                                    .nutrition(4)
-                                    .saturationModifier(0.6f)
+                                    .nutrition(8)
+                                    .saturationModifier(0.8f)
                                     .alwaysEdible()
                                     .build()
                             )

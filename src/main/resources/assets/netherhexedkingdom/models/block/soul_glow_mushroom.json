@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "netherhexedkingdom:block/soul_glow_mushroom"
+  },
+  "render_type": "minecraft:cutout_mipped"
+}
+

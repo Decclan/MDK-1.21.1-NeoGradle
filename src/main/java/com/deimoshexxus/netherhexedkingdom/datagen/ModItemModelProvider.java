@@ -66,6 +66,11 @@ public class ModItemModelProvider extends ItemModelProvider {
                 mcLoc("item/generated"),
                 "layer0", modLoc("item/lingzhi_mushroom"));
 
+
+        singleTexture(ModItems.SOULGLOW_MUSHROOM_ITEM.getId().getPath(),
+                mcLoc("item/generated"),
+                "layer0", modLoc("item/soul_glow_mushroom"));
+
 //        withExistingParent(ModItems.LINGZHI_MUSHROOM_ITEM.getId().getPath(),
 //                modLoc("block/lingzhi_mushroom_stage2"));
 

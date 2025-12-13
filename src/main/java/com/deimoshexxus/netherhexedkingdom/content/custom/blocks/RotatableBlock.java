@@ -1,4 +1,4 @@
-package com.deimoshexxus.netherhexedkingdom.content.custom;
+package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

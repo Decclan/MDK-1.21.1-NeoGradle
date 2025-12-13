@@ -54,7 +54,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
         tag(FUNGI_ITEMS)
                 .add(ModItems.LINGZHI_MUSHROOM_ITEM.get())
-                .add(ModItems.MASONIAE_MUSHROOM_ITEM.get());
+                .add(ModItems.MASONIAE_MUSHROOM_ITEM.get())
+                .add(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
                 //.add(ModItems.LINGZHI_MUSHROOM_FOOD.get());
     }
 

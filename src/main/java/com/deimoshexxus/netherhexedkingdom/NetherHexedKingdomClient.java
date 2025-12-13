@@ -5,19 +5,27 @@ import com.deimoshexxus.netherhexedkingdom.client.model.HexanGuardModel;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
+import com.google.common.base.Preconditions;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Set;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = NetherHexedKingdom.MODID, dist = Dist.CLIENT)
@@ -30,6 +38,26 @@ public class NetherHexedKingdomClient {
         // Do not forget to add translations for your config options to the en_us.json file.
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
+
+    @SubscribeEvent
+    public static void onRegisterAdditionalModels(net.neoforged.neoforge.client.event.ModelEvent.RegisterAdditional event) {
+        event.register(ModelResourceLocation.standalone(
+                ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "block/" + "soul_glow_mushroom_glow")
+        ));
+    }
+
+
+//    @SubscribeEvent
+//    public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+//        event.register(
+//                ModelResourceLocation.standalone(
+//                        ResourceLocation.fromNamespaceAndPath(
+//                                NetherHexedKingdom.MODID,
+//                                "block/soul_glow_mushroom_glow"
+//                        )
+//                )
+//        );
+//    }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

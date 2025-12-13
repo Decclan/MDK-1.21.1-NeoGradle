@@ -1,4 +1,4 @@
-package com.deimoshexxus.netherhexedkingdom.content.custom;
+package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

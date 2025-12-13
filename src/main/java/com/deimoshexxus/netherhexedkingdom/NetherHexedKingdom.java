@@ -1,7 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom;
 
-import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
-import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
+import com.deimoshexxus.netherhexedkingdom.content.*;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
 import org.slf4j.Logger;
@@ -22,8 +21,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
-import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
 
 /**
@@ -53,6 +50,7 @@ public class NetherHexedKingdom {
 
         // register content classes (these will call BLOCKS/ITEMS/CREATIVE_MODE_TABS behind the scenes)
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModItems.register(modEventBus);
 
         ModSounds.SOUNDS.register(modEventBus);

@@ -1,0 +1,6 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "netherhexedkingdom:block/soul_glow_mushroom_emissive"
+  }
+}
