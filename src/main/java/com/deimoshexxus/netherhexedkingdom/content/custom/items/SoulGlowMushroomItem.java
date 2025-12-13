@@ -35,6 +35,11 @@ public class SoulGlowMushroomItem extends BlockItem {
                     1
             ));
             entity.addEffect(new MobEffectInstance(
+                    MobEffects.MOVEMENT_SLOWDOWN,
+                    20 * 20,  // 20 seconds
+                    0
+            ));
+            entity.addEffect(new MobEffectInstance(
                     MobEffects.REGENERATION,
                     20 * 20,  // 20 seconds
                     0

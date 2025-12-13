@@ -30,8 +30,9 @@ public class ModCreativeTabs {
                         output.accept(ModItems.NETHERITE_FRAGMENT.get());
                         output.accept(ModItems.NETHERITE_OXIDE.get());
                         output.accept(ModItems.IMPERIAL_COINS.get());
-                        output.accept(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
-                        output.accept(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
+                        output.accept(ModItems.DECAYED_ZOMBIE_SPAWN_EGG.get());
+                        output.accept(ModItems.DECAYED_ZOMBIE_HUSK_SPAWN_EGG.get());
+                        output.accept(ModItems.DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG.get());
                         output.accept(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
                         output.accept(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
                         output.accept(ModItems.MILITUS_ALLOY_HELMET.get());
@@ -42,7 +43,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.POISON_GAS_ITEM.get());
                         output.accept(ModItems.LINGZHI_MUSHROOM_ITEM.get());
                         output.accept(ModItems.MASONIAE_MUSHROOM_ITEM.get());
-                        //output.accept(ModItems.LINGZHI_MUSHROOM_FOOD.get());
                         output.accept(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
 
 

@@ -148,22 +148,32 @@ public class ModItems {
 
     // --- Entity Eggs ---
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_SPAWN_EGG =
-            ITEMS.register("hexed_zombie_spawn_egg", () ->
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIE_SPAWN_EGG =
+            ITEMS.register("decayed_zombie_spawn_egg", () ->
                     new DeferredSpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE,
+                            ModEntities.DECAYED_ZOMBIE,
                             0x6b0626,
                             0x8a8270,
                             new Item.Properties()
                     )
             );
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_HUSK_SPAWN_EGG =
-            ITEMS.register("hexed_zombie_husk_spawn_egg", () ->
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIE_HUSK_SPAWN_EGG =
+            ITEMS.register("decayed_zombie_husk_spawn_egg", () ->
                     new DeferredSpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE_HUSK,
+                            ModEntities.DECAYED_ZOMBIE_HUSK,
                             0x4f0634,
                             0xaba28c,
+                            new Item.Properties()
+                    )
+            );
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG =
+            ITEMS.register("decayed_zombified_piglin_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.DECAYED_ZOMBIFIED_PIGLIN,
+                            0x4f0634,
+                            0x2e4a42,
                             new Item.Properties()
                     )
             );
@@ -172,7 +182,7 @@ public class ModItems {
             ITEMS.register("hexan_guard_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.HEXAN_GUARD,
-                            0x4B503D,
+                            0x7b8a67,
                             0x6b1706,
                             new Item.Properties()
                     )

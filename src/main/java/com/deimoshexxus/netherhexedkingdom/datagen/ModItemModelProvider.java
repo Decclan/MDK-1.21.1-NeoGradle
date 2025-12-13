@@ -22,8 +22,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NETHERITE_FRAGMENT.get());
         basicItem(ModItems.NETHERITE_OXIDE.get());
         basicItem(ModItems.IMPERIAL_COINS.get());
-        spawnEggItem(ModItems.HEXED_ZOMBIE_SPAWN_EGG.get());
-        spawnEggItem(ModItems.HEXED_ZOMBIE_HUSK_SPAWN_EGG.get());
+        spawnEggItem(ModItems.DECAYED_ZOMBIE_SPAWN_EGG.get());
+        spawnEggItem(ModItems.DECAYED_ZOMBIE_HUSK_SPAWN_EGG.get());
+        spawnEggItem(ModItems.DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG.get());
         spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
         spawnEggItem(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
 

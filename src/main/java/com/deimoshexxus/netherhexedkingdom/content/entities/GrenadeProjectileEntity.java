@@ -1,188 +1,196 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 
-/**
- * Grenade projectile that uses a small ballistic simulation (gravity per tick)
- * and explodes on hit (destroying blocks).
- */
-public class GrenadeProjectileEntity extends Fireball {
+import java.util.List;
 
-    // tuning constants
-    private static final double DEFAULT_SPEED = 1.0D;      // initial speed (blocks/tick)
-    private static final double DEFAULT_INACCURACY = 0.12D; // gaussian spread
-    private static final double GRAVITY = 0.06D;           // per-tick downward velocity added
+public class GrenadeProjectileEntity extends Projectile implements ItemSupplier {
 
-    // Required constructor for EntityType loading / spawning
+    private static final double GRAVITY = 0.06D;
+    private static final double DEFAULT_SPEED = 1.0D;
+    private static final double DEFAULT_INACCURACY = 0.12D;
+
     public GrenadeProjectileEntity(EntityType<? extends GrenadeProjectileEntity> type, Level level) {
-        super((EntityType<? extends Fireball>)(Object) type, level);
+        super(type, level);
     }
 
-    // Runtime spawn constructor (shooter + initial velocity vector)
-    public GrenadeProjectileEntity(Level level, LivingEntity shooter, Vec3 velocity) {
-        super((EntityType<? extends Fireball>)(Object) ModEntities.GRENADE.get(), shooter, velocity, level);
+    public GrenadeProjectileEntity(Level level, LivingEntity owner, Vec3 velocity) {
+        this(ModEntities.GRENADE.get(), level);
+        this.setOwner(owner);
+        this.setPos(owner.getX(), owner.getEyeY() - 0.1D, owner.getZ());
+        this.setDeltaMovement(velocity);
     }
 
-    /** Convenience: create using shooter's look (biased upward) with defaults. */
+    /* ------------------------------------------------------------ */
+    /* Factory helpers                                              */
+    /* ------------------------------------------------------------ */
+
     public static GrenadeProjectileEntity createThrown(Level level, LivingEntity shooter) {
-        return createThrown(level, shooter, DEFAULT_SPEED, DEFAULT_INACCURACY);
+        Vec3 dir = shooter.getLookAngle()
+                .add(0.0, 0.08, 0.0)
+                .normalize()
+                .scale(DEFAULT_SPEED);
+
+        return applyInaccuracy(
+                new GrenadeProjectileEntity(level, shooter, dir),
+                level.getRandom(),
+                DEFAULT_INACCURACY
+        );
     }
 
-    /** Convenience: create using shooter's look (biased upward) with configurable speed/inaccuracy. */
-    public static GrenadeProjectileEntity createThrown(Level level, LivingEntity shooter, double speed, double inaccuracy) {
-        // base direction from look vector
-        Vec3 dir = shooter.getLookAngle();
-        // gentle upward bias so throws lob
-        Vec3 biased = dir.add(0.0, 0.08, 0.0).normalize();
-        RandomSource rnd = level.getRandom();
+    public static GrenadeProjectileEntity createThrownAtTarget(
+            Level level,
+            LivingEntity shooter,
+            Vec3 targetPos,
+            double speed,
+            double inaccuracy
+    ) {
+        Vec3 source = shooter.getEyePosition();
+        Vec3 dir = targetPos.subtract(source).normalize();
 
-        Vec3 noisy = new Vec3(
-                biased.x() + (rnd.nextDouble() - 0.5) * inaccuracy,
-                biased.y() + (rnd.nextDouble() - 0.5) * inaccuracy,
-                biased.z() + (rnd.nextDouble() - 0.5) * inaccuracy
-        ).normalize().scale(speed);
+        // Upward bias so it arcs
+        dir = dir.add(0.0, 0.12, 0.0).normalize().scale(speed);
 
-        GrenadeProjectileEntity g = new GrenadeProjectileEntity(level, shooter, noisy);
-        g.setPos(shooter.getX(), shooter.getEyeY() - 0.1, shooter.getZ());
-        g.setDeltaMovement(noisy);
-        return g;
-    }
-
-    /**
-     * Create a grenade with a ballistic solution aimed at targetPos.
-     * Uses the solver for a low-arc trajectory when possible; falls back to biased direct aim if no solution.
-     *
-     * @param level       world
-     * @param shooter     shooter entity
-     * @param targetPos   absolute target position (Vec3)
-     * @param speed       magnitude of initial speed (blocks/tick)
-     * @param inaccuracy  gaussian spread magnitude
-     * @return ready-to-spawn GrenadeProjectileEntity
-     */
-    public static GrenadeProjectileEntity createThrownAtTarget(Level level, LivingEntity shooter, Vec3 targetPos, double speed, double inaccuracy) {
-        Vec3 source = new Vec3(shooter.getX(), shooter.getEyeY() - 0.1D, shooter.getZ());
-
-        double dx = targetPos.x() - source.x();
-        double dz = targetPos.z() - source.z();
-        double dy = targetPos.y() - source.y();
-
-        double horizontalDist = Math.sqrt(dx * dx + dz * dz);
-        double v = speed;
-        double g = GRAVITY;
-
-        Vec3 velocity;
-        if (horizontalDist < 1e-6) {
-            // target nearly vertical -> fallback vertical shot
-            velocity = new Vec3(0.0, Math.signum(dy) * v, 0.0);
-        } else {
-            double v2 = v * v;
-            double v4 = v2 * v2;
-            double underSqrt = v4 - g * (g * horizontalDist * horizontalDist + 2.0 * dy * v2);
-
-            if (underSqrt >= 0.0D) {
-                double sqrtTerm = Math.sqrt(underSqrt);
-                // choose low-angle solution for faster projectile
-                double angle = Math.atan2(v2 - sqrtTerm, g * horizontalDist);
-                double cos = Math.cos(angle);
-                double sin = Math.sin(angle);
-
-                double vx = (dx / horizontalDist) * v * cos;
-                double vz = (dz / horizontalDist) * v * cos;
-                double vy = v * sin;
-                velocity = new Vec3(vx, vy, vz);
-            } else {
-                // no ballistic solution with this speed -> aim directly with upward bias
-                Vec3 dir = targetPos.subtract(source).normalize();
-                dir = dir.add(0.0, 0.12, 0.0).normalize();
-                velocity = dir.scale(v);
-            }
-        }
-
-        GrenadeProjectileEntity grenade = new GrenadeProjectileEntity(level, shooter, velocity);
-        grenade.setPos(source.x(), source.y(), source.z());
-        grenade.setDeltaMovement(velocity);
+        GrenadeProjectileEntity grenade =
+                new GrenadeProjectileEntity(level, shooter, dir);
 
         return applyInaccuracy(grenade, level.getRandom(), inaccuracy);
     }
 
-    // small helper to add perpendicular gaussian inaccuracy
-    private static GrenadeProjectileEntity applyInaccuracy(GrenadeProjectileEntity proj, RandomSource rnd, double inaccuracy) {
-        if (inaccuracy <= 0.0D) return proj;
+    private static GrenadeProjectileEntity applyInaccuracy(
+            GrenadeProjectileEntity proj,
+            RandomSource rnd,
+            double inaccuracy
+    ) {
+        if (inaccuracy <= 0) return proj;
+
         Vec3 v = proj.getDeltaMovement();
-        double vx = v.x();
-        double vy = v.y();
-        double vz = v.z();
-        double horiz = Math.sqrt(vx * vx + vz * vz);
-        if (horiz > 1e-6) {
-            double px = -vz / horiz;
-            double pz = vx / horiz;
-            double spread = rnd.nextGaussian() * inaccuracy;
-            double upNoise = rnd.nextGaussian() * inaccuracy * 0.5;
-            vx += px * spread;
-            vz += pz * spread;
-            vy += upNoise;
-        } else {
-            vx += rnd.nextGaussian() * inaccuracy;
-            vz += rnd.nextGaussian() * inaccuracy;
-        }
-        Vec3 newVel = new Vec3(vx, vy, vz);
-        proj.setDeltaMovement(newVel);
+        v = v.add(
+                rnd.nextGaussian() * inaccuracy,
+                rnd.nextGaussian() * inaccuracy * 0.5,
+                rnd.nextGaussian() * inaccuracy
+        );
+
+        proj.setDeltaMovement(v);
         return proj;
     }
+
+    /* ------------------------------------------------------------ */
+    /* Tick + Physics                                               */
+    /* ------------------------------------------------------------ */
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (!this.level().isClientSide()) {
+            this.setDeltaMovement(
+                    this.getDeltaMovement().add(0.0D, -GRAVITY, 0.0D)
+            );
+
+            if (this.tickCount % 4 == 0) {
+                this.level().playSound(
+                        null,
+                        this.getX(), this.getY(), this.getZ(),
+                        SoundEvents.CREEPER_PRIMED,
+                        SoundSource.NEUTRAL,
+                        0.5F,
+                        1.0F
+                );
+            }
+        }
+    }
+
+    /* ------------------------------------------------------------ */
+    /* Hit Handling                                                 */
+    /* ------------------------------------------------------------ */
 
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
 
         if (!this.level().isClientSide()) {
-            // Explosion that destroys blocks
-            this.level().explode(
-                    this,
-                    this.getX(),
-                    this.getY(),
-                    this.getZ(),
-                    1.5F, // tuned a little lower than TNT, change if desired
-                    Level.ExplosionInteraction.BLOCK
-            );
-            this.discard();
+            explode();
         }
     }
 
-    /**
-     * Apply gravity every tick so projectile arcs.
-     * We apply gravity after super.tick() so movement from the current delta is applied,
-     * then gravity reduces the Y velocity for the following ticks.
-     */
-    @Override
-    public void tick() {
-        super.tick();
+    private void explode() {
+        Level level = this.level();
 
-        // only modify server-side motion
-        if (!this.level().isClientSide()) {
-            Vec3 motion = this.getDeltaMovement();
-            motion = motion.add(0.0D, -GRAVITY, 0.0D);
-            this.setDeltaMovement(motion);
+        level.explode(
+                this,
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                1.5F,
+                Level.ExplosionInteraction.BLOCK
+        );
 
-            // play a fizzing sound occasionally
-            if (this.tickCount % 4 == 0) { // every 4 ticks (~0.2s)
-                this.level().playSound(
-                        null, // null = everyone nearby hears it
-                        this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.CREEPER_PRIMED, // placeholder sound
-                        net.minecraft.sounds.SoundSource.NEUTRAL,
-                        0.5F, // volume
-                        1.0F  // pitch
-                );
+        // AOE effects
+        AABB area = this.getBoundingBox().inflate(3.0D);
+        List<LivingEntity> entities =
+                level.getEntitiesOfClass(LivingEntity.class, area, e -> e != this.getOwner());
+
+        for (LivingEntity e : entities) {
+            e.hurt(
+                    this.level().damageSources().thrown(this, this.getOwner()),
+                    8.0F
+            );
+            e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1)); // 3 seconds
+
+            if (e instanceof Player player) {
+
+                // 100 ticks = 5 seconds
+                int shieldDisableTicks = 100;
+
+                player.getCooldowns().addCooldown(Items.SHIELD, shieldDisableTicks);
+
+                // Optional: force shield lowering immediately
+                player.stopUsingItem();
             }
         }
+
+
+
+        if (level instanceof ServerLevel server) {
+            server.sendParticles(
+                    ParticleTypes.EXPLOSION,
+                    this.getX(), this.getY(), this.getZ(),
+                    1,
+                    0.3, 0.3, 0.3,
+                    0.0
+            );
+        }
+
+        this.discard();
     }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    }
+
+    @Override
+    public ItemStack getItem() {
+        // Use a real item (custom grenade item is ideal)
+        return new ItemStack(Items.FIRE_CHARGE);
+    }
+
+
 
 }

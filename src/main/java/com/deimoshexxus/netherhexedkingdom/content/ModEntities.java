@@ -1,11 +1,8 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.entities.GrenadeProjectileEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieHuskEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.GargoylePossessedEntity;
+import com.deimoshexxus.netherhexedkingdom.content.entities.*;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -18,19 +15,28 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, NetherHexedKingdom.MODID);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<HexedZombieEntity>> HEXED_ZOMBIE =
-            ENTITY_TYPES.register("hexed_zombie", () ->
-                    EntityType.Builder.of(HexedZombieEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<DecayedZombieEntity>> DECAYED_ZOMBIE =
+            ENTITY_TYPES.register("decayed_zombie", () ->
+                    EntityType.Builder.of(DecayedZombieEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.95F)
-                            .build(NetherHexedKingdom.MODID + ":hexed_zombie")
+                            .build(NetherHexedKingdom.MODID + ":decayed_zombie")
             );
 
-    public static final DeferredHolder<EntityType<?>, EntityType<HexedZombieHuskEntity>> HEXED_ZOMBIE_HUSK =
-            ENTITY_TYPES.register("hexed_zombie_husk", () ->
-                    EntityType.Builder.of(HexedZombieHuskEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<DecayedZombieHuskEntity>> DECAYED_ZOMBIE_HUSK =
+            ENTITY_TYPES.register("decayed_zombie_husk", () ->
+                    EntityType.Builder.of(DecayedZombieHuskEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.95F)
-                            .build(NetherHexedKingdom.MODID + ":hexed_zombie_husk")
+                            .build(NetherHexedKingdom.MODID + ":decayed_zombie_husk")
             );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DecayedZombifiedPiglinEntity>> DECAYED_ZOMBIFIED_PIGLIN =
+            ENTITY_TYPES.register("decayed_zombified_piglin",
+                    () -> EntityType.Builder.of(
+                                    DecayedZombifiedPiglinEntity::new,
+                                    MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F)
+                            .build("decayed_zombified_piglin"));
+
 
     public static final DeferredHolder<EntityType<?>, EntityType<HexanGuardEntity>> HEXAN_GUARD =
             ENTITY_TYPES.register("hexan_guard", () ->
