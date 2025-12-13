@@ -157,10 +157,59 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     private void generateGlowingMushroom(Block block, String name) {
-        ModelFile modelFile = models().getExistingFile(modLoc("block/" + name));
-        simpleBlock(block, modelFile);
-        simpleBlockItem(block, modelFile);
+        // 1) Base model (try to reuse an existing model file if present)
+        ModelFile baseModel;
+        try {
+            baseModel = models().getExistingFile(modLoc("block/" + name));
+        } catch (Exception ignored) {
+            // Fallback: create a simple cross model that points to the base texture
+            baseModel = models().withExistingParent(name, mcLoc("block/cross"))
+                    .texture("cross", modLoc("block/" + name));
+        }
+
+        // Register base blockstate + item model
+        simpleBlock(block, baseModel);
+        simpleBlockItem(block, baseModel);
+
+        // 2) Attempt to create the glow model that references the emissive texture.
+        //    ModelBuilder.texture(...) may throw IllegalArgumentException in datagen if it
+        //    can't find the PNG in the datagen resource context. Catch that and fall back.
+        ModelFile glowModel;
+        String emissiveTextureName = "block/" + name + "_emissive"; // modid:block/<name>_emissive
+
+        try {
+            glowModel = models()
+                    .withExistingParent(name + "_glow", mcLoc("block/cross"))
+                    .texture("cross", modLoc(emissiveTextureName));
+            // Generate an item model variant too if you'd like (optional)
+            simpleBlockItem(block, glowModel);
+            NetherHexedKingdom.LOGGER.info("[Datagen] Generated glow model referencing '{}'", emissiveTextureName);
+        } catch (IllegalArgumentException ex) {
+            // Datagen couldn't validate the emissive PNG. Fall back safely to base texture
+            NetherHexedKingdom.LOGGER.warn("[Datagen] emissive texture '{}' not visible to datagen; generating fallback glow model that uses base texture.",
+                    emissiveTextureName);
+
+            // Fallback glow model uses the base texture (so datagen will succeed)
+            glowModel = models()
+                    .withExistingParent(name + "_glow", mcLoc("block/cross"))
+                    .texture("cross", modLoc("block/" + name));
+
+            // Create the fallback item model as well (optional)
+            simpleBlockItem(block, glowModel);
+        }
+
+        // 3) IMPORTANT: do NOT overwrite the blockstate with the glow model here unless you want
+        //    the block in-world to use the glow texture. We only generate the glow model JSON so
+        //    your renderer can load it as a standalone model at runtime.
+        //
+        // If you *do* want the block to use the glow model in-world, you could call:
+        // simpleBlock(block, glowModel);
+        //
+        // But typically we keep the baseModel as the blockstate and let the renderer render the glow
+        // overlay using the standalone model (registered in ModelEvent.RegisterAdditional).
     }
+
+
 
 //    private void generateGlowingMushroom(Block block, String name) {
 //        // Use NeoForge model builder to generate the JSON automatically

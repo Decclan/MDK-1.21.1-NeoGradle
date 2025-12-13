@@ -21,11 +21,30 @@ public class SoulGlowMushroomItem extends BlockItem {
         if (!level.isClientSide) {
             entity.addEffect(new MobEffectInstance(
                     MobEffects.NIGHT_VISION,
-                    20 * 30,  // 30 seconds
+                    20 * 720,  // 6 minutes
+                    1
+            ));
+            entity.addEffect(new MobEffectInstance(
+                    MobEffects.LUCK,
+                    20 * 120,  // 2 minutes
+                    0
+            ));
+            entity.addEffect(new MobEffectInstance(
+                    MobEffects.CONFUSION,
+                    20 * 15,  // 15 seconds
+                    1
+            ));
+            entity.addEffect(new MobEffectInstance(
+                    MobEffects.REGENERATION,
+                    20 * 20,  // 20 seconds
+                    0
+            ));
+            entity.addEffect(new MobEffectInstance(
+                    MobEffects.HUNGER,
+                    20 * 35,  // 35 seconds
                     0
             ));
         }
-
         return result;
     }
 }

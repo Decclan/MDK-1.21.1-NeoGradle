@@ -1,16 +1,16 @@
 package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
+import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,6 +37,38 @@ public class SoulGlowMushroomBlock extends BushBlock implements EntityBlock {
     public SoulGlowMushroomBlock(Properties props) {
         super(props);
     }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        BlockPos below = pos.below();
+        BlockState soil = world.getBlockState(below);
+
+        // Allow normal Minecraft mushroom logic
+        boolean defaultLogic = super.canSurvive(state, world, pos);
+
+        // Add your custom blocks here
+        boolean customHost = soil.is(Blocks.SOUL_SOIL);// || soil.is(ModBlocks.MY_CUSTOM_BLOCK.get());
+
+        return defaultLogic || customHost;
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        if (!world.isAreaLoaded(pos, 1)) return; // Safety check
+
+        // Only attempt spread occasionally
+        if (random.nextInt(200) == 0) { // 2% 1 in 200 chance per tick // vanilla mushrooms have 4% chance of spreading to a nearby block - 4 in 100
+            spreadMushroom(state, world, pos, random);
+        }
+    }
+
+    private void spreadMushroom(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        BlockPos targetPos = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - 1, random.nextInt(3) - 1);
+        if (world.isEmptyBlock(targetPos) && state.canSurvive(world, targetPos)) {
+            world.setBlock(targetPos, state, 2);
+        }
+    }
+
 
     @Nullable
     @Override

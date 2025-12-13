@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/cross",
+  "parent": "block/cross",
   "textures": {
     "cross": "netherhexedkingdom:block/soul_glow_mushroom_emissive"
-  },
-  "render_type": "minecraft:cutout_mipped"
+  }
 }
