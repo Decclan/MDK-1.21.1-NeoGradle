@@ -5,6 +5,8 @@ import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.AlertNearbyGuardsGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -29,17 +31,20 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.WitherSkeleton;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -64,7 +69,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class HexanGuardEntity extends AbstractSkeleton {
+public class HexanGuardEntity extends Monster implements RangedAttackMob {
 
     public enum Variant { MELEE, RANGED, GRENADIER;
         public static Variant fromId(int id) { return values()[Math.floorMod(id, values().length)]; }
@@ -74,7 +79,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     private static final EntityDataAccessor<Integer> DATA_VARIANT =
             SynchedEntityData.defineId(HexanGuardEntity.class, EntityDataSerializers.INT);
 
-    public HexanGuardEntity(EntityType<? extends AbstractSkeleton> type, Level level) {
+    public HexanGuardEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
@@ -202,16 +207,6 @@ public class HexanGuardEntity extends AbstractSkeleton {
         }
     }
 
-    @Override
-    public void reassessWeaponGoal() {
-        // prevent vanilla skeleton from forcing its own weapon logic
-    }
-
-    @Override
-    protected SoundEvent getStepSound() {
-        return ModSounds.GUARD_STEP.get(); // safer than returning null
-    }
-
     // ---------------------------
     // Spawning + variant assignment
     // ---------------------------
@@ -227,9 +222,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
         // Assign random variant for non-leaders (50% melee / 20% ranged / 30% grenadier)
         float roll = this.random.nextFloat();
         if (roll < 0.5F)
-            setVariant(Variant.MELEE);
+            setVariant(Variant.GRENADIER); // MELEE
         else if (roll < 0.7F)
-            setVariant(Variant.RANGED);
+            setVariant(Variant.GRENADIER); // RANGED
         else
             setVariant(Variant.GRENADIER);
 
@@ -262,7 +257,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
 
-            // this causing suspicious effect holder bug. init enchanted armour/weapon instead
+            // this causes suspicious effect holder bug. init enchanted armour/weapon instead
 //            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 999999, 1)); // Strength II
 //            this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 999999, 0)); // Resistance I
 //            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 999999, 0)); // Speed I
@@ -290,7 +285,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 int pick = r.nextInt(3);
                 ItemStack weapon = switch (pick) {
                     case 0 -> new ItemStack(Items.STONE_SWORD);
-                    case 1 -> new ItemStack(Items.IRON_AXE);
+                    case 1 -> new ItemStack(Items.STONE_AXE);
                     default -> new ItemStack(Items.GOLDEN_SWORD);
                 };
                 this.setItemSlot(EquipmentSlot.MAINHAND, weapon);
@@ -302,12 +297,40 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
             }
             case GRENADIER -> {
+                //this.setLeftHanded(true);
+
                 this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.MILITUS_ALLOY_CHESTPLATE));
                 this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.MILITUS_ALLOY_LEGGINGS));
-                if (r.nextFloat() < 0.50F)
-                    this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
 
-                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FIRE_CHARGE));
+                if (r.nextFloat() < 0.50F) {
+                    this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
+                }
+
+                // off hand = grenade visual only
+                this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.FIRE_CHARGE));
+
+                // Offhand fallback melee weapon
+                ItemStack sword = new ItemStack(Items.GOLDEN_SWORD);
+
+                var enchantments = this.level()
+                        .registryAccess()
+                        .registryOrThrow(Registries.ENCHANTMENT);
+
+                Holder<Enchantment> fireAspect =
+                        enchantments.getHolderOrThrow(Enchantments.FIRE_ASPECT);
+
+                Holder<Enchantment> sharpness =
+                        enchantments.getHolderOrThrow(Enchantments.SHARPNESS);
+
+                // Fire Aspect I or II
+                sword.enchant(fireAspect, r.nextBoolean() ? 1 : 2);
+
+                // Optional mild damage boost
+                if (r.nextFloat() < 0.35F) {
+                    sword.enchant(sharpness, 1);
+                }
+
+                this.setItemSlot(EquipmentSlot.MAINHAND, sword);
             }
         }
 
@@ -367,8 +390,9 @@ public class HexanGuardEntity extends AbstractSkeleton {
             this.goalSelector.addGoal(5, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
         } else if (getVariant() == Variant.GRENADIER) {
             this.goalSelector.addGoal(4, new ThrowGrenadeGoal(this));
+            this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
         } else { // ranged
-            this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0D, 20, 16.0F));
+            this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0D, 15, 20.0F));
         }
 
         // Avoidance/utility near bottom so attack goals can override when needed
@@ -384,7 +408,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
     @Override protected SoundEvent getDeathSound() { return ModSounds.GUARD_DEATH.get(); }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return AbstractSkeleton.createAttributes()
+        return Monster.createMonsterAttributes()
                 //.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0)
                 .add(Attributes.MAX_HEALTH, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.24D)
@@ -392,9 +416,11 @@ public class HexanGuardEntity extends AbstractSkeleton {
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
 
-// Put these inside your HexanGuardEntity class (replace the old methods)
+    public boolean isFriendlyFireRisk(LivingEntity ent, LivingEntity target) {
+        return isAllyForFriendlyFire(ent, target);
+    }
 
-    private boolean isAllyForFriendlyFire(LivingEntity ent, LivingEntity target) {
+    protected boolean isAllyForFriendlyFire(LivingEntity ent, LivingEntity target) {
         if (ent == null) return false;
         if (ent == this) return false;
         if (ent == target) return false;
@@ -406,11 +432,19 @@ public class HexanGuardEntity extends AbstractSkeleton {
         // Scoreboard/team / vanilla allied check
         if (ent.isAlliedTo(this)) return true;
 
-        // Optionally treat villagers and golems as allies (uncomment if desired)
-        // if (ent instanceof Villager || ent instanceof IronGolem) return true;
-
         return false;
     }
+
+//    public boolean hasAllyNearTarget(LivingEntity target, double radius) {
+//        if (target == null || !target.isAlive()) return false;
+//
+//        return !this.level().getEntitiesOfClass(
+//                LivingEntity.class,
+//                target.getBoundingBox().inflate(radius),
+//                e -> isAllyForFriendlyFire(e, target)
+//        ).isEmpty();
+//    }
+
 
     /**
      * Quick corridor check: builds a thin AABB between shooter eyes and target eyes and
@@ -428,7 +462,7 @@ public class HexanGuardEntity extends AbstractSkeleton {
      * @return true if the straight shot is "clear enough" (no allies in the corridor)
      */
 
-
+    // ranged bow attack check
     public boolean isClearShotTo(LivingEntity target, boolean ignoreBlocks) {
         if (target == null || !target.isAlive()) return false;
         if (this.level() == null) return false;
@@ -506,6 +540,49 @@ public class HexanGuardEntity extends AbstractSkeleton {
 
         return true;
     }
+
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        ItemStack bow = this.getMainHandItem();
+        if (!bow.is(Items.BOW)) return;
+
+        // Find ammo (vanilla-style)
+        ItemStack arrowStack = this.getProjectile(bow);
+        if (arrowStack.isEmpty()) {
+            arrowStack = new ItemStack(Items.ARROW);
+        }
+
+        AbstractArrow arrow = ProjectileUtil.getMobArrow(
+                this,
+                arrowStack,
+                distanceFactor,
+                bow
+        );
+
+        double dx = target.getX() - this.getX();
+        double dy = target.getEyeY() - arrow.getY();
+        double dz = target.getZ() - this.getZ();
+        double horizDist = Math.sqrt(dx * dx + dz * dz);
+
+        arrow.shoot(
+                dx,
+                dy + horizDist * 0.2D,
+                dz,
+                1.6F,
+                14 - this.level().getDifficulty().getId() * 4
+        );
+
+        this.level().addFreshEntity(arrow);
+
+        this.playSound(
+                SoundEvents.SKELETON_SHOOT,
+                1.0F,
+                1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F)
+        );
+    }
+
+
 
 
 }

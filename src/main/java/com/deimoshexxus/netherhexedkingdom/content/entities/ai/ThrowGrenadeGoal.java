@@ -28,6 +28,7 @@ public class ThrowGrenadeGoal extends Goal {
     // tuning: how many samples along path to check for allies, and radius of each sample box
     private final int samplingCount;
     private final double samplingRadius;
+    private static final double MIN_GRENADE_RANGE_SQ = 9.0D; // 3 blocks
 
     public ThrowGrenadeGoal(HexanGuardEntity guard, int cooldownTicks, double maxRange, double projectileSpeed, int samplingCount, double samplingRadius) {
         this.guard = guard;
@@ -42,25 +43,51 @@ public class ThrowGrenadeGoal extends Goal {
     public ThrowGrenadeGoal(HexanGuardEntity guard) {
         // defaults: 30 ticks cooldown (~2s), 24 block range, speed 1.0
         // sampling: 3 points, radius 0.6 (tweak to taste)
-        this(guard, 30, 24.0D, 1.0D, 3, 0.6D);
+        this(guard, 30, 24.0D, 1.2D, 3, 0.6D);
     }
 
     @Override
     public boolean canUse() {
-        if (guard.getVariant() == null) return false;
-        if (guard.getVariant() != HexanGuardEntity.Variant.GRENADIER) return false;
+        if (guard.getVariant() != HexanGuardEntity.Variant.GRENADIER)
+            return false;
 
         target = guard.getTarget();
-        if (target == null || !target.isAlive()) return false;
+        if (target == null || !target.isAlive())
+            return false;
 
-        return guard.distanceToSqr(target) <= maxRangeSq;
+        double distSq = guard.distanceToSqr(target);
+
+        if (distSq < MIN_GRENADE_RANGE_SQ)
+            return false;
+
+        return distSq <= maxRangeSq;
     }
 
     @Override
     public boolean canContinueToUse() {
-        if (target == null || !target.isAlive()) return false;
-        if (guard.getVariant() != HexanGuardEntity.Variant.GRENADIER) return false;
-        return guard.distanceToSqr(target) <= maxRangeSq;
+        if (guard.getVariant() != HexanGuardEntity.Variant.GRENADIER)
+            return false;
+
+        if (target == null || !target.isAlive())
+            return false;
+
+        double distSq = guard.distanceToSqr(target);
+
+        // Stop throwing if target gets close
+        return distSq >= MIN_GRENADE_RANGE_SQ && distSq <= maxRangeSq;
+    }
+
+    private boolean hasAllyNearTarget(LivingEntity target, double radius) {
+        return !guard.level().getEntitiesOfClass(
+                LivingEntity.class,
+                target.getBoundingBox().inflate(radius),
+                e -> guard.isFriendlyFireRisk(e, target)
+        ).isEmpty();
+    }
+
+    @Override
+    public boolean isInterruptable() {
+        return true;
     }
 
     @Override
@@ -76,71 +103,66 @@ public class ThrowGrenadeGoal extends Goal {
 
     @Override
     public void tick() {
-        // 1. Target check
         if (target == null || !target.isAlive())
             return;
 
-        // 2. Face the target
+        double distSq = guard.distanceToSqr(target);
+
+        // Too close → let melee handle it
+        if (distSq < MIN_GRENADE_RANGE_SQ)
+            return;
+
         guard.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-        // 3. Cooldown handling
         if (cooldownTicks > 0) {
             cooldownTicks--;
             return;
         }
 
-        // 4. Optional: Max effective throwing range
-        final double maxRange = 20.0D;  // adjust as needed
-        if (guard.distanceToSqr(target) > (maxRange * maxRange))
-            return;
-
-        // 5. Clear-shot check
-        if (!guard.isClearShotBySampling(target, 3, 0.6D)) {
-            cooldownTicks = 5;  // retry after a short delay
+        if (!guard.isClearShotBySampling(target, samplingCount, samplingRadius)) {
+            cooldownTicks = 5;
             return;
         }
 
-        // 6. Source position at guard's eyes
+        // Cheap blast-zone friendly fire check (2 blocks)
+        if (hasAllyNearTarget(target, 2.0D)) {
+            cooldownTicks = 8; // slightly longer hesitation
+            return;
+        }
+
         Vec3 source = new Vec3(
                 guard.getX(),
                 guard.getEyeY() - 0.2D,
                 guard.getZ()
         );
 
-        // 7. Predict target movement
-        Vec3 targetPos = new Vec3(target.getX(), target.getEyeY(), target.getZ());
-        Vec3 motion = target.getDeltaMovement();
-        double distance = source.distanceTo(targetPos);
+        Vec3 targetPos = target.getEyePosition();
+        Vec3 predicted = targetPos.add(target.getDeltaMovement().scale(0.5));
 
-        // factor scales with distance, clamped to [0,1]
-        double leadFactor = Math.min(1.0D, distance / 20.0D);
+        GrenadeProjectileEntity proj =
+                GrenadeProjectileEntity.createThrownAtTarget(
+                        guard.level(),
+                        guard,
+                        predicted,
+                        projectileSpeed,
+                        0.035D
+                ); // 0.04 = // balanced arc, ~20–24 blocks, snowball 0.03
 
-        // clamp lead to prevent overshoot at close range
-        double leadScale = Math.min(5.0D * leadFactor, distance);
-        Vec3 predicted = targetPos.add(motion.scale(leadScale));
-
-        // 8. Create projectile with ballistic solver
-        GrenadeProjectileEntity proj = GrenadeProjectileEntity.createThrownAtTarget(
-                guard.level(),
-                guard,
-                predicted,
-                this.projectileSpeed,
-                0.12D
-        );
-
-        // 9. Arm swing animation
-        guard.swing(InteractionHand.MAIN_HAND, true);
-
-        // 10. Position projectile and spawn
-        proj.setPos(source.x(), source.y(), source.z());
+        guard.swing(InteractionHand.OFF_HAND, true);
+        proj.setPos(source);
         guard.level().addFreshEntity(proj);
 
-        // throw sound
-         guard.level().playSound(null, guard, SoundEvents.SNOWBALL_THROW, SoundSource.HOSTILE, 1.0F, 1.0F);
+        guard.level().playSound(
+                null,
+                guard,
+                SoundEvents.SNOWBALL_THROW,
+                SoundSource.HOSTILE,
+                1.0F,
+                1.0F
+        );
 
-        // 11. Reset cooldown with a bit of random variation
         cooldownTicks = cooldownBase
-                + guard.level().getRandom().nextInt(Math.max(1, cooldownBase / 2));
+                + guard.level().getRandom().nextInt(cooldownBase / 2 + 1);
     }
 
 }

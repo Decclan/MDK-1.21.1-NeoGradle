@@ -148,34 +148,44 @@ public class ModItems {
 
     // --- Entity Eggs ---
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_SPAWN_EGG =
-            ITEMS.register("hexed_zombie_spawn_egg", () ->
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIE_SPAWN_EGG =
+            ITEMS.register("decayed_zombie_spawn_egg", () ->
                     new DeferredSpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE,
-                            0x6b0626,
-                            0x8a8270,
+                            ModEntities.DECAYED_ZOMBIE,
+                            0x7b8a67,
+                            0x556649,
                             new Item.Properties()
                     )
             );
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_HUSK_SPAWN_EGG =
-            ITEMS.register("hexed_zombie_husk_spawn_egg", () ->
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIE_HUSK_SPAWN_EGG =
+            ITEMS.register("decayed_zombie_husk_spawn_egg", () ->
                     new DeferredSpawnEggItem(
-                            ModEntities.HEXED_ZOMBIE_HUSK,
-                            0x4f0634,
-                            0xaba28c,
+                            ModEntities.DECAYED_ZOMBIE_HUSK,
+                            0x7b8a67,
+                            0x2e453f,
                             new Item.Properties()
                     )
+            );
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG =
+            ITEMS.register("decayed_zombified_piglin_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.DECAYED_ZOMBIFIED_PIGLIN,
+                            0x7b8a67,
+                            0xcfc467,
+                            new Item.Properties()
+                    )//light green bg: 7b8a67, dark green: 2e4a42
             );
 
     public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXAN_GUARD_SPAWN_EGG =
             ITEMS.register("hexan_guard_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.HEXAN_GUARD,
-                            0x4B503D,
                             0x6b1706,
+                            0x4f0634,
                             new Item.Properties()
-                    )
+                    )// highlight red: 6b1706, main purple: 4f0634
             );
 
     public static final DeferredHolder<Item, DeferredSpawnEggItem> GARGOYLE_POSSESSED_SPAWN_EGG =

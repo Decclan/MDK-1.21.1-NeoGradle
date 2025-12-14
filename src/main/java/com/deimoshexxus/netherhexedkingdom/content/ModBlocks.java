@@ -195,13 +195,6 @@ public class ModBlocks {
                     .sound(SoundType.WOOL)
             ));
 
-//    public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
-//            () -> new Block(BlockBehaviour.Properties.of()
-//                    .mapColor(MapColor.PLANT)
-//                    .strength(0.2f)
-//                    .sound(SoundType.FUNGUS)
-//                    .noOcclusion()));
-
     public static final DeferredBlock<Block> MASONIAE_MUSHROOM = register("masoniae_mushroom",
             () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
@@ -218,7 +211,7 @@ public class ModBlocks {
                     .sound(SoundType.FUNGUS)
                     .instabreak()
                     .noCollission()
-                    .lightLevel(state -> 6)
+                    .lightLevel(state -> 5)
                     .noOcclusion()
                     .randomTicks()
             ));
@@ -232,8 +225,6 @@ public class ModBlocks {
                             .noOcclusion()
                             .randomTicks()
                     ));
-
-
 
     // -------------------------
     // Registry Helpers

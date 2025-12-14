@@ -1,8 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.client.renderer;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexedZombieEntity;
-
+import com.deimoshexxus.netherhexedkingdom.content.entities.DecayedZombieHuskEntity;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,12 +9,12 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 
-public class HexedZombieRenderer extends MobRenderer<HexedZombieEntity, ZombieModel<HexedZombieEntity>> {
+public class DecayedZombieHuskRenderer extends MobRenderer<DecayedZombieHuskEntity, ZombieModel<DecayedZombieHuskEntity>> {
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "textures/entity/zombie/hexed_zombie.png");
+            ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "textures/entity/zombie/decayed_zombie_husk.png");
 
-    public HexedZombieRenderer(EntityRendererProvider.Context ctx) {
+    public DecayedZombieHuskRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new ZombieModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), 0.5F);
 
         this.addLayer(new HumanoidArmorLayer<>(
@@ -27,7 +26,7 @@ public class HexedZombieRenderer extends MobRenderer<HexedZombieEntity, ZombieMo
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HexedZombieEntity entity) {
+    public ResourceLocation getTextureLocation(DecayedZombieHuskEntity entity) {
         return TEXTURE;
     }
 }
