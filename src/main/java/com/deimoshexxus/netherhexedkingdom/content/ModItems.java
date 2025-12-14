@@ -152,8 +152,8 @@ public class ModItems {
             ITEMS.register("decayed_zombie_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.DECAYED_ZOMBIE,
-                            0x6b0626,
-                            0x8a8270,
+                            0x7b8a67,
+                            0x556649,
                             new Item.Properties()
                     )
             );
@@ -162,8 +162,8 @@ public class ModItems {
             ITEMS.register("decayed_zombie_husk_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.DECAYED_ZOMBIE_HUSK,
-                            0x4f0634,
-                            0xaba28c,
+                            0x7b8a67,
+                            0x2e453f,
                             new Item.Properties()
                     )
             );
@@ -172,20 +172,20 @@ public class ModItems {
             ITEMS.register("decayed_zombified_piglin_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.DECAYED_ZOMBIFIED_PIGLIN,
-                            0x4f0634,
-                            0x2e4a42,
+                            0x7b8a67,
+                            0xcfc467,
                             new Item.Properties()
-                    )
+                    )//light green bg: 7b8a67, dark green: 2e4a42
             );
 
     public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXAN_GUARD_SPAWN_EGG =
             ITEMS.register("hexan_guard_spawn_egg", () ->
                     new DeferredSpawnEggItem(
                             ModEntities.HEXAN_GUARD,
-                            0x7b8a67,
                             0x6b1706,
+                            0x4f0634,
                             new Item.Properties()
-                    )
+                    )// highlight red: 6b1706, main purple: 4f0634
             );
 
     public static final DeferredHolder<Item, DeferredSpawnEggItem> GARGOYLE_POSSESSED_SPAWN_EGG =

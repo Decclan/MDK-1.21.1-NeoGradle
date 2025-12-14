@@ -13,6 +13,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -25,6 +26,7 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
     private static final double GRAVITY = 0.06D;
     private static final double DEFAULT_SPEED = 1.0D;
     private static final double DEFAULT_INACCURACY = 0.12D;
+    private static final int MAX_LIFETIME = 60;
 
     public GrenadeProjectileEntity(EntityType<? extends GrenadeProjectileEntity> type, Level level) {
         super(type, level);
@@ -99,27 +101,54 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
     public void tick() {
         super.tick();
 
-        if (!this.level().isClientSide()) {
-            this.setDeltaMovement(
-                    this.getDeltaMovement().add(0.0D, -GRAVITY, 0.0D)
-            );
+        if (!this.level().isClientSide() && this.tickCount > MAX_LIFETIME) {
+            explode();
+            return;
+        }
 
-            if (this.tickCount % 4 == 0) {
-                this.level().playSound(
-                        null,
-                        this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.CREEPER_PRIMED,
-                        SoundSource.NEUTRAL,
-                        0.5F,
-                        1.0F
-                );
-            }
+        Vec3 motion = this.getDeltaMovement();
+
+        // --- HIT DETECTION ---
+        HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(
+                this,
+                this::canHitEntity
+        );
+
+        if (hitResult.getType() != HitResult.Type.MISS) {
+            this.onHit(hitResult);
+        }
+
+        // --- MOVE ---
+        this.move(MoverType.SELF, motion);
+
+        // --- GRAVITY ---
+        this.setDeltaMovement(motion.add(0.0D, -GRAVITY, 0.0D));
+
+        // --- ROTATION (optional but recommended) ---
+        this.updateRotation();
+
+        // --- FUSE SOUND ---
+        if (!this.level().isClientSide() && this.tickCount % 4 == 0) {
+            this.level().playSound(
+                    null,
+                    this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.CREEPER_PRIMED,
+                    SoundSource.NEUTRAL,
+                    0.8F,
+                    1.0F
+            );
         }
     }
 
     /* ------------------------------------------------------------ */
     /* Hit Handling                                                 */
     /* ------------------------------------------------------------ */
+
+    @Override
+    protected boolean canHitEntity(Entity entity) {
+        return super.canHitEntity(entity)
+                && entity != this.getOwner();
+    }
 
     @Override
     protected void onHit(HitResult result) {
@@ -152,7 +181,8 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
                     this.level().damageSources().thrown(this, this.getOwner()),
                     8.0F
             );
-            e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1)); // 3 seconds
+            // do not use, causes suspicious holder creative tab crash bug
+            //e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1)); // 3 seconds
 
             if (e instanceof Player player) {
 
@@ -166,8 +196,6 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
             }
         }
 
-
-
         if (level instanceof ServerLevel server) {
             server.sendParticles(
                     ParticleTypes.EXPLOSION,
@@ -177,7 +205,6 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
                     0.0
             );
         }
-
         this.discard();
     }
 
