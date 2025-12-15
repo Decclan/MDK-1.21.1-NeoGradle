@@ -44,6 +44,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.LINGZHI_MUSHROOM_ITEM.get());
                         output.accept(ModItems.MASONIAE_MUSHROOM_ITEM.get());
                         output.accept(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
+                        output.accept(ModItems.NETHER_PORTAL_ORB.get());
 
 
                         // Blocks

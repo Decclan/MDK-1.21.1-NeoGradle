@@ -17,6 +17,7 @@ public class ModEntityRenderers {
         event.registerEntityRenderer(ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(), DecayedZombifiedPiglinRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXAN_GUARD.get(), HexanGuardRenderer::new);
         event.registerEntityRenderer(ModEntities.GRENADE.get(), GrenadeRenderer::new);
+        event.registerEntityRenderer(ModEntities.NETHER_PORTAL_ORB.get(), NetherPortalOrbRenderer::new);
         event.registerEntityRenderer(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SOULGLOW_MUSHROOM.get(), SoulGlowMushroomRenderer::new);
     }

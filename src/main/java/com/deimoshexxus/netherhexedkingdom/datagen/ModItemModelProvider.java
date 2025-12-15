@@ -63,6 +63,10 @@ public class ModItemModelProvider extends ItemModelProvider {
                 mcLoc("item/generated"),
                 "layer0", modLoc("item/poison_gas_source"));
 
+        singleTexture(ModItems.NETHER_PORTAL_ORB.getId().getPath(),
+                mcLoc("item/generated"),
+                "layer0", modLoc("item/nether_portal_orb"));
+
         singleTexture(ModItems.LINGZHI_MUSHROOM_ITEM.getId().getPath(),
                 mcLoc("item/generated"),
                 "layer0", modLoc("item/lingzhi_mushroom"));

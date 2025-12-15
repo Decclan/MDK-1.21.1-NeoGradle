@@ -45,6 +45,13 @@ public class ModEntities {
                             .build(NetherHexedKingdom.MODID + ":hexan_guard")
             );
 
+    public static final DeferredHolder<EntityType<?>, EntityType<GargoylePossessedEntity>> GARGOYLE_POSSESSED =
+            ENTITY_TYPES.register("gargoyle_possessed", () ->
+                    EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.CREATURE)
+                            .sized(0.8F, 0.95F)   // set size you want
+                            .build(NetherHexedKingdom.MODID + ":gargoyle_possessed")
+            );
+
     public static final DeferredHolder<EntityType<?>, EntityType<GrenadeProjectileEntity>> GRENADE =
             ENTITY_TYPES.register("grenade", () ->
                     EntityType.Builder.<GrenadeProjectileEntity>of(GrenadeProjectileEntity::new, MobCategory.MISC)
@@ -55,12 +62,19 @@ public class ModEntities {
                             .build(NetherHexedKingdom.MODID + ":grenade")
             );
 
-    public static final DeferredHolder<EntityType<?>, EntityType<GargoylePossessedEntity>> GARGOYLE_POSSESSED =
-            ENTITY_TYPES.register("gargoyle_possessed", () ->
-                    EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.CREATURE)
-                            .sized(0.8F, 0.95F)   // set size you want
-                            .build(NetherHexedKingdom.MODID + ":gargoyle_possessed")
-            );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<NetherPortalOrbEntity>> NETHER_PORTAL_ORB =
+            ENTITY_TYPES.register("nether_portal_orb",
+                    () -> EntityType.Builder.<NetherPortalOrbEntity>of(
+                                    NetherPortalOrbEntity::new,
+                                    MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("nether_portal_orb"));
+
+
+
 
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);

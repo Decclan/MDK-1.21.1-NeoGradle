@@ -134,7 +134,7 @@ public class GrenadeProjectileEntity extends Projectile implements ItemSupplier 
                     this.getX(), this.getY(), this.getZ(),
                     SoundEvents.CREEPER_PRIMED,
                     SoundSource.NEUTRAL,
-                    0.8F,
+                    1.1F,
                     1.0F
             );
         }
