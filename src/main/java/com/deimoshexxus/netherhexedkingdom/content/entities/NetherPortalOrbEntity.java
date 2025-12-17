@@ -159,7 +159,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
             double[] rotated = rotateOffset(localX, localZ, rotation);
 
             level.sendParticles(
-                    ParticleTypes.SOUL_FIRE_FLAME,
+                    ParticleTypes.REVERSE_PORTAL,    //.SOUL_FIRE_FLAME,
                     center.getX() + 0.5 + rotated[0],
                     center.getY() + 0.8 + level.random.nextDouble() * 2.2,
                     center.getZ() + 0.5 + rotated[1],

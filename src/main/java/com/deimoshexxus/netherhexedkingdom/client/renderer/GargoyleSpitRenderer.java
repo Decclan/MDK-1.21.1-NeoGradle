@@ -1,0 +1,25 @@
+package com.deimoshexxus.netherhexedkingdom.client.renderer;
+import com.deimoshexxus.netherhexedkingdom.content.entities.GargoyleSpitEntity;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+
+public class GargoyleSpitRenderer extends ThrownItemRenderer<GargoyleSpitEntity> {
+
+    public GargoyleSpitRenderer(EntityRendererProvider.Context ctx) {
+        super(ctx);
+        this.shadowRadius = 0.15F; // optional
+    }
+
+    @Override
+    public void render(GargoyleSpitEntity entity, float entityYaw, float partialTicks,
+                       com.mojang.blaze3d.vertex.PoseStack poseStack,
+                       net.minecraft.client.renderer.MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        // optional scale
+        float scale = 1.1F;
+        poseStack.scale(scale, scale, scale);
+
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        poseStack.popPose();
+    }
+}

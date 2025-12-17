@@ -82,8 +82,7 @@ public class ModItems {
                                     .nutrition(4)
                                     .saturationModifier(0.6f)
                                     .alwaysEdible()
-                                    //do not use here, results in suspicious holder bug
-                                    //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+                                    //do not use effects here, results in suspicious holder bug
                                     .build()
                             )
             )

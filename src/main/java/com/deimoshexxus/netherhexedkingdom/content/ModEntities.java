@@ -73,7 +73,14 @@ public class ModEntities {
                             .updateInterval(10)
                             .build("nether_portal_orb"));
 
-
+    public static final DeferredHolder<EntityType<?>, EntityType<GargoyleSpitEntity>> GARGOYLE_SPIT =
+            ENTITY_TYPES.register("gargoyle_spit",
+                    () -> EntityType.Builder.<GargoyleSpitEntity>of(GargoyleSpitEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("gargoyle_spit")
+            );
 
 
     public static void register(IEventBus bus) {

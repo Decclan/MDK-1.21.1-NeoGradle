@@ -1,4 +1,4 @@
-package com.deimoshexxus.netherhexedkingdom.world;
+package com.deimoshexxus.netherhexedkingdom.worldgen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;

@@ -1,9 +1,21 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
@@ -15,15 +27,72 @@ public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
 
     @Override
     protected void registerGoals() {
-        super.registerGoals();
-        // You can add additional goals here if needed
+        // Clear piglin-style anger behavior by NOT relying on super's target goals
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, true));
+
+        // Standard movement / idle
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+
+        // Retaliation
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+
+        // Always-hostile targeting
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(
+                this, Player.class, true));
+
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
+                this, Piglin.class, false));
+
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(
+                this, IronGolem.class, true));
+
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(
+                this, AbstractVillager.class, false));
     }
+
+    /**
+     * Prevents piglin anger from ever decaying or pacifying
+     */
+    @Override
+    public boolean isAngryAt(LivingEntity target) {
+        return true;
+    }
+
+    /**
+     * Prevents anger timers from clearing aggression
+     */
+    @Override
+    public void tick() {
+        super.tick();
+        this.setAggressive(true);
+    }
+
+    @Override
+    public boolean canPickUpLoot() {
+        return true;
+    }
+
 
     public static AttributeSupplier.Builder createAttributes() {
         return ZombifiedPiglin.createAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.35D)
-                .add(Attributes.ATTACK_DAMAGE, 9.0D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D)
                 .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.FOLLOW_RANGE, 40.0D);
     }
+
+    // vanilla zombie
+//            .add(Attributes.FOLLOW_RANGE, 35.0)
+//            .add(Attributes.MOVEMENT_SPEED, 0.23F)
+//            .add(Attributes.ATTACK_DAMAGE, 3.0)
+//            .add(Attributes.ARMOR, 2.0)
+//            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
+    // vanilla zombified piglin
+//            return Zombie.createAttributes()
+//             .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0)
+//            .add(Attributes.MOVEMENT_SPEED, 0.23F)
+//            .add(Attributes.ATTACK_DAMAGE, 5.0);
 }
+

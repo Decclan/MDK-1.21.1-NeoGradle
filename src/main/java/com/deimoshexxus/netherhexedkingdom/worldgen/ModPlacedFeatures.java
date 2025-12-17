@@ -1,19 +1,4 @@
-package com.deimoshexxus.netherhexedkingdom.world;
-
-import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.placement.*;
-import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.List;
+package com.deimoshexxus.netherhexedkingdom.worldgen;
 
 /**
  * Placed features (registered to Registries.PLACED_FEATURE).

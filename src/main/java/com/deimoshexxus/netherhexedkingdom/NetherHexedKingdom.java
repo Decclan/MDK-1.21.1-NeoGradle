@@ -1,8 +1,9 @@
 package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.content.*;
+import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
+import com.deimoshexxus.netherhexedkingdom.content.events.ZombifiedPiglinDecayEvents;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
-import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -59,6 +60,9 @@ public class NetherHexedKingdom {
         ModArmorMaterials.MATERIALS.register(modEventBus);
         //ModWorldFeatures.PLACED_FEATURES.register(modEventBus);
 
+        // Register Events
+        NeoForge.EVENT_BUS.register(DecayInfectionEvents.class);
+        NeoForge.EVENT_BUS.register(ZombifiedPiglinDecayEvents.class);
 
         // register this class to NeoForge event bus for server / other events
         NeoForge.EVENT_BUS.register(this);
