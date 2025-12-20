@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -18,8 +19,12 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.core.Vec3i;
+import org.slf4j.Logger;
 
 public class NetherPortalOrbEntity extends ThrowableItemProjectile {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final ResourceLocation PORTAL_ID =
             ResourceLocation.fromNamespaceAndPath(
@@ -33,7 +38,6 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                     "nether_portal_complete_base"
             );
 
-    // Design-time offsets (structure origin at center-bottom)
     private static final BlockPos PORTAL_OFFSET = new BlockPos(-2, 0, -3);
     private static final BlockPos BASE_OFFSET   = new BlockPos(-2, -3, -3);
 
@@ -57,7 +61,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
 
         return switch (living.getDirection()) {
             case NORTH, SOUTH -> Rotation.CLOCKWISE_90;
-            default -> Rotation.NONE; // EAST / WEST
+            default -> Rotation.NONE;
         };
     }
 
@@ -65,11 +69,19 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
 
-        if (!(level() instanceof ServerLevel serverLevel)) return;
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
         BlockPos centerPos = (hitResult instanceof BlockHitResult blockHit)
                 ? blockHit.getBlockPos()
                 : BlockPos.containing(hitResult.getLocation());
+
+        LOGGER.info(
+                "NetherPortalOrb hit at {} in dimension {}",
+                centerPos,
+                serverLevel.dimension().location()
+        );
 
         placePortalWithBase(serverLevel, centerPos);
         discard();
@@ -85,13 +97,18 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
         BlockPos baseOrigin =
                 centerPos.offset(rotateOffset(BASE_OFFSET, rotation));
 
+        LOGGER.info(
+                "Placing portal structures: rotation={}, portalOrigin={}, baseOrigin={}",
+                rotation, portalOrigin, baseOrigin
+        );
+
         if (!placeTemplate(level, PORTAL_ID, portalOrigin, rotation)) {
-            System.out.println("Failed to place portal structure");
+            LOGGER.error("Failed to place portal structure {}", PORTAL_ID);
             return;
         }
 
         if (!placeTemplate(level, BASE_ID, baseOrigin, rotation)) {
-            System.out.println("Failed to place base structure");
+            LOGGER.error("Failed to place base structure {}", BASE_ID);
         }
 
         level.playSound(
@@ -102,6 +119,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 1.5F,
                 0.9F + level.random.nextFloat() * 0.2F
         );
+
         spawnPortalParticles(level, centerPos, rotation);
     }
 
@@ -112,13 +130,36 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
             Rotation rotation
     ) {
         StructureTemplate template = level.getStructureManager().getOrCreate(id);
-        if (template == null) return false;
+
+        Vec3i size = template.getSize();
+
+        if (size.equals(Vec3i.ZERO)) {
+            LOGGER.error(
+                    "Structure {} is EMPTY — resource not found or shadowed",
+                    id
+            );
+            return false;
+        }
+
+        LOGGER.info(
+                "Resolved structure {} with size {}",
+                id, size
+        );
+
+        // 1.21+ CORRECT validity check
+        if (size.equals(BlockPos.ZERO)) {
+            LOGGER.error(
+                    "Structure {} is EMPTY — resource not found or shadowed by another pack",
+                    id
+            );
+            return false;
+        }
 
         StructurePlaceSettings settings = new StructurePlaceSettings()
                 .setIgnoreEntities(true)
                 .setRotation(rotation);
 
-        return template.placeInWorld(
+        boolean placed = template.placeInWorld(
                 level,
                 origin,
                 origin,
@@ -126,6 +167,13 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 level.random,
                 2
         );
+
+        LOGGER.info(
+                "Placement result for {} at {}: {}",
+                id, origin, placed
+        );
+
+        return placed;
     }
 
     private void spawnPortalParticles(
@@ -134,10 +182,8 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
             Rotation rotation
     ) {
         for (int i = 0; i < 160; i++) {
-
             double localX = level.random.nextGaussian() * 3.0;
             double localZ = level.random.nextGaussian() * 3.0;
-
             double[] rotated = rotateOffset(localX, localZ, rotation);
 
             level.sendParticles(
@@ -152,14 +198,12 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
         }
 
         for (int i = 0; i < 48; i++) {
-
             double localX = level.random.nextGaussian() * 1.6;
             double localZ = level.random.nextGaussian() * 1.6;
-
             double[] rotated = rotateOffset(localX, localZ, rotation);
 
             level.sendParticles(
-                    ParticleTypes.REVERSE_PORTAL,    //.SOUL_FIRE_FLAME,
+                    ParticleTypes.REVERSE_PORTAL,
                     center.getX() + 0.5 + rotated[0],
                     center.getY() + 0.8 + level.random.nextDouble() * 2.2,
                     center.getZ() + 0.5 + rotated[1],

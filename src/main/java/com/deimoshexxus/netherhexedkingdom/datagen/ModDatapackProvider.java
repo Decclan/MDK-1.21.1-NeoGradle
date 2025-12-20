@@ -23,20 +23,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+// src/main/java/.../ModDatapackProvider.java
 public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
 
-    /**
-     * Registry builder for all datapack-driven registries
-     */
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            // Structures
             .add(net.minecraft.core.registries.Registries.STRUCTURE, ModStructures::bootstrap)
             .add(net.minecraft.core.registries.Registries.STRUCTURE_SET, ModStructureSets::bootstrap);
 
-    // Add more later as needed:
-    // .add(Registries.CONFIGURED_FEATURE, ...)
-    // .add(Registries.PLACED_FEATURE, ...)
-    // .add(Registries.BIOME, ...) (rarely needed)
+    // NOTE: using a separate namespace so generated pack does NOT shadow mod resources
+    private static final Set<String> GENERATED_NAMESPACES = Set.of(NetherHexedKingdom.MODID + "_datagen");
 
     public ModDatapackProvider(
             PackOutput output,
@@ -47,7 +42,7 @@ public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
                 output,
                 registries,
                 BUILDER,
-                Set.of(NetherHexedKingdom.MODID)
+                GENERATED_NAMESPACES
         );
     }
 }
