@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.custom.items.NetherPortalOrbItem;
 import com.deimoshexxus.netherhexedkingdom.content.custom.items.SoulGlowMushroomItem;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,6 +33,10 @@ public class ModItems {
     public static final DeferredItem<Item> IMPERIAL_COINS = registerItem("imperial_coins");
     public static final DeferredItem<BlockItem> POISON_GAS_ITEM = ITEMS.register("poison_gas_source",
                     () -> new BlockItem(ModBlocks.GAS_SOURCE.get(), new Item.Properties()));
+
+    public static final DeferredItem<Item> NETHER_PORTAL_ORB =
+            ITEMS.register("nether_portal_orb",
+                    () -> new NetherPortalOrbItem(new Item.Properties().stacksTo(1)));
 
 
 //    public static final DeferredItem<Item> ANCIENT_FRAGMENT = registerItem("ancient_fragment");
@@ -77,8 +82,7 @@ public class ModItems {
                                     .nutrition(4)
                                     .saturationModifier(0.6f)
                                     .alwaysEdible()
-                                    //do not use here, results in suspicious holder bug
-                                    //.effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
+                                    //do not use effects here, results in suspicious holder bug
                                     .build()
                             )
             )

@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoylePlayTamedGoal;
+import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoyleSpitAttackGoal;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.Zombie;
@@ -80,7 +82,7 @@ public class GargoylePossessedEntity extends TamableAnimal {
         float baseDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
         // custom bonus against zombie types
-        if (livingTarget instanceof Zombie || livingTarget instanceof ZombifiedPiglin) {
+        if (livingTarget instanceof Zombie || livingTarget instanceof ZombifiedPiglin || livingTarget instanceof Creeper) {
             baseDamage += 4.0F; // your bonus
         }
 
@@ -120,6 +122,7 @@ public class GargoylePossessedEntity extends TamableAnimal {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(3, new GargoyleSpitAttackGoal(this, 60, 16.0));
         this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.9D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));

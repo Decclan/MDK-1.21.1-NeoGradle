@@ -11,7 +11,7 @@
 //import net.minecraft.client.model.geom.builders.*;
 //import net.minecraft.resources.ResourceLocation;
 //import net.minecraft.util.Mth;
-//import net.minecraft.world.entity.Entity;
+//import net.minecraft.worldgen.entity.Entity;
 //import net.neoforged.api.distmarker.Dist;
 //import net.neoforged.api.distmarker.OnlyIn;
 //

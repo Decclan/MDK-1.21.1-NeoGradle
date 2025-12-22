@@ -1,16 +1,16 @@
 package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.content.*;
+import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
+import com.deimoshexxus.netherhexedkingdom.content.events.ZombifiedPiglinDecayEvents;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
-import com.deimoshexxus.netherhexedkingdom.world.ModWorldFeatures;
+import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
-
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Blocks;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -21,7 +21,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
 
 /**
  * Main mod class for Nether Hexed Kingdom
@@ -57,8 +56,11 @@ public class NetherHexedKingdom {
         // register entities' deferred register
         ModEntities.register(modEventBus);
         ModArmorMaterials.MATERIALS.register(modEventBus);
-        //ModWorldFeatures.PLACED_FEATURES.register(modEventBus);
+        //UnusedModWorldFeatures.PLACED_FEATURES.register(modEventBus);
 
+        // Register Events
+        NeoForge.EVENT_BUS.register(DecayInfectionEvents.class);
+        NeoForge.EVENT_BUS.register(ZombifiedPiglinDecayEvents.class);
 
         // register this class to NeoForge event bus for server / other events
         NeoForge.EVENT_BUS.register(this);
@@ -81,6 +83,7 @@ public class NetherHexedKingdom {
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
 
     }
+
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {

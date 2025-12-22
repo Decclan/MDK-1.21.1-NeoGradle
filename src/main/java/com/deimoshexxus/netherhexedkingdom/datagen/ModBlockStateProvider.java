@@ -199,10 +199,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
         }
 
         // 3) IMPORTANT: do NOT overwrite the blockstate with the glow model here unless you want
-        //    the block in-world to use the glow texture. We only generate the glow model JSON so
+        //    the block in-worldgen to use the glow texture. We only generate the glow model JSON so
         //    your renderer can load it as a standalone model at runtime.
         //
-        // If you *do* want the block to use the glow model in-world, you could call:
+        // If you *do* want the block to use the glow model in-worldgen, you could call:
         // simpleBlock(block, glowModel);
         //
         // But typically we keep the baseModel as the blockstate and let the renderer render the glow

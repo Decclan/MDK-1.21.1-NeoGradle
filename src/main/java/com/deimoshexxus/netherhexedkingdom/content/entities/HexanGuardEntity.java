@@ -435,16 +435,6 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         return false;
     }
 
-//    public boolean hasAllyNearTarget(LivingEntity target, double radius) {
-//        if (target == null || !target.isAlive()) return false;
-//
-//        return !this.level().getEntitiesOfClass(
-//                LivingEntity.class,
-//                target.getBoundingBox().inflate(radius),
-//                e -> isAllyForFriendlyFire(e, target)
-//        ).isEmpty();
-//    }
-
 
     /**
      * Quick corridor check: builds a thin AABB between shooter eyes and target eyes and
