@@ -17,45 +17,6 @@ public class SoulGlowMushroomItem extends BlockItem {
         super(block, properties);
     }
 
-//    @Override
-//    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-//        ItemStack result = super.finishUsingItem(stack, level, entity);
-//
-//        if (!level.isClientSide) {
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.NIGHT_VISION,
-//                    20 * 720,  // 6 minutes
-//                    1
-//            ));
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.LUCK,
-//                    20 * 120,  // 2 minutes
-//                    0
-//            ));
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.CONFUSION,
-//                    20 * 15,  // 15 seconds
-//                    1
-//            ));
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.MOVEMENT_SLOWDOWN,
-//                    20 * 20,  // 20 seconds
-//                    0
-//            ));
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.REGENERATION,
-//                    20 * 20,  // 20 seconds
-//                    0
-//            ));
-//            entity.addEffect(new MobEffectInstance(
-//                    MobEffects.HUNGER,
-//                    20 * 35,  // 35 seconds
-//                    0
-//            ));
-//        }
-//        return result;
-//    }
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

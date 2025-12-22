@@ -27,10 +27,10 @@ public final class DataGenerators {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupFuture = event.getLookupProvider();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(output, lookupFuture, existingFileHelper);
+        ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(output, lookupProvider, existingFileHelper);
         generator.addProvider(true, blockTagsProvider);
 
         if (event.includeClient()) {
@@ -38,29 +38,32 @@ public final class DataGenerators {
             generator.addProvider(true, new ModItemModelProvider(output, existingFileHelper));
         }
 
+
+        generator.addProvider(event.includeServer(), new ModDatapackProvider(output, lookupProvider));
+        
         if (event.includeServer()) {
             // Datapack provider (worldgen, structures, etc.)
-            generator.addProvider(
-                    true,
-                    new ModDatapackProvider(
-                            output,
-                            lookupFuture,
-                            existingFileHelper
-                    )
-            );
-
-            List<LootTableProvider.SubProviderEntry> subProviders = List.of(
-                    new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK)
-            );
-
-            Set<ResourceKey<LootTable>> requiredTables = Set.of();
-
-            generator.addProvider(true, new LootTableProvider(
-                    output,
-                    requiredTables,
-                    subProviders,
-                    lookupFuture
-            ));
+//            generator.addProvider(
+//                    true,
+//                    new ModDatapackProvider(
+//                            output,
+//                            lookupProvider,
+//                            existingFileHelper
+//                    )
+//            );
+//
+//            List<LootTableProvider.SubProviderEntry> subProviders = List.of(
+//                    new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK)
+//            );
+//
+//            Set<ResourceKey<LootTable>> requiredTables = Set.of();
+//
+//            generator.addProvider(true, new LootTableProvider(
+//                    output,
+//                    requiredTables,
+//                    subProviders,
+//                    lookupProvider
+//            ));
         }
 
     }

@@ -3,31 +3,38 @@ package com.deimoshexxus.netherhexedkingdom.worldgen;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 
-/**
- * Configured features (registered to Registries.CONFIGURED_FEATURE).
- */
-public final class ModConfiguredFeatures {
+import java.util.List;
 
-    public static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED =
-            DeferredRegister.create(Registries.CONFIGURED_FEATURE, NetherHexedKingdom.MODID);
+public class ModConfiguredFeatures {
 
-    // DeferredHolder for the configured feature (we will reference its holder when making the placed feature)
-    public static final DeferredHolder<ConfiguredFeature<?, ?>, ConfiguredFeature<?, ?>> MASONIAE_MUSHROOM =
-            CONFIGURED.register("masoniae_mushroom", () ->
-                    new ConfiguredFeature<>(
-                            Feature.SIMPLE_BLOCK,
-                            new SimpleBlockConfiguration(
-                                    BlockStateProvider.simple(ModBlocks.MASONIAE_MUSHROOM.get())
-                            )
-                    )
-            );
+    public static final ResourceKey<ConfiguredFeature<?, ?>> MILITUS_ALLOY_ORE_KEY = registerKey("militus_alloy_ore");
 
-    private ModConfiguredFeatures() {}
+    public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
+        RuleTest netherrackReplacables = new BlockMatchTest(Blocks.NETHERRACK);
+
+        List<OreConfiguration.TargetBlockState> netherMilitusAlloyOres = List.of(
+                OreConfiguration.target(netherrackReplacables, ModBlocks.MILITUS_ALLOY_ORE.get().defaultBlockState()));
+
+        register(context, MILITUS_ALLOY_ORE_KEY, Feature.ORE, new OreConfiguration(netherMilitusAlloyOres, 5));
+    }
+
+    public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, name));
+    }
+
+    private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(BootstrapContext<ConfiguredFeature<?, ?>> context,
+                                                                                          ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FC configuration) {
+        context.register(key, new ConfiguredFeature<>(feature, configuration));
+    }
 }

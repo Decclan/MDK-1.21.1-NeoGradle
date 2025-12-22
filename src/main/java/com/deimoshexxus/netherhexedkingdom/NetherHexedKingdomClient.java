@@ -38,18 +38,6 @@ public class NetherHexedKingdomClient {
     }
 
 
-//    @SubscribeEvent
-//    public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-//        event.register(
-//                ModelResourceLocation.standalone(
-//                        ResourceLocation.fromNamespaceAndPath(
-//                                NetherHexedKingdom.MODID,
-//                                "block/soul_glow_mushroom_glow"
-//                        )
-//                )
-//        );
-//    }
-
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         // Main model layer

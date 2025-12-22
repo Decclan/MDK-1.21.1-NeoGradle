@@ -1,43 +1,49 @@
 package com.deimoshexxus.netherhexedkingdom.worldgen;
 
-/**
- * Placed features (registered to Registries.PLACED_FEATURE).
- */
-public final class ModPlacedFeatures {
 
-//    public static final DeferredRegister<PlacedFeature> PLACED =
-//            DeferredRegister.create(Registries.PLACED_FEATURE, NetherHexedKingdom.MODID);
-//
-//    public static final DeferredHolder<PlacedFeature, PlacedFeature> MASONIAE_MUSHROOM_PLACED =
-//            PLACED.register("masoniae_mushroom_placed", () -> {
-//                // Get the Holder<ConfiguredFeature> from the configured-features DeferredHolder:
-//                Holder<ConfiguredFeature<?, ?>> configuredHolder =
-//                        ModConfiguredFeatures.MASONIAE_MUSHROOM.getHolder().orElseThrow(() ->
-//                                new IllegalStateException("Configured feature not registered: masoniae_mushroom"));
-//
-//                // Build placed feature with proper placement modifiers.
-//                return new PlacedFeature(
-//                        configuredHolder,
-//                        List.of(
-//                                // 1) CountPlacement - how many attempts per placement
-//                                CountPlacement.of(5),
-//
-//                                // 2) Spread inside the chunk
-//                                InSquarePlacement.spread(),
-//
-//                                // 3) Height selection - place at surface (use onHeightmap so we get the surface)
-//                                HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
-//
-//                                // 4) Block predicate: block below must be BONE_BLOCK (offset -1)
-//                                BlockPredicateFilter.forPredicate(
-//                                        BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.BONE_BLOCK)
-//                                ),
-//
-//                                // 5) Biome filter: feature only runs in matching biome context
-//                                BiomeFilter.biome()
-//                        )
-//                );
-//            });
-//
-//    private ModPlacedFeatures() {}
+import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.worldgen.ModOrePlacement;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.*;
+
+import java.util.List;
+
+public class ModPlacedFeatures {
+
+    public static final ResourceKey<PlacedFeature> MILITUS_ALLOY_ORE_PLACED_KEY = registerKey("militus_alloy_ore_placed");
+
+    public static void bootstrap(BootstrapContext<PlacedFeature> context) {
+        var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
+
+        register(context, MILITUS_ALLOY_ORE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.MILITUS_ALLOY_ORE_KEY),
+                ModOrePlacement.commonOrePlacement(12, HeightRangePlacement.triangle(VerticalAnchor.absolute(24), VerticalAnchor.absolute(64))));
+
+//        PlacementUtils.register(
+//                context,
+//                ORE_ANCIENT_DEBRIS_LARGE,
+//                holder27,
+//                InSquarePlacement.spread(),
+//                HeightRangePlacement.triangle(VerticalAnchor.absolute(8), VerticalAnchor.absolute(24)),
+//                BiomeFilter.biome()
+//        );
+//        PlacementUtils.register(context, ORE_ANCIENT_DEBRIS_SMALL, holder28, InSquarePlacement.spread(), PlacementUtils.RANGE_8_8, BiomeFilter.biome());
+
+    }
+
+
+    private static ResourceKey<PlacedFeature> registerKey(String name) {
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, name));
+    }
+
+    private static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?, ?>> configuration,
+                                 List<PlacementModifier> modifiers) {
+        context.register(key, new PlacedFeature(configuration, List.copyOf(modifiers)));
+    }
 }
