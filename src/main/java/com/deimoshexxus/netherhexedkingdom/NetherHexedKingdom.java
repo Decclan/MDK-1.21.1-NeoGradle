@@ -56,7 +56,9 @@ public class NetherHexedKingdom {
         // register entities' deferred register
         ModEntities.register(modEventBus);
         ModArmorMaterials.MATERIALS.register(modEventBus);
-        //UnusedModWorldFeatures.PLACED_FEATURES.register(modEventBus);
+
+        ModStructures.STRUCTURE_TYPES.register(modEventBus);
+        ModStructurePieces.STRUCTURE_PIECES.register(modEventBus);
 
         // Register Events
         NeoForge.EVENT_BUS.register(DecayInfectionEvents.class);
