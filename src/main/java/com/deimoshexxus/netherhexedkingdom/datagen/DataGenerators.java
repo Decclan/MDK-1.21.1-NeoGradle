@@ -42,7 +42,7 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), new ModDatapackProvider(output, lookupProvider));
         
         if (event.includeServer()) {
-            // Datapack provider (worldgen, structures, etc.)
+            // Datapack provider (worldgen, structure, etc.)
 //            generator.addProvider(
 //                    true,
 //                    new ModDatapackProvider(

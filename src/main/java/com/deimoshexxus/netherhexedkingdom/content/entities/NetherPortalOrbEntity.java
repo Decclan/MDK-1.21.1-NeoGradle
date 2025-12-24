@@ -99,7 +99,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 centerPos.offset(rotateOffset(BASE_OFFSET, rotation));
 
         LOGGER.info(
-                "Placing portal structures: rotation={}, portalOrigin={}, baseOrigin={}",
+                "Placing portal structure: rotation={}, portalOrigin={}, baseOrigin={}",
                 rotation, portalOrigin, baseOrigin
         );
 
