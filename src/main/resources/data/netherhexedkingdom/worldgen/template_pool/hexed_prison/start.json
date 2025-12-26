@@ -1,0 +1,15 @@
+{
+  "name": "netherhexedkingdom:hexed_prison/start",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "netherhexedkingdom:hexed_prison",
+        "processors": "minecraft:empty",
+        "projection": "rigid"
+      }
+    }
+  ]
+}

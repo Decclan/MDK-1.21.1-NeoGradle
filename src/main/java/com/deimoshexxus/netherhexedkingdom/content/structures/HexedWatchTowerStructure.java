@@ -79,10 +79,10 @@ public class HexedWatchTowerStructure extends Structure {
                     0
             ));
 
-            // height of base NBT (example: 6)
-            int currentY = y + 6;
+            // height of base NBT
+            int currentY = y + 8;
 
-            // --- COLUMN (random) ---
+            // --- COLUMN ---
             ResourceLocation column =
                     COLUMNS[context.random().nextInt(COLUMNS.length)];
 
@@ -94,10 +94,10 @@ public class HexedWatchTowerStructure extends Structure {
                     1
             ));
 
-            // height of column NBT (example: 10)
-            currentY += 10;
+            // height of column NBT
+            currentY += 20;
 
-            // --- TOP (random) ---
+            // --- TOP ---
             ResourceLocation top =
                     TOPS[context.random().nextInt(TOPS.length)];
 
