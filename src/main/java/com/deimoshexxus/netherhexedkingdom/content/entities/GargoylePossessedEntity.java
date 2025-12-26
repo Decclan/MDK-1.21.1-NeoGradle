@@ -50,6 +50,7 @@ public class GargoylePossessedEntity extends TamableAnimal {
 
     private static final EntityDataAccessor<Boolean> DATA_SITTING =
             SynchedEntityData.defineId(GargoylePossessedEntity.class, EntityDataSerializers.BOOLEAN);
+    private int spitCooldown;
 
     // constructor required by EntityType
     public GargoylePossessedEntity(EntityType<? extends GargoylePossessedEntity> type, Level level) {
@@ -122,12 +123,12 @@ public class GargoylePossessedEntity extends TamableAnimal {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(3, new GargoyleSpitAttackGoal(this, 60, 16.0));
-        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
-        this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.9D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(8, new GargoylePlayTamedGoal(this, 0.7D, 10.0D));
+        this.goalSelector.addGoal(4, new GargoyleSpitAttackGoal(this, 60, 16.0));
+        this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
+        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.9D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(9, new GargoylePlayTamedGoal(this, 0.7D, 10.0D));
 
         // ------ TARGETING GOALS ------
         // defend owner + owner's pets
@@ -257,16 +258,13 @@ public class GargoylePossessedEntity extends TamableAnimal {
     @Override
     public void addAdditionalSaveData(CompoundTag nbt) {
         super.addAdditionalSaveData(nbt);
-        // add any extra data here if needed
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
-        // read extras if added
     }
 
-    // ---------- Optional: custom sounds (fill in your sound registry) ---------- //
     @Nullable
     protected SoundEvent getAmbientSound() { return null; }
     @Nullable
@@ -278,8 +276,22 @@ public class GargoylePossessedEntity extends TamableAnimal {
     @Override
     @Nullable
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob mate) {
-        // This entity is not breedable — return null
         return null;
+    }
+
+    // ---------- Spit attack goal values ---------- //
+    public void resetSpitCooldown(int ticks) {
+        this.spitCooldown = ticks;
+    }
+
+    public int getSpitCooldown() {
+        return spitCooldown;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (spitCooldown > 0) spitCooldown--;
     }
 
     // Removed Forge-specific spawn packet override: networking is handled by the platform/loader.
