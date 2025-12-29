@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -35,16 +36,10 @@ public class HexedPrisonStructure extends Structure {
         int x = context.chunkPos().getMiddleBlockX();
         int z = context.chunkPos().getMiddleBlockZ();
 
-        int y = context.chunkGenerator().getFirstOccupiedHeight(
-                x,
-                z,
-                Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(),
-                context.randomState()
-        );
+        int y = context.random().nextInt(40, 90);
 
         BlockPos startPos = new BlockPos(x, y, z);
-
+        Rotation rotation = Rotation.getRandom(context.random());
         NetherHexedKingdom.LOGGER.info(
                 "[HexedPrison] Chunk {}, start position {}",
                 context.chunkPos(),
@@ -65,10 +60,10 @@ public class HexedPrisonStructure extends Structure {
             return Optional.empty();
         }
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedPrison] Start pool found: {}",
-                HEXED_PRISON_START.location()
-        );
+//        NetherHexedKingdom.LOGGER.info(
+//                "[HexedPrison] Start pool found: {}",
+//                HEXED_PRISON_START.location()
+//        );
 
         Optional<GenerationStub> result = JigsawPlacement.addPieces(
                 context,
@@ -91,9 +86,9 @@ public class HexedPrisonStructure extends Structure {
             return Optional.empty();
         }
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedPrison] JigsawPlacement succeeded"
-        );
+//        NetherHexedKingdom.LOGGER.info(
+//                "[HexedPrison] JigsawPlacement succeeded"
+//        );
 
         return result;
     }

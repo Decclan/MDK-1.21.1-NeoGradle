@@ -78,11 +78,11 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 ? blockHit.getBlockPos()
                 : BlockPos.containing(hitResult.getLocation());
 
-        LOGGER.info(
-                "NetherPortalOrb hit at {} in dimension {}",
-                centerPos,
-                serverLevel.dimension().location()
-        );
+//        LOGGER.info(
+//                "NetherPortalOrb hit at {} in dimension {}",
+//                centerPos,
+//                serverLevel.dimension().location()
+//        );
 
         placePortalWithBase(serverLevel, centerPos);
         discard();
@@ -124,6 +124,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
         spawnPortalParticles(level, centerPos, rotation);
     }
 
+    // for debug
     private boolean placeTemplate(
             ServerLevel level,
             ResourceLocation id,

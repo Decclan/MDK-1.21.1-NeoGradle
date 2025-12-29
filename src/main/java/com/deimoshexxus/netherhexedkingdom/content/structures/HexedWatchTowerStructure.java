@@ -53,16 +53,35 @@ public class HexedWatchTowerStructure extends Structure {
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 
-        int y = context.chunkGenerator()
-                .getFirstOccupiedHeight(
-                        x,
-                        z,
-                        Heightmap.Types.WORLD_SURFACE_WG,
-                        context.heightAccessor(),
-                        context.randomState()
-                );
+        // --- SAFE NETHER RANGE ---
+        int minY = 32;
+        int maxY = 90;
 
-        BlockPos basePos = new BlockPos(x, y, z);
+        int startY = context.random().nextInt(minY, maxY);
+
+        var column = context.chunkGenerator().getBaseColumn(
+                x,
+                z,
+                context.heightAccessor(),
+                context.randomState()
+        );
+
+        int y = startY;
+
+        // Walk downward to find solid ground (max 24 blocks)
+        for (int i = 0; i < 24 && y > minY; i++) {
+            if (column.getBlock(y).isSolid()) {
+                break;
+            }
+            y--;
+        }
+
+        // Abort if no suitable ground found
+        if (y <= minY) {
+            return Optional.empty();
+        }
+
+        BlockPos basePos = new BlockPos(x, y + 1, z);
         Rotation rotation = Rotation.getRandom(context.random());
 
         return Optional.of(new GenerationStub(basePos, builder -> {
@@ -79,22 +98,20 @@ public class HexedWatchTowerStructure extends Structure {
                     0
             ));
 
-            // height of base NBT
-            int currentY = y + 8;
+            int currentY = basePos.getY() + 8;
 
             // --- COLUMN ---
-            ResourceLocation column =
+            ResourceLocation columnPiece =
                     COLUMNS[context.random().nextInt(COLUMNS.length)];
 
             builder.addPiece(new HexedWatchTowerPiece(
                     manager,
-                    column,
+                    columnPiece,
                     new BlockPos(x, currentY, z),
                     rotation,
                     1
             ));
 
-            // height of column NBT
             currentY += 20;
 
             // --- TOP ---
