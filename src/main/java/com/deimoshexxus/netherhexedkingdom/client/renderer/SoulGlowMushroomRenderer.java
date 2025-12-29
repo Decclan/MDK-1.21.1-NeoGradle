@@ -22,38 +22,11 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class SoulGlowMushroomRenderer implements BlockEntityRenderer<SoulGlowMushroomBlockEntity> {
 
-    // Texture referenced by the glow model JSON (no "textures/" or ".png")
-    private static final ResourceLocation GLOW_TEXTURE_RL =
-            ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "block/soul_glow_mushroom_emissive");
-
     // Standalone ModelResourceLocation -> corresponds to assets/<modid>/models/block/soul_glow_mushroom_glow.json
     private static final ModelResourceLocation GLOW_MODEL_RL =
             ModelResourceLocation.standalone(
                     ResourceLocation.fromNamespaceAndPath(NetherHexedKingdom.MODID, "block/soul_glow_mushroom_glow")
             );
-
-    public static final RenderType SOUL_GLOW = RenderType.create(
-            "soul_glow",
-            DefaultVertexFormat.BLOCK,
-            VertexFormat.Mode.QUADS,
-            1536,
-            false,
-            true,
-            RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_SHADER)
-                    .setTextureState(new RenderStateShard.TextureStateShard(
-                            TextureAtlas.LOCATION_BLOCKS, false, false
-                    ))
-                    .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
-                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-                    .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING) // ⭐ THIS IS THE FIX
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .setLightmapState(RenderStateShard.LIGHTMAP)
-                    .setOverlayState(RenderStateShard.OVERLAY)
-                    .createCompositeState(true)
-    );
-
-
 
     public SoulGlowMushroomRenderer(BlockEntityRendererProvider.Context ctx) { }
 

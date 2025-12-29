@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "minecraft:plains",
-    "minecraft:forest",
-    "minecraft:savanna"
+    "minecraft:crimson_forest",
+    "minecraft:soul_sand_valley",
+    "minecraft:nether_wastes"
   ]
 }
