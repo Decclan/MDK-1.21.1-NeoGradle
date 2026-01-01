@@ -41,6 +41,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<HexanGuardEntity>> HEXAN_GUARD =
             ENTITY_TYPES.register("hexan_guard", () ->
                     EntityType.Builder.of(HexanGuardEntity::new, MobCategory.MONSTER)
+                            .fireImmune()
                             .sized(0.6F, 1.9F)
                             .build(NetherHexedKingdom.MODID + ":hexan_guard")
             );
