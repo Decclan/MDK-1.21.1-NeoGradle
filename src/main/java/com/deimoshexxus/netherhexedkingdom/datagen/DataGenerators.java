@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.datagen;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.datagen.ModChestLootProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -40,31 +41,31 @@ public final class DataGenerators {
 
 
         generator.addProvider(event.includeServer(), new ModDatapackProvider(output, lookupProvider));
-        
+
         if (event.includeServer()) {
-            // Datapack provider (worldgen, structure, etc.)
-//            generator.addProvider(
-//                    true,
-//                    new ModDatapackProvider(
-//                            output,
-//                            lookupProvider,
-//                            existingFileHelper
-//                    )
-//            );
-//
-//            List<LootTableProvider.SubProviderEntry> subProviders = List.of(
-//                    new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK)
-//            );
-//
-//            Set<ResourceKey<LootTable>> requiredTables = Set.of();
-//
-//            generator.addProvider(true, new LootTableProvider(
-//                    output,
-//                    requiredTables,
-//                    subProviders,
-//                    lookupProvider
-//            ));
+
+            List<LootTableProvider.SubProviderEntry> subProviders = List.of(
+                    new LootTableProvider.SubProviderEntry(
+                            ModBlockLootProvider::new,
+                            LootContextParamSets.BLOCK
+                    ),
+                    new LootTableProvider.SubProviderEntry(
+                            ModChestLootProvider::new,
+                            LootContextParamSets.CHEST
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new LootTableProvider(
+                            output,
+                            Set.of(), // required tables (almost always empty)
+                            subProviders,
+                            lookupProvider
+                    )
+            );
         }
+
 
     }
 
