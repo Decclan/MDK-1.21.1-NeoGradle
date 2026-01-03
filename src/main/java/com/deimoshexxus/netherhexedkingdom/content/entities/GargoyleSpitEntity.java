@@ -21,6 +21,7 @@ import net.minecraft.world.phys.HitResult;
 
 public class GargoyleSpitEntity extends Projectile implements ItemSupplier {
 
+    private int life;
     public GargoyleSpitEntity(EntityType<? extends GargoyleSpitEntity> type, Level level) {
         super(type, level);
     }
@@ -40,6 +41,10 @@ public class GargoyleSpitEntity extends Projectile implements ItemSupplier {
     public void tick() {
         super.tick();
 
+        if (++life > 40) { // 40 ticks = 2 seconds
+            this.discard();
+            return;
+        }
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitresult.getType() != HitResult.Type.MISS) {
             this.onHit(hitresult);

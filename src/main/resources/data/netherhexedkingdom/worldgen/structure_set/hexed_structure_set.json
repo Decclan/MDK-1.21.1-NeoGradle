@@ -6,6 +6,10 @@
     },
     {
       "structure": "netherhexedkingdom:hexed_prison_structure",
+      "weight": 5
+    },
+    {
+      "structure": "netherhexedkingdom:hexed_lookout_structure",
       "weight": 4
     }
   ],

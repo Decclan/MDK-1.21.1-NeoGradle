@@ -110,7 +110,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                 LootPool.lootPool()
                                         // 2–5 total rolls
                                         //.setRolls(UniformGenerator.between(2, 5))
-                                        .setRolls(UniformGenerator.between(16, 24))
+                                        .setRolls(UniformGenerator.between(12, 16))
 
                                         // common
                                         .add(LootItem.lootTableItem(Items.GOLD_NUGGET).setWeight(10).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 12))))
@@ -184,7 +184,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                 LootPool.lootPool()
                                         // 2–5 total rolls
                                         //.setRolls(UniformGenerator.between(2, 5))
-                                        .setRolls(UniformGenerator.between(18, 24))
+                                        .setRolls(UniformGenerator.between(16, 22))
 
                                         // common
                                         .add(LootItem.lootTableItem(Items.GOLD_NUGGET).setWeight(12).apply(SetItemCountFunction.setCount(UniformGenerator.between(9, 16))))
