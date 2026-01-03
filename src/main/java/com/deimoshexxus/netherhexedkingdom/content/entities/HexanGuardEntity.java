@@ -222,9 +222,9 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         // Assign random variant for non-leaders (50% melee / 20% ranged / 30% grenadier)
         float roll = this.random.nextFloat();
         if (roll < 0.5F)
-            setVariant(Variant.GRENADIER); // MELEE
+            setVariant(Variant.MELEE); // MELEE
         else if (roll < 0.7F)
-            setVariant(Variant.GRENADIER); // RANGED
+            setVariant(Variant.RANGED); // RANGED
         else
             setVariant(Variant.GRENADIER);
 

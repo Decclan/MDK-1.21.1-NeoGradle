@@ -1,26 +1,20 @@
 {
-  "type": "netherhexedkingdom:hexed_prison_structure",
+  "type": "netherhexedkingdom:hexed_lookout_structure",
   "biomes": "#minecraft:is_nether",
 
   "step": "surface_structures",
 
-  "terrain_adaptation": "beard_thin",
+  "terrain_adaptation": "none",
 
   "spawn_overrides": {
     "monster": {
       "bounding_box": "piece",
       "spawns": [
         {
-          "type": "minecraft:blaze",
-          "weight": 1,
-          "minCount": 1,
-          "maxCount": 2
-        },
-        {
           "type": "netherhexedkingdom:hexan_guard",
-          "weight": 5,
-          "minCount": 5,
-          "maxCount": 10
+          "weight": 1,
+          "minCount": 2,
+          "maxCount": 5
         }
       ]
     }

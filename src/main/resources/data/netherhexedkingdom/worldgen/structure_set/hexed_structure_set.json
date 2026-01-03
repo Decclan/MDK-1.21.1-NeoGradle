@@ -1,18 +1,22 @@
 {
   "structures": [
     {
-      "structure": "netherhexedkingdom:hexed_prison_structure",
-      "weight": 3
+      "structure": "netherhexedkingdom:hexed_watch_tower_structure",
+      "weight": 6
     },
     {
-      "structure": "netherhexedkingdom:hexed_watch_tower_structure",
+      "structure": "netherhexedkingdom:hexed_prison_structure",
       "weight": 5
+    },
+    {
+      "structure": "netherhexedkingdom:hexed_lookout_structure",
+      "weight": 4
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 48,
-    "separation": 24,
-    "salt": 192837465
+    "spacing": 20,
+    "separation": 10,
+    "salt": 192837666
   }
 }

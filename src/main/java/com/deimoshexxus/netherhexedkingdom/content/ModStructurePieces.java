@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.content;
 
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.structures.HexedLookoutPiece;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedWatchTowerPiece;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -19,6 +20,12 @@ public final class ModStructurePieces {
             HEXED_WATCH_TOWER_PIECE = STRUCTURE_PIECES.register(
             "hexed_watch_tower_piece",
             () -> HexedWatchTowerPiece::new
+    );
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_LOOKOUT_PIECE = STRUCTURE_PIECES.register(
+            "hexed_lookout_piece",
+            () -> HexedLookoutPiece::new
     );
 
 }
