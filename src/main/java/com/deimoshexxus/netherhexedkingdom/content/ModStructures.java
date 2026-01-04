@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.structures.HexedBullionTempleStructure;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedLookoutStructure;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedPrisonStructure;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedWatchTowerStructure;
@@ -22,6 +23,9 @@ public final class ModStructures {
     public static final DeferredHolder<StructureType<?>, StructureType<HexedPrisonStructure>> HEXED_PRISON_STRUCTURE = STRUCTURE_TYPES.register("hexed_prison_structure", () -> explicitStructureTypeTyping(HexedPrisonStructure.CODEC));
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedLookoutStructure>> HEXED_LOOKOUT_STRUCTURE = STRUCTURE_TYPES.register("hexed_lookout_structure", () -> explicitStructureTypeTyping(HexedLookoutStructure.CODEC));
+
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedBullionTempleStructure>> HEXED_BULLION_TEMPLE_STRUCTURE = STRUCTURE_TYPES.register("hexed_bullion_temple_structure", () -> explicitStructureTypeTyping(HexedBullionTempleStructure.CODEC));
+
 
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;

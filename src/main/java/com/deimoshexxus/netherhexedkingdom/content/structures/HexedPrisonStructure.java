@@ -36,7 +36,7 @@ public class HexedPrisonStructure extends Structure {
         int x = context.chunkPos().getMiddleBlockX();
         int z = context.chunkPos().getMiddleBlockZ();
 
-        int y = context.random().nextInt(32, 80);
+        int y = context.random().nextInt(31, 64);
 
         BlockPos startPos = new BlockPos(x, y, z);
         Rotation rotation = Rotation.getRandom(context.random());
