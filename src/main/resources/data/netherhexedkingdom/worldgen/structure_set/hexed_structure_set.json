@@ -11,6 +11,10 @@
     {
       "structure": "netherhexedkingdom:hexed_lookout_structure",
       "weight": 4
+    },
+    {
+      "structure": "netherhexedkingdom:hexed_bullion_temple_structure",
+      "weight": 4
     }
   ],
   "placement": {

@@ -9,6 +9,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 import java.util.Optional;
@@ -52,27 +53,18 @@ public class HexedWatchTowerStructure extends Structure {
         NetherHexedKingdom.LOGGER.info("[HexedWatchTower] findGenerationPoint called");
 
         ChunkPos chunkPos = context.chunkPos();
-        int x = chunkPos.getMiddleBlockX();
-        int z = chunkPos.getMiddleBlockZ();
-
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedWatchTower] Chunk {}, evaluating position x={}, z={}",
-                chunkPos, x, z
-        );
+        int centerX = chunkPos.getMiddleBlockX();
+        int centerZ = chunkPos.getMiddleBlockZ();
 
         // --- SAFE NETHER RANGE ---
         int minY = 32;
         int maxY = 90;
 
         int startY = context.random().nextInt(minY, maxY);
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedWatchTower] Starting vertical scan at Y={}",
-                startY
-        );
 
         var column = context.chunkGenerator().getBaseColumn(
-                x,
-                z,
+                centerX,
+                centerZ,
                 context.heightAccessor(),
                 context.randomState()
         );
@@ -80,7 +72,6 @@ public class HexedWatchTowerStructure extends Structure {
         int y = startY;
         boolean foundGround = false;
 
-        // Walk downward to find solid ground
         for (int i = 0; i < 24 && y > minY; i++) {
             if (column.getBlock(y).isSolid()) {
                 foundGround = true;
@@ -90,15 +81,20 @@ public class HexedWatchTowerStructure extends Structure {
         }
 
         if (!foundGround) {
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedWatchTower] No solid ground found in chunk {}, aborting",
-                    chunkPos
-            );
             return Optional.empty();
         }
 
-        BlockPos basePos = new BlockPos(x, y + 1, z);
         Rotation rotation = Rotation.getRandom(context.random());
+
+        StructureTemplateManager manager = context.structureTemplateManager();
+        StructureTemplate baseTemplate = manager.getOrCreate(BASE);
+
+        // --- CENTER THE BASE TEMPLATE ---
+        BlockPos basePos = new BlockPos(
+                centerX - baseTemplate.getSize().getX() / 2,
+                y + 1,
+                centerZ - baseTemplate.getSize().getZ() / 2
+        );
 
         NetherHexedKingdom.LOGGER.info(
                 "[HexedWatchTower] Ground found at Y={}, placing base at {} with rotation {}",
@@ -106,11 +102,6 @@ public class HexedWatchTowerStructure extends Structure {
         );
 
         return Optional.of(new GenerationStub(basePos, builder -> {
-
-            StructureTemplateManager manager =
-                    context.structureTemplateManager();
-
-
 
             // --- BASE ---
             builder.addPiece(new HexedWatchTowerPiece(
@@ -121,43 +112,53 @@ public class HexedWatchTowerStructure extends Structure {
                     0
             ));
 
-
             // --- FOUNDATION ---
+            StructureTemplate foundationTemplate =
+                    manager.getOrCreate(FOUNDATION);
 
-            int currentY = basePos.getY() - 5;
+            int foundationY =
+                    basePos.getY() - foundationTemplate.getSize().getY();
 
             builder.addPiece(new HexedWatchTowerPiece(
                     manager,
                     FOUNDATION,
-                    new BlockPos(x, currentY, z),
+                    new BlockPos(basePos.getX(), foundationY, basePos.getZ()),
                     rotation,
                     -1
             ));
-
-            currentY += 13;
 
             // --- COLUMN ---
             ResourceLocation columnPiece =
                     COLUMNS[context.random().nextInt(COLUMNS.length)];
 
+            StructureTemplate columnTemplate =
+                    manager.getOrCreate(columnPiece);
+
+            int columnY =
+                    basePos.getY() + baseTemplate.getSize().getY();
+
             builder.addPiece(new HexedWatchTowerPiece(
                     manager,
                     columnPiece,
-                    new BlockPos(x, currentY, z),
+                    new BlockPos(basePos.getX(), columnY, basePos.getZ()),
                     rotation,
                     1
             ));
 
-            currentY += 20;
-
             // --- TOP ---
-            ResourceLocation top =
+            ResourceLocation topPiece =
                     TOPS[context.random().nextInt(TOPS.length)];
+
+            StructureTemplate topTemplate =
+                    manager.getOrCreate(topPiece);
+
+            int topY =
+                    columnY + columnTemplate.getSize().getY();
 
             builder.addPiece(new HexedWatchTowerPiece(
                     manager,
-                    top,
-                    new BlockPos(x, currentY, z),
+                    topPiece,
+                    new BlockPos(basePos.getX(), topY, basePos.getZ()),
                     rotation,
                     2
             ));
