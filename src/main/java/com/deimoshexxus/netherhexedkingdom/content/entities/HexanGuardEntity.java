@@ -399,7 +399,7 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Cat.class, 8.0F, 1.0, 1.2));
         this.goalSelector.addGoal(7, new AvoidEntityGoal<>(this, ZombifiedPiglin.class, 6.0F, 1.0, 1.2));
         // Squad following (if you have leaders)
-        this.goalSelector.addGoal(8, new FollowSquadLeaderGoal(this, 1.0D, 3.0F));
+        this.goalSelector.addGoal(8, new FollowSquadLeaderGoal(this, 1.0D, 6.0F));
     }
 
     // Sounds & attributes

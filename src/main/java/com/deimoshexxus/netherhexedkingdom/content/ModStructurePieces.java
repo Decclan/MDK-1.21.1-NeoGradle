@@ -4,6 +4,7 @@ package com.deimoshexxus.netherhexedkingdom.content;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedBullionTemplePiece;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedLookoutPiece;
+import com.deimoshexxus.netherhexedkingdom.content.structures.HexedOutpostPiece;
 import com.deimoshexxus.netherhexedkingdom.content.structures.HexedWatchTowerPiece;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -34,6 +35,13 @@ public final class ModStructurePieces {
             "hexed_bullion_temple_piece",
             () -> HexedBullionTemplePiece::new
     );
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_OUTPOST_PIECE = STRUCTURE_PIECES.register(
+            "hexed_outpost_piece",
+            () -> HexedOutpostPiece::new
+    );
+
 
 }
 

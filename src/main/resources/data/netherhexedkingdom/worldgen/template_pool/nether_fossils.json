@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 2,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "netherhexedkingdom:nether_fossils/fossil_masoniae_1",
+        "processors": "minecraft:nether_fossil",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "netherhexedkingdom:nether_fossils/fossil_masoniae_2",
+        "processors": "minecraft:nether_fossil",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "netherhexedkingdom:nether_fossils/fossil_masoniae_3",
+        "processors": "minecraft:nether_fossil",
+        "projection": "rigid"
+      }
+    }
+  ]
+}

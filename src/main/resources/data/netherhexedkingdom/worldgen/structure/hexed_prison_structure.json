@@ -1,6 +1,6 @@
 {
   "type": "netherhexedkingdom:hexed_prison_structure",
-  "biomes": "#minecraft:is_nether",
+  "biomes": "#netherhexedkingdom:has_hexed_prison_structure",
 
   "step": "surface_structures",
 

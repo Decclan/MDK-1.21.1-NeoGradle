@@ -1,6 +1,6 @@
 {
-  "type": "netherhexedkingdom:hexed_watch_tower_structure",
-  "biomes": "#netherhexedkingdom:has_hexed_watch_tower_structure",
+  "type": "netherhexedkingdom:hexed_outpost_structure",
+  "biomes": "#netherhexedkingdom:has_hexed_outpost_structure",
 
   "step": "surface_structures",
 
@@ -11,7 +11,7 @@
       "bounding_box": "piece",
       "spawns": [
         {
-          "type": "minecraft:wither_skeleton",
+          "type": "netherhexedkingdom:hexan_guard",
           "weight": 1,
           "minCount": 1,
           "maxCount": 2
