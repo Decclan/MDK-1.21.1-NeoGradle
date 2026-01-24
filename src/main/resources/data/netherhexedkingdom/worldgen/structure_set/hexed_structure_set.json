@@ -15,12 +15,16 @@
     {
       "structure": "netherhexedkingdom:hexed_bullion_temple_structure",
       "weight": 4
+    },
+    {
+      "structure": "netherhexedkingdom:hexed_outpost_structure",
+      "weight": 4
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 20,
-    "separation": 10,
+    "spacing": 16,
+    "separation": 8,
     "salt": 192837666
   }
 }

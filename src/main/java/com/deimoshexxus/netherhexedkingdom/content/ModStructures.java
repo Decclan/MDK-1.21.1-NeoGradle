@@ -1,10 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedBullionTempleStructure;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedLookoutStructure;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedPrisonStructure;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedWatchTowerStructure;
+import com.deimoshexxus.netherhexedkingdom.content.structures.*;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -26,6 +23,7 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedBullionTempleStructure>> HEXED_BULLION_TEMPLE_STRUCTURE = STRUCTURE_TYPES.register("hexed_bullion_temple_structure", () -> explicitStructureTypeTyping(HexedBullionTempleStructure.CODEC));
 
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedOutpostStructure>> HEXED_OUTPOST_STRUCTURE = STRUCTURE_TYPES.register("hexed_outpost_structure", () -> explicitStructureTypeTyping(HexedOutpostStructure.CODEC));
 
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
