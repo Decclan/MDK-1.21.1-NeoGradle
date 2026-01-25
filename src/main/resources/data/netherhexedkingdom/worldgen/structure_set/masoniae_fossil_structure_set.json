@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "netherhexedkingdom:fossil_masoniae", "weight": 1 }
+  ],
+  "placement": {
+    "type": "random_spread",
+    "spacing": 64,
+    "separation": 15,
+    "salt": 10387320
+  }
+}
