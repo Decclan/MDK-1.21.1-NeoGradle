@@ -25,6 +25,8 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedOutpostStructure>> HEXED_OUTPOST_STRUCTURE = STRUCTURE_TYPES.register("hexed_outpost_structure", () -> explicitStructureTypeTyping(HexedOutpostStructure.CODEC));
 
+    public static final DeferredHolder<StructureType<?>, StructureType<MasoniaeFossilStructure>> FOSSIL_MASONIAE = STRUCTURE_TYPES.register("fossil_masoniae", () -> explicitStructureTypeTyping(MasoniaeFossilStructure.CODEC));
+
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
     }

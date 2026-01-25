@@ -43,23 +43,19 @@ public class NetherHexedKingdomClient {
         // Main model layer
         event.registerLayerDefinition(
                 ModModelLayers.HEXAN_GUARD_BODY,
-                HexanGuardModel::createBodyLayer
-        );
+                HexanGuardModel::createBodyLayer);
         // Armor layers
         event.registerLayerDefinition(
                 ModModelLayers.HEXAN_GUARD_ARMOR_INNER,
-                () -> HexanGuardModel.createArmorLayer(0.5F)
-        );
+                () -> HexanGuardModel.createArmorLayer(0.5F));
 
         event.registerLayerDefinition(
                 ModModelLayers.HEXAN_GUARD_ARMOR_OUTER,
-                () -> HexanGuardModel.createArmorLayer(1.0F)
-        );
+                () -> HexanGuardModel.createArmorLayer(1.0F));
 
         event.registerLayerDefinition(
                 ModModelLayers.GARGOYLE_POSSESSED,
-                com.deimoshexxus.netherhexedkingdom.client.model.GargoylePossessedModel::createBodyLayer
-        );
+                com.deimoshexxus.netherhexedkingdom.client.model.GargoylePossessedModel::createBodyLayer);
     }
 
     @SubscribeEvent

@@ -19,9 +19,19 @@ public class ModPlacedFeatures {
 
     public static final ResourceKey<PlacedFeature> MILITUS_ALLOY_ORE_PLACED_KEY = registerKey("militus_alloy_ore_placed");
 
+//    public static final ResourceKey<PlacedFeature> MASONIAE_NETHER_FOSSIL_PLACED =
+//            ResourceKey.create(
+//                    Registries.PLACED_FEATURE,
+//                    ResourceLocation.fromNamespaceAndPath(
+//                            NetherHexedKingdom.MODID,
+//                            "masoniae_nether_fossil_placed"
+//                    )
+//            );
+
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
+        // Ores
         register(context, MILITUS_ALLOY_ORE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.MILITUS_ALLOY_ORE_KEY),
                 ModOrePlacement.commonOrePlacement(12, HeightRangePlacement.triangle(VerticalAnchor.absolute(24), VerticalAnchor.absolute(64))));
 
@@ -34,6 +44,27 @@ public class ModPlacedFeatures {
 //                BiomeFilter.biome()
 //        );
 //        PlacementUtils.register(context, ORE_ANCIENT_DEBRIS_SMALL, holder28, InSquarePlacement.spread(), PlacementUtils.RANGE_8_8, BiomeFilter.biome());
+
+
+        // Biome Features
+//        var configured = context.lookup(Registries.CONFIGURED_FEATURE);
+//
+//        context.register(
+//                MASONIAE_NETHER_FOSSIL_PLACED,
+//                new PlacedFeature(
+//                        configured.getOrThrow(ModConfiguredFeatures.MASONIAE_NETHER_FOSSIL),
+//                        List.of(
+//                                RarityFilter.onAverageOnceEvery(64),
+//                                InSquarePlacement.spread(),
+//                                HeightRangePlacement.uniform(
+//                                        VerticalAnchor.absolute(30),
+//                                        VerticalAnchor.absolute(70)
+//                                ),
+//                                BiomeFilter.biome()
+//                        )
+//                )
+//        );
+//
 
     }
 
