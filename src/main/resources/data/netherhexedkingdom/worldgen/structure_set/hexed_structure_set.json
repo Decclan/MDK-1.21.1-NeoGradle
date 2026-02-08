@@ -1,25 +1,11 @@
 {
   "structures": [
-    {
-      "structure": "netherhexedkingdom:hexed_watch_tower_structure",
-      "weight": 6
-    },
-    {
-      "structure": "netherhexedkingdom:hexed_prison_structure",
-      "weight": 5
-    },
-    {
-      "structure": "netherhexedkingdom:hexed_lookout_structure",
-      "weight": 4
-    },
-    {
-      "structure": "netherhexedkingdom:hexed_bullion_temple_structure",
-      "weight": 4
-    },
-    {
-      "structure": "netherhexedkingdom:hexed_outpost_structure",
-      "weight": 4
-    }
+    {"structure": "netherhexedkingdom:hexed_watch_tower_structure", "weight": 6},
+    {"structure": "netherhexedkingdom:hexed_prison_structure", "weight": 5},
+    {"structure": "netherhexedkingdom:hexed_lookout_structure", "weight": 4},
+    {"structure": "netherhexedkingdom:hexed_bullion_temple_structure", "weight": 4},
+    {"structure": "netherhexedkingdom:hexed_outpost_structure", "weight": 4},
+    {"structure": "netherhexedkingdom:hexed_greed_mines_structure", "weight": 4}
   ],
   "placement": {
     "type": "minecraft:random_spread",

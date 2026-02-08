@@ -1,0 +1,7 @@
+{
+  "type": "netherhexedkingdom:hexed_nether_fossil_structure",
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin",
+  "biomes": "#netherhexedkingdom:has_nether_fossil",
+  "spawn_overrides": {}
+}

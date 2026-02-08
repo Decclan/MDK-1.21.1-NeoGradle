@@ -1,7 +1,0 @@
-{
-  "type": "netherhexedkingdom:fossil_masoniae",
-  "step": "underground_decoration",
-  "terrain_adaptation": "bury",
-  "biomes": "#netherhexedkingdom:has_nether_fossil",
-  "spawn_overrides": {}
-}
