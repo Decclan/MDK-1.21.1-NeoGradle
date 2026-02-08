@@ -2,10 +2,7 @@ package com.deimoshexxus.netherhexedkingdom.content;
 
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedBullionTemplePiece;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedLookoutPiece;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedOutpostPiece;
-import com.deimoshexxus.netherhexedkingdom.content.structures.HexedWatchTowerPiece;
+import com.deimoshexxus.netherhexedkingdom.content.structures.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -42,6 +39,23 @@ public final class ModStructurePieces {
             () -> HexedOutpostPiece::new
     );
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_NETHER_FOSSIL_PIECE = STRUCTURE_PIECES.register(
+            "hexed_nether_fossil_piece",
+            () -> HexedNetherFossilPiece::new
+    );
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            CRIMSON_MOTHER_FUNGUS_PIECE = STRUCTURE_PIECES.register(
+            "crimson_mother_fungus_piece",
+            () -> CrimsonMotherFungusPiece::new
+    );
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            WARPED_MOTHER_FUNGUS_PIECE = STRUCTURE_PIECES.register(
+            "warped_mother_fungus_piece",
+            () -> WarpedMotherFungusPiece::new
+    );
 
 }
 

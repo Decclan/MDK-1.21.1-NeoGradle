@@ -33,6 +33,8 @@ public class ModItems {
     public static final DeferredItem<Item> IMPERIAL_COINS = registerItem("imperial_coins");
     public static final DeferredItem<BlockItem> POISON_GAS_ITEM = ITEMS.register("poison_gas_source",
                     () -> new BlockItem(ModBlocks.GAS_SOURCE.get(), new Item.Properties()));
+    public static final DeferredItem<BlockItem> POISON_GAS_CHILD_ITEM = ITEMS.register("poison_gas_child",
+            () -> new BlockItem(ModBlocks.GAS_CHILD.get(), new Item.Properties()));
 
     public static final DeferredItem<Item> NETHER_PORTAL_ORB =
             ITEMS.register("nether_portal_orb",

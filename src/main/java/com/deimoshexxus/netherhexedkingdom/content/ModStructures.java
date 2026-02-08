@@ -25,7 +25,13 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedOutpostStructure>> HEXED_OUTPOST_STRUCTURE = STRUCTURE_TYPES.register("hexed_outpost_structure", () -> explicitStructureTypeTyping(HexedOutpostStructure.CODEC));
 
-    public static final DeferredHolder<StructureType<?>, StructureType<MasoniaeFossilStructure>> FOSSIL_MASONIAE = STRUCTURE_TYPES.register("fossil_masoniae", () -> explicitStructureTypeTyping(MasoniaeFossilStructure.CODEC));
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedNetherFossilStructure>> HEXED_NETHER_FOSSIL = STRUCTURE_TYPES.register("hexed_nether_fossil_structure", () -> explicitStructureTypeTyping(HexedNetherFossilStructure.CODEC));
+
+    public static final DeferredHolder<StructureType<?>, StructureType<CrimsonMotherFungusStructure>> CRIMSON_MOTHER_FUNGUS = STRUCTURE_TYPES.register("crimson_mother_fungus_structure", () -> explicitStructureTypeTyping(CrimsonMotherFungusStructure.CODEC));
+
+    public static final DeferredHolder<StructureType<?>, StructureType<WarpedMotherFungusStructure>> WARPED_MOTHER_FUNGUS = STRUCTURE_TYPES.register("warped_mother_fungus_structure", () -> explicitStructureTypeTyping(WarpedMotherFungusStructure.CODEC));
+
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedGreedMinesStructure>> HEXED_GREED_MINES_STRUCTURE = STRUCTURE_TYPES.register("hexed_greed_mines_structure", () -> explicitStructureTypeTyping(HexedGreedMinesStructure.CODEC));
 
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;

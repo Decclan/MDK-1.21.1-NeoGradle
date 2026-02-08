@@ -1,0 +1,13 @@
+{
+  "structures": [
+    { "structure": "netherhexedkingdom:hexed_nether_fossil_structure", "weight": 6 },
+    { "structure": "netherhexedkingdom:crimson_mother_fungus_structure", "weight": 3 },
+    { "structure": "netherhexedkingdom:warped_mother_fungus_structure", "weight": 3 }
+  ],
+  "placement": {
+    "type": "random_spread",
+    "spacing": 32,
+    "separation": 16,
+    "salt": 10387320
+  }
+}
