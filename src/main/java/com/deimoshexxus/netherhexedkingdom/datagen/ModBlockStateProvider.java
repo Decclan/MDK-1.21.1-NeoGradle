@@ -53,7 +53,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get(), cubeAll(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get()));
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get(), cubeAll(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get()));
         generateGasBlock(ModBlocks.GAS_SOURCE.get(), "poison_gas_source");
-        generateGasBlock(ModBlocks.GAS_CHILD.get(), "poison_gas");
+        generateGasBlock(ModBlocks.GAS_CHILD.get(), "poison_gas_child");
 
         // ----------------------
         // Vegetation

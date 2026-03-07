@@ -25,7 +25,7 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedOutpostStructure>> HEXED_OUTPOST_STRUCTURE = STRUCTURE_TYPES.register("hexed_outpost_structure", () -> explicitStructureTypeTyping(HexedOutpostStructure.CODEC));
 
-    public static final DeferredHolder<StructureType<?>, StructureType<HexedNetherFossilStructure>> HEXED_NETHER_FOSSIL = STRUCTURE_TYPES.register("hexed_nether_fossil_structure", () -> explicitStructureTypeTyping(HexedNetherFossilStructure.CODEC));
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedNetherFossilStructure>> HEXED_NETHER_FOSSIL_STRUCTURE = STRUCTURE_TYPES.register("hexed_nether_fossil_structure", () -> explicitStructureTypeTyping(HexedNetherFossilStructure.CODEC));
 
     public static final DeferredHolder<StructureType<?>, StructureType<CrimsonMotherFungusStructure>> CRIMSON_MOTHER_FUNGUS = STRUCTURE_TYPES.register("crimson_mother_fungus_structure", () -> explicitStructureTypeTyping(CrimsonMotherFungusStructure.CODEC));
 

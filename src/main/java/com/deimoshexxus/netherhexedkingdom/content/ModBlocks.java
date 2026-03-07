@@ -179,7 +179,6 @@ public class ModBlocks {
                     .noCollission()   // entities can move through
                     .noOcclusion()    // invisible for pathfinding, light
                     .strength(0.5F)
-                    //.strength(-1.0F, 3600000.0F) // unbreakable by players
                     .randomTicks()    // schedule ticks if needed
                     .lightLevel(state -> 8)
                     .sound(SoundType.WOOL)
