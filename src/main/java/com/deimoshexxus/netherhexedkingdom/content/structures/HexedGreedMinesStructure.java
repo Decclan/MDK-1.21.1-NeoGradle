@@ -94,6 +94,6 @@ public class HexedGreedMinesStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return ModStructures.HEXED_PRISON_STRUCTURE.get();
+        return ModStructures.HEXED_GREED_MINES_STRUCTURE.get();
     }
 }
