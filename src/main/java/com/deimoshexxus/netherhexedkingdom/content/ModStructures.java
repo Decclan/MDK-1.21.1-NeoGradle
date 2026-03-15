@@ -33,6 +33,8 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedGreedMinesStructure>> HEXED_GREED_MINES_STRUCTURE = STRUCTURE_TYPES.register("hexed_greed_mines_structure", () -> explicitStructureTypeTyping(HexedGreedMinesStructure.CODEC));
 
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedVolcanPitStructure>> HEXED_VOLCAN_PIT_STRUCTURE = STRUCTURE_TYPES.register("hexed_volcan_pit_structure", () -> explicitStructureTypeTyping(HexedVolcanPitStructure.CODEC));
+
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
     }

@@ -57,5 +57,11 @@ public final class ModStructurePieces {
             () -> WarpedMotherFungusPiece::new
     );
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_VOLCAN_PIT_PIECE = STRUCTURE_PIECES.register(
+            "hexed_volcan_pit_piece",
+            () -> HexedVolcanPitPiece::new
+    );
+
 }
 

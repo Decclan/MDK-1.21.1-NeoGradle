@@ -25,10 +25,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BracketFungusBlock extends HorizontalDirectionalBlock implements BonemealableBlock {
     private static final Block[] VALID_HOSTS = {
-            Blocks.STRIPPED_CRIMSON_STEM,
-            Blocks.STRIPPED_WARPED_STEM,
             Blocks.CRIMSON_STEM,    //.get(),
-            Blocks.WARPED_STEM    //.get()
+            Blocks.WARPED_STEM,    //.get()
+            Blocks.CRIMSON_HYPHAE,
+            Blocks.WARPED_HYPHAE
     };
 
 
