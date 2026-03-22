@@ -6,7 +6,8 @@
     {"structure": "netherhexedkingdom:hexed_bullion_temple_structure", "weight": 4},
     {"structure": "netherhexedkingdom:hexed_outpost_structure", "weight": 4},
     {"structure": "netherhexedkingdom:hexed_greed_mines_structure", "weight": 5},
-    {"structure": "netherhexedkingdom:hexed_volcan_pit_structure", "weight": 3}
+    {"structure": "netherhexedkingdom:hexed_volcan_pit_structure", "weight": 3},
+    {"structure": "netherhexedkingdom:hexed_red_sun_tower_structure", "weight": 2}
   ],
   "placement": {
     "type": "minecraft:random_spread",

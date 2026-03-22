@@ -63,5 +63,11 @@ public final class ModStructurePieces {
             () -> HexedVolcanPitPiece::new
     );
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_RED_SUN_TOWER_PIECE = STRUCTURE_PIECES.register(
+            "hexed_red_sun_tower_piece",
+            () -> HexedRedSunTowerPiece::new
+    );
+
 }
 
