@@ -2,10 +2,12 @@ package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoylePlayTamedGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoyleSpitAttackGoal;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
@@ -32,6 +34,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 
 import javax.annotation.Nullable;
@@ -294,5 +297,10 @@ public class GargoylePossessedEntity extends TamableAnimal {
         if (spitCooldown > 0) spitCooldown--;
     }
 
+
+    public static boolean canSpawn(EntityType<GargoylePossessedEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
+    }
     // Removed Forge-specific spawn packet override: networking is handled by the platform/loader.
 }

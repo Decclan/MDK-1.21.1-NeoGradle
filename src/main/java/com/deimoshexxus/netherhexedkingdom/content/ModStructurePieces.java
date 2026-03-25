@@ -69,5 +69,11 @@ public final class ModStructurePieces {
             () -> HexedRedSunTowerPiece::new
     );
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_IRON_CLAD_PIECE = STRUCTURE_PIECES.register(
+            "hexed_iron_clad_piece",
+            () -> HexedIronCladPiece::new
+    );
+
 }
 
