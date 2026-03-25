@@ -21,15 +21,6 @@ public class ModConfiguredFeatures {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> MILITUS_ALLOY_ORE_KEY = registerKey("militus_alloy_ore");
 
-//    public static final ResourceKey<ConfiguredFeature<?, ?>> MASONIAE_NETHER_FOSSIL =
-//            ResourceKey.create(
-//                    Registries.CONFIGURED_FEATURE,
-//                    ResourceLocation.fromNamespaceAndPath(
-//                            NetherHexedKingdom.MODID,
-//                            "masoniae_nether_fossil"
-//                    )
-//            );
-
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         // Ores
         RuleTest netherrackReplacables = new BlockMatchTest(Blocks.NETHERRACK);
@@ -41,30 +32,6 @@ public class ModConfiguredFeatures {
 
         // Biome Features
 
-//        var pools = context.lookup(Registries.TEMPLATE_POOL);
-//
-//        var masoniaePool = pools.getOrThrow(
-//                ResourceKey.create(
-//                        Registries.TEMPLATE_POOL,
-//                        ResourceLocation.fromNamespaceAndPath(
-//                                NetherHexedKingdom.MODID,
-//                                "nether_fossils/masoniae"
-//                        )
-//                )
-//        );
-
-//        // Vanilla uses the same pool for bones + skulls
-//        NetherFossilConfiguration config =
-//                new NetherFossilConfiguration(
-//                        masoniaePool,
-//                        masoniaePool,
-//                        0.1F // coal replacement chance
-//                );
-//
-//        context.register(
-//                MASONIAE_NETHER_FOSSIL,
-//                new ConfiguredFeature<>(Feature.NETHER_FOSSIL, config)
-//        );
 
     }
 

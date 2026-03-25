@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.content.*;
 import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
+import com.deimoshexxus.netherhexedkingdom.content.events.ModEntitySpawnEvents;
 import com.deimoshexxus.netherhexedkingdom.content.events.ZombifiedPiglinDecayEvents;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
@@ -41,6 +42,8 @@ public class NetherHexedKingdom {
         modEventBus.addListener(this::commonSetup);
         // Register the data generator listener
         modEventBus.addListener(com.deimoshexxus.netherhexedkingdom.datagen.DataGenerators::gatherData);
+
+        modEventBus.addListener(ModEntitySpawnEvents::registerSpawnPlacements);
 
         // register our content's deferred registers to the mod event bus
         BLOCKS.register(modEventBus);

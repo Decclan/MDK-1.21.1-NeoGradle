@@ -48,7 +48,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<GargoylePossessedEntity>> GARGOYLE_POSSESSED =
             ENTITY_TYPES.register("gargoyle_possessed", () ->
-                    EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.CREATURE)
+                    EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.MONSTER)
+                            .fireImmune()
                             .sized(0.8F, 0.95F)   // set size you want
                             .build(NetherHexedKingdom.MODID + ":gargoyle_possessed")
             );

@@ -37,6 +37,8 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedRedSunTowerStructure>> HEXED_RED_SUN_TOWER_STRUCTURE = STRUCTURE_TYPES.register("hexed_red_sun_tower_structure", () -> explicitStructureTypeTyping(HexedRedSunTowerStructure.CODEC));
 
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedIronCladStructure>> HEXED_IRON_CLAD_STRUCTURE = STRUCTURE_TYPES.register("hexed_iron_clad_structure", () -> explicitStructureTypeTyping(HexedIronCladStructure.CODEC));
+
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
     }

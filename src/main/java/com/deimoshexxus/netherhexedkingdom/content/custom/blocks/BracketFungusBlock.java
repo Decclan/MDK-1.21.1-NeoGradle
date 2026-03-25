@@ -28,7 +28,10 @@ public class BracketFungusBlock extends HorizontalDirectionalBlock implements Bo
             Blocks.CRIMSON_STEM,    //.get(),
             Blocks.WARPED_STEM,    //.get()
             Blocks.CRIMSON_HYPHAE,
-            Blocks.WARPED_HYPHAE
+            Blocks.WARPED_HYPHAE,
+            Blocks.OAK_LOG,
+            Blocks.DARK_OAK_LOG,
+            Blocks.SPRUCE_LOG
     };
 
 
