@@ -9,7 +9,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 import java.util.Optional;
 
@@ -17,7 +16,6 @@ public class HexedBullionTempleStructure extends Structure {
 
     public static final MapCodec<HexedBullionTempleStructure> CODEC =
             simpleCodec(HexedBullionTempleStructure::new);
-
 
     private static final ResourceLocation MAIN =
             rl("hexed_bullion_temple");
@@ -29,82 +27,87 @@ public class HexedBullionTempleStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedBullionTemple] findGenerationPoint called");
-
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedBullionTemple] Chunk {}, evaluating position x={}, z={}",
-                chunkPos, x, z
-        );
-
-        // --- SAFE NETHER RANGE ---
-        int minY = 64;
+        // --- EMBEDDED RANGE (Nether mid-body, avoids lava oceans & roof) ---
+        int minY = 48;
         int maxY = 96;
 
-        int startY = context.random().nextInt(minY, maxY);
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedBullionTemple] Starting vertical scan at Y={}",
-                startY
+        // Try multiple attempts to find a good embedded location
+        for (int attempt = 0; attempt < 5; attempt++) {
+
+            int y = context.random().nextIntBetweenInclusive(minY, maxY);
+            BlockPos center = new BlockPos(x, y, z);
+
+            // Validate terrain density (we want mostly solid)
+            if (!isValidEmbedding(context, center)) {
+                continue;
+            }
+
+            Rotation rotation = Rotation.getRandom(context.random());
+
+            NetherHexedKingdom.LOGGER.debug(
+                    "[HexedBullionTemple] SUCCESS at {} rot={} attempt={}",
+                    center,
+                    rotation,
+                    attempt
+            );
+
+            return Optional.of(new GenerationStub(center, builder -> {
+                builder.addPiece(new HexedBullionTemplePiece(
+                        context.structureTemplateManager(),
+                        MAIN,
+                        center,
+                        rotation,
+                        0
+                ));
+            }));
+        }
+
+        // Failed all attempts
+        NetherHexedKingdom.LOGGER.debug(
+                "[HexedBullionTemple] FAILED in chunk {}",
+                chunkPos
         );
 
+        return Optional.empty();
+    }
+
+    /**
+     * Ensures the structure is embedded in terrain (not floating or exposed).
+     */
+    private boolean isValidEmbedding(GenerationContext context, BlockPos center) {
+
         var column = context.chunkGenerator().getBaseColumn(
-                x,
-                z,
+                center.getX(),
+                center.getZ(),
                 context.heightAccessor(),
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
+        int solid = 0;
+        int total = 0;
 
-        // Walk downward to find solid ground
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
-                break;
+        // Sample a vertical slice around the center
+        for (int dy = -6; dy <= 6; dy++) {
+            int y = center.getY() + dy;
+
+            if (y < context.heightAccessor().getMinBuildHeight() ||
+                    y > context.heightAccessor().getMaxBuildHeight()) {
+                continue;
             }
-            y--;
+
+            total++;
+
+            if (column.getBlock(y).canOcclude()) {
+                solid++;
+            }
         }
 
-        if (!foundGround) {
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedBullionTemple] No solid ground found in chunk {}, aborting",
-                    chunkPos
-            );
-            return Optional.empty();
-        }
-
-        BlockPos basePos = new BlockPos(x, y + 1, z);
-        Rotation rotation = Rotation.getRandom(context.random());
-
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedBullionTemple] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
-        );
-
-        return Optional.of(new GenerationStub(basePos, builder -> {
-
-            StructureTemplateManager manager =
-                    context.structureTemplateManager();
-
-            // --- BASE ---
-            builder.addPiece(new HexedBullionTemplePiece(
-                    manager,
-                    MAIN,
-                    basePos,
-                    rotation,
-                    0
-            ));
-
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedBullionTemple] Structure assembled successfully at {}",
-                    basePos
-            );
-        }));
+        // Require at least 70% solid blocks → embedded in terrain
+        return total > 0 && ((float) solid / total) >= 0.7f;
     }
 
     @Override

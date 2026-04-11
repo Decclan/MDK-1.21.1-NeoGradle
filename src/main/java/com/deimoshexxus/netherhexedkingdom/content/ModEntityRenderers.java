@@ -14,6 +14,7 @@ public class ModEntityRenderers {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.DECAYED_ZOMBIE.get(), DecayedZombieRenderer::new);
         event.registerEntityRenderer(ModEntities.DECAYED_ZOMBIE_HUSK.get(), DecayedZombieHuskRenderer::new);
+        event.registerEntityRenderer(ModEntities.DECAYED_MUMMY.get(), DecayedMummyRenderer::new);
         event.registerEntityRenderer(ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(), DecayedZombifiedPiglinRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXAN_GUARD.get(), HexanGuardRenderer::new);
         event.registerEntityRenderer(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedRenderer::new);

@@ -174,6 +174,16 @@ public class ModItems {
                     )
             );
 
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_MUMMY_SPAWN_EGG =
+            ITEMS.register("decayed_mummy_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.DECAYED_MUMMY,
+                            0x7b8a67,
+                            0xa19985,
+                            new Item.Properties()
+                    )
+            );
+
     public static final DeferredHolder<Item, DeferredSpawnEggItem> DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG =
             ITEMS.register("decayed_zombified_piglin_spawn_egg", () ->
                     new DeferredSpawnEggItem(
