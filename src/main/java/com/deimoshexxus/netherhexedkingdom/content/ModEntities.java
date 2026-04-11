@@ -29,6 +29,13 @@ public class ModEntities {
                             .build(NetherHexedKingdom.MODID + ":decayed_zombie_husk")
             );
 
+    public static final DeferredHolder<EntityType<?>, EntityType<DecayedZombieHuskEntity>> DECAYED_MUMMY =
+            ENTITY_TYPES.register("decayed_mummy", () ->
+                    EntityType.Builder.of(DecayedZombieHuskEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F)
+                            .build(NetherHexedKingdom.MODID + ":decayed_mummy")
+            );
+
     public static final DeferredHolder<EntityType<?>, EntityType<DecayedZombifiedPiglinEntity>> DECAYED_ZOMBIFIED_PIGLIN =
             ENTITY_TYPES.register("decayed_zombified_piglin",
                     () -> EntityType.Builder.of(
@@ -50,7 +57,7 @@ public class ModEntities {
             ENTITY_TYPES.register("gargoyle_possessed", () ->
                     EntityType.Builder.of(GargoylePossessedEntity::new, MobCategory.MONSTER)
                             .fireImmune()
-                            .sized(0.8F, 0.95F)   // set size you want
+                            .sized(0.8F, 0.95F) 
                             .build(NetherHexedKingdom.MODID + ":gargoyle_possessed")
             );
 

@@ -2,6 +2,7 @@ package com.deimoshexxus.netherhexedkingdom;
 
 import com.deimoshexxus.netherhexedkingdom.client.ModModelLayers;
 import com.deimoshexxus.netherhexedkingdom.client.model.HexanGuardModel;
+import com.deimoshexxus.netherhexedkingdom.client.renderer.DecayedMummyRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.DecayedZombieHuskRenderer;
 import com.deimoshexxus.netherhexedkingdom.client.renderer.DecayedZombieRenderer;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
@@ -66,6 +67,9 @@ public class NetherHexedKingdomClient {
 
             EntityRenderers.register(ModEntities.DECAYED_ZOMBIE_HUSK.get(),
                     DecayedZombieHuskRenderer::new);
+
+            EntityRenderers.register(ModEntities.DECAYED_MUMMY.get(),
+                    DecayedMummyRenderer::new);
 
             EntityRenderers.register(ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(),
                     com.deimoshexxus.netherhexedkingdom.client.renderer.DecayedZombifiedPiglinRenderer::new);

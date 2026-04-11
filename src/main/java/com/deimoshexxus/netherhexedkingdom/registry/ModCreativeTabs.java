@@ -32,6 +32,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.IMPERIAL_COINS.get());
                         output.accept(ModItems.DECAYED_ZOMBIE_SPAWN_EGG.get());
                         output.accept(ModItems.DECAYED_ZOMBIE_HUSK_SPAWN_EGG.get());
+                        output.accept(ModItems.DECAYED_MUMMY_SPAWN_EGG.get());
                         output.accept(ModItems.DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG.get());
                         output.accept(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
                         output.accept(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
@@ -45,7 +46,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.MASONIAE_MUSHROOM_ITEM.get());
                         output.accept(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
                         output.accept(ModItems.NETHER_PORTAL_ORB.get());
-
 
                         // Blocks
                         output.accept(ModBlocks.MILITUS_ALLOY_BLOCK.get());

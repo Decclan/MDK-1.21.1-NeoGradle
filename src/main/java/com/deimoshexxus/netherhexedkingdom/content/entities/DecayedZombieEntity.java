@@ -23,6 +23,7 @@ public class DecayedZombieEntity extends Zombie {
     /** Be sure to register this attribute supplier on the EntityAttributeCreationEvent. */
     public static AttributeSupplier.Builder createAttributes() {
         return Zombie.createAttributes() // reuse zombie defaults
+                .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.23D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D);

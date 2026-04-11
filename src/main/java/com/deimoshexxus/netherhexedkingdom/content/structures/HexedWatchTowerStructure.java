@@ -11,6 +11,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.level.chunk.BlockColumn;
 
 import java.util.Optional;
 
@@ -19,11 +20,8 @@ public class HexedWatchTowerStructure extends Structure {
     public static final MapCodec<HexedWatchTowerStructure> CODEC =
             simpleCodec(HexedWatchTowerStructure::new);
 
-    private static final ResourceLocation FOUNDATION =
-            rl("hexed_watch_tower_foundation");
-
-    private static final ResourceLocation BASE =
-            rl("hexed_watch_tower_base");
+    private static final ResourceLocation FOUNDATION = rl("hexed_watch_tower_foundation");
+    private static final ResourceLocation BASE = rl("hexed_watch_tower_base");
 
     private static final ResourceLocation[] COLUMNS = {
             rl("hexed_watch_tower_column"),
@@ -50,124 +48,95 @@ public class HexedWatchTowerStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedWatchTower] findGenerationPoint called");
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMiddleBlockX();
+        int z = chunk.getMiddleBlockZ();
 
-        ChunkPos chunkPos = context.chunkPos();
-        int centerX = chunkPos.getMiddleBlockX();
-        int centerZ = chunkPos.getMiddleBlockZ();
-
-        // --- SAFE NETHER RANGE ---
         int minY = 32;
         int maxY = 90;
 
         int startY = context.random().nextInt(minY, maxY);
 
         var column = context.chunkGenerator().getBaseColumn(
-                centerX,
-                centerZ,
+                x, z,
                 context.heightAccessor(),
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
-
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
-                break;
-            }
-            y--;
-        }
-
-        if (!foundGround) {
-            return Optional.empty();
-        }
+        int groundY = findGround(column, startY, minY);
+        if (groundY == -1) return Optional.empty();
 
         Rotation rotation = Rotation.getRandom(context.random());
-
         StructureTemplateManager manager = context.structureTemplateManager();
-        StructureTemplate baseTemplate = manager.getOrCreate(BASE);
 
-        // --- CENTER THE BASE TEMPLATE ---
+        // --- LOAD TEMPLATES ONCE ---
+        StructureTemplate base = manager.getOrCreate(BASE);
+        StructureTemplate foundation = manager.getOrCreate(FOUNDATION);
+
+        ResourceLocation columnId = COLUMNS[context.random().nextInt(COLUMNS.length)];
+        StructureTemplate columnTemplate = manager.getOrCreate(columnId);
+
+        ResourceLocation topId = TOPS[context.random().nextInt(TOPS.length)];
+        StructureTemplate topTemplate = manager.getOrCreate(topId);
+
+        // --- ROTATION-AWARE SIZE ---
+        var baseSize = base.getSize(rotation);
+        var foundationSize = foundation.getSize(rotation);
+        var columnSize = columnTemplate.getSize(rotation);
+
+        // --- CENTER BASE CORRECTLY ---
         BlockPos basePos = new BlockPos(
-                centerX - baseTemplate.getSize().getX() / 2,
-                y + 1,
-                centerZ - baseTemplate.getSize().getZ() / 2
-        );
-
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedWatchTower] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
+                x - baseSize.getX() / 2,
+                groundY + 1,
+                z - baseSize.getZ() / 2
         );
 
         return Optional.of(new GenerationStub(basePos, builder -> {
 
-            // --- BASE ---
-            builder.addPiece(new HexedWatchTowerPiece(
-                    manager,
-                    BASE,
-                    basePos,
-                    rotation,
-                    0
-            ));
+            int currentY = basePos.getY();
 
-            // --- FOUNDATION ---
-            StructureTemplate foundationTemplate =
-                    manager.getOrCreate(FOUNDATION);
+            // FOUNDATION
+            currentY -= foundationSize.getY();
+            builder.addPiece(piece(manager, FOUNDATION, basePos.atY(currentY), rotation, -1));
 
-            int foundationY =
-                    basePos.getY() - foundationTemplate.getSize().getY();
+            // BASE
+            currentY += foundationSize.getY();
+            builder.addPiece(piece(manager, BASE, basePos, rotation, 0));
 
-            builder.addPiece(new HexedWatchTowerPiece(
-                    manager,
-                    FOUNDATION,
-                    new BlockPos(basePos.getX(), foundationY, basePos.getZ()),
-                    rotation,
-                    -1
-            ));
+            // COLUMN
+            currentY += baseSize.getY();
+            builder.addPiece(piece(manager, columnId, basePos.atY(currentY), rotation, 1));
 
-            // --- COLUMN ---
-            ResourceLocation columnPiece =
-                    COLUMNS[context.random().nextInt(COLUMNS.length)];
+            // TOP
+            currentY += columnSize.getY();
+            builder.addPiece(piece(manager, topId, basePos.atY(currentY), rotation, 2));
 
-            StructureTemplate columnTemplate =
-                    manager.getOrCreate(columnPiece);
-
-            int columnY =
-                    basePos.getY() + baseTemplate.getSize().getY();
-
-            builder.addPiece(new HexedWatchTowerPiece(
-                    manager,
-                    columnPiece,
-                    new BlockPos(basePos.getX(), columnY, basePos.getZ()),
-                    rotation,
-                    1
-            ));
-
-            // --- TOP ---
-            ResourceLocation topPiece =
-                    TOPS[context.random().nextInt(TOPS.length)];
-
-            StructureTemplate topTemplate =
-                    manager.getOrCreate(topPiece);
-
-            int topY =
-                    columnY + columnTemplate.getSize().getY();
-
-            builder.addPiece(new HexedWatchTowerPiece(
-                    manager,
-                    topPiece,
-                    new BlockPos(basePos.getX(), topY, basePos.getZ()),
-                    rotation,
-                    2
-            ));
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedWatchTower] Structure assembled successfully at {}",
-                    basePos
+            NetherHexedKingdom.LOGGER.debug(
+                    "[WatchTower] Generated at {} (groundY={})",
+                    basePos, groundY
             );
         }));
+    }
+
+    // --- HELPERS ---
+
+    private static int findGround(BlockColumn column, int startY, int minY) {
+        for (int y = startY; y >= minY; y--) {
+            if (column.getBlock(y).canOcclude()) {
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    private static HexedWatchTowerPiece piece(
+            StructureTemplateManager manager,
+            ResourceLocation id,
+            BlockPos pos,
+            Rotation rotation,
+            int depth
+    ) {
+        return new HexedWatchTowerPiece(manager, id, pos, rotation, depth);
     }
 
     @Override

@@ -16,6 +16,7 @@ public class ModEntityAttributes {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.DECAYED_ZOMBIE.get(), DecayedZombieEntity.createAttributes().build());
         event.put(ModEntities.DECAYED_ZOMBIE_HUSK.get(), DecayedZombieHuskEntity.createAttributes().build());
+        event.put(ModEntities.DECAYED_MUMMY.get(), DecayedZombieHuskEntity.createAttributes().build());
         event.put(ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(), DecayedZombieHuskEntity.createAttributes().build());
         event.put(ModEntities.HEXAN_GUARD.get(), HexanGuardEntity.createAttributes().build());
         event.put(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedEntity.createAttributes().build());
