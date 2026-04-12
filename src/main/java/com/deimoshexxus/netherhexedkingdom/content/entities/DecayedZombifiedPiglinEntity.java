@@ -74,7 +74,6 @@ public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
         return true;
     }
 
-
     public static AttributeSupplier.Builder createAttributes() {
         return ZombifiedPiglin.createAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.35D)

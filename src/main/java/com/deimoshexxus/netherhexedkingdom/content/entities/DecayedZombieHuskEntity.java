@@ -29,8 +29,8 @@ public class DecayedZombieHuskEntity extends Zombie {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        super.registerGoals(); // keep vanilla behavior
+        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.2D)); // modify/add
     }
 
     @Override
@@ -53,6 +53,11 @@ public class DecayedZombieHuskEntity extends Zombie {
     }
 
     @Override
+    public boolean isSunSensitive() {
+        return false;
+    }
+
+    @Override
     protected void playStepSound(BlockPos pos, BlockState block) {
         this.playSound(this.getStepSound(), 0.15F, 1.0F);
     }
@@ -60,7 +65,7 @@ public class DecayedZombieHuskEntity extends Zombie {
     /** Be sure to register this attribute supplier on the EntityAttributeCreationEvent. */
     public static AttributeSupplier.Builder createAttributes() {
         return Zombie.createAttributes() // reuse zombie defaults
-                .add(Attributes.FOLLOW_RANGE, 35.0)
+                .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 3.5D);

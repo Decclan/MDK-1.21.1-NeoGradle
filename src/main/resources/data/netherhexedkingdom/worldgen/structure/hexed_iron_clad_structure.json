@@ -6,19 +6,7 @@
 
   "terrain_adaptation": "none",
 
-  "spawn_overrides": {
-    "monster": {
-      "bounding_box": "piece",
-      "spawns": [
-        {
-          "type": "netherhexedkingdom:hexan_guard",
-          "weight": 1,
-          "minCount": 2,
-          "maxCount": 2
-        }
-      ]
-    }
-  },
+  "spawn_overrides": {},
 
   "start_height": {
     "absolute": 0
