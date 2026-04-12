@@ -63,7 +63,8 @@ public class HexedBloodPyramidStructure extends Structure {
         StructureTemplateManager manager = context.structureTemplateManager();
         StructureTemplate cornerTemplate = manager.getOrCreate(CORNER);
 
-        var size = cornerTemplate.getSize(Rotation.NONE);
+        var sizeVec = cornerTemplate.getSize(Rotation.NONE);
+        BlockPos size = new BlockPos(sizeVec);
 
         Rotation baseRotation = Rotation.getRandom(context.random());
 
@@ -86,22 +87,30 @@ public class HexedBloodPyramidStructure extends Structure {
 
             for (int i = 0; i < 4; i++) {
 
-                // Correct inward-facing rotations
+                // Correct inward-facing rotations. correct but opposite
                 Rotation localRotation = switch (i) {
-                    case 0 -> Rotation.NONE;
+                    case 0 -> Rotation.CLOCKWISE_180;
                     case 1 -> Rotation.CLOCKWISE_90;
                     case 2 -> Rotation.COUNTERCLOCKWISE_90;
-                    case 3 -> Rotation.CLOCKWISE_180;
+                    case 3 -> Rotation.NONE;
                     default -> Rotation.NONE;
                 };
 
                 Rotation finalRotation = localRotation.getRotated(baseRotation);
 
-                // ✅ Rotate offset into world space
+                // Rotate grid position first
                 BlockPos rotatedOffset = rotateOffset(localOffsets[i], baseRotation);
-                BlockPos piecePos = startPos.offset(rotatedOffset);
 
-                // ✅ FOUNDATION ONLY FOR FIRST TILE
+                // apply pivot correction for the STRUCTURE ROTATION
+                BlockPos pivotFix = getPivotCorrection(size, finalRotation);
+
+                // FINAL position
+                BlockPos piecePos = startPos
+                        .offset(rotatedOffset)
+                        .offset(pivotFix);
+
+
+                // FOUNDATION ONLY FOR FIRST TILE
                 if (i == 0) {
                     ResourceLocation foundationId =
                             FOUNDATIONS[context.random().nextInt(FOUNDATIONS.length)];
@@ -167,6 +176,15 @@ public class HexedBloodPyramidStructure extends Structure {
             case CLOCKWISE_90 -> new BlockPos(-offset.getZ(), offset.getY(), offset.getX());
             case CLOCKWISE_180 -> new BlockPos(-offset.getX(), offset.getY(), -offset.getZ());
             case COUNTERCLOCKWISE_90 -> new BlockPos(offset.getZ(), offset.getY(), -offset.getX());
+        };
+    }
+
+    private static BlockPos getPivotCorrection(BlockPos size, Rotation rotation) {
+        return switch (rotation) {
+            case NONE -> BlockPos.ZERO;
+            case CLOCKWISE_90 -> new BlockPos(0, 0, -size.getX());
+            case CLOCKWISE_180 -> new BlockPos(-size.getX(), 0, -size.getZ());
+            case COUNTERCLOCKWISE_90 -> new BlockPos(-size.getZ(), 0, 0);
         };
     }
 
