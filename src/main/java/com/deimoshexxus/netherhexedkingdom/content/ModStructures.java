@@ -39,6 +39,8 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructureType<?>, StructureType<HexedIronCladStructure>> HEXED_IRON_CLAD_STRUCTURE = STRUCTURE_TYPES.register("hexed_iron_clad_structure", () -> explicitStructureTypeTyping(HexedIronCladStructure.CODEC));
 
+    public static final DeferredHolder<StructureType<?>, StructureType<HexedBloodPyramidStructure>> HEXED_BLOOD_PYRAMID_STRUCTURE = STRUCTURE_TYPES.register("hexed_blood_pyramid_structure", () -> explicitStructureTypeTyping(HexedBloodPyramidStructure.CODEC));
+
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
     }

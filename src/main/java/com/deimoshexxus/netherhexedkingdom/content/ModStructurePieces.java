@@ -75,5 +75,11 @@ public final class ModStructurePieces {
             () -> HexedIronCladPiece::new
     );
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+            HEXED_BLOOD_PYRAMID_PIECE = STRUCTURE_PIECES.register(
+            "hexed_blood_pyramid_piece",
+            () -> HexedBloodPyramidPiece::new
+    );
+
 }
 
