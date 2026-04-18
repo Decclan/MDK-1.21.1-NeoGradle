@@ -108,8 +108,12 @@ public class GasSourceBlock extends Block {
     }
 
     private void createGasCloud(ServerLevel level, BlockPos sourcePos) {
-        // --- (1) Place plus-shape (cardinal) children at y = source ---
 
+        if (!canVent(level, sourcePos)) {
+            return;
+        }
+
+        // --- (1) Place plus-shape (cardinal) children at y = source ---
         int[][] PATTERN_OFFSETS = {
                 {0, -1}, // north
                 {0,  1}, // south
@@ -164,6 +168,17 @@ public class GasSourceBlock extends Block {
         }
     }
 
+    // Prevents leaking when blocked
+    private boolean canVent(Level level, BlockPos pos) {
+        for (BlockPos nb : new BlockPos[]{
+                pos.north(), pos.south(), pos.east(), pos.west(), pos.above()
+        }) {
+            if (GasUtil.isPassableOrGas(level, nb)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void placePatternCloud(ServerLevel level, BlockPos sourcePos, Set<BlockPos> reachable) {
 
