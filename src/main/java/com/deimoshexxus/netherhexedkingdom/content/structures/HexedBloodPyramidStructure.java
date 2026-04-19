@@ -79,33 +79,26 @@ public class HexedBloodPyramidStructure extends Structure {
 
             // Local 2x2 offsets (unrotated)
             BlockPos[] localOffsets = new BlockPos[] {
-                    new BlockPos(0, 0, 0),                         // NW (tile 0)
-                    new BlockPos(size.getX(), 0, 0),               // NE (tile 1)
-                    new BlockPos(0, 0, size.getZ()),               // SW (tile 2)
-                    new BlockPos(size.getX(), 0, size.getZ())      // SE (tile 3)
+                    new BlockPos(0, 0, 0),
+                    new BlockPos(size.getX(), 0, 0),
+                    new BlockPos(0, 0, size.getZ()),
+                    new BlockPos(size.getX(), 0, size.getZ())
             };
 
-            // --- PRESELECT 4 UNIQUE FOUNDATIONS ---
-            int[] indices = new int[FOUNDATIONS.length];
-            for (int i = 0; i < indices.length; i++) {
-                indices[i] = i;
+            // --- SELECT 4 UNIQUE FOUNDATIONS ---
+            ResourceLocation[] selected = new ResourceLocation[4];
+            boolean[] used = new boolean[FOUNDATIONS.length];
+
+            for (int j = 0; j < 4; j++) {
+                int idx;
+                do {
+                    idx = context.random().nextInt(FOUNDATIONS.length);
+                } while (used[idx]);
+
+                used[idx] = true;
+                selected[j] = FOUNDATIONS[idx];
             }
 
-            // Fisher–Yates shuffle
-            for (int i = indices.length - 1; i > 0; i--) {
-                int j = context.random().nextInt(i + 1);
-                int temp = indices[i];
-                indices[i] = indices[j];
-                indices[j] = temp;
-            }
-
-            // First 4 are guaranteed unique
-            ResourceLocation[] selectedFoundations = new ResourceLocation[4];
-            for (int i = 0; i < 4; i++) {
-                selectedFoundations[i] = FOUNDATIONS[indices[i]];
-            }
-
-            // --- GENERATION LOOP ---
             for (int i = 0; i < 4; i++) {
 
                 Rotation localRotation = switch (i) {
@@ -118,29 +111,27 @@ public class HexedBloodPyramidStructure extends Structure {
 
                 Rotation finalRotation = localRotation.getRotated(baseRotation);
 
-                BlockPos centerOffset = new BlockPos(size.getX(), 0, size.getZ()); // center of 2x2 grid
-
-                BlockPos shifted = localOffsets[i].subtract(centerOffset);
-                BlockPos rotated = rotateOffset(shifted, baseRotation);
-                BlockPos rotatedOffset = rotated.offset(centerOffset);
-
-                // apply pivot correction for the STRUCTURE ROTATION
+                // ORIGINAL (WORKING) POSITION LOGIC — UNCHANGED
+                BlockPos rotatedOffset = rotateOffset(localOffsets[i], baseRotation);
                 BlockPos pivotFix = getPivotCorrection(size, finalRotation);
 
-                // FINAL position
                 BlockPos piecePos = startPos
                         .offset(rotatedOffset)
                         .offset(pivotFix);
 
-                // --- FOUNDATION (NOW FOR ALL 4, UNIQUE) ---
-                ResourceLocation foundationId = selectedFoundations[i];
+                // --- FOUNDATION (ALL 4, UNIQUE, FIXED HEIGHT) ---
+                ResourceLocation foundationId = selected[i];
 
-                StructureTemplate foundationTemplate =
-                        manager.getOrCreate(foundationId);
+                StructureTemplate foundationTemplate = manager.getOrCreate(foundationId);
 
-                var foundationSize = foundationTemplate.getSize(finalRotation);
+// get correct height
+                int foundationDepth = foundationTemplate.getSize(finalRotation).getY();
 
-                BlockPos foundationPos = piecePos.below(foundationSize.getY());
+// place foundation so its TOP aligns exactly with corner base
+                BlockPos foundationPos = piecePos.below(foundationDepth);
+
+// slight safety offset (prevents bounding box merge/cull edge case)
+                foundationPos = foundationPos.offset(0, -1, 0);
 
                 builder.addPiece(piece(
                         manager,
@@ -150,7 +141,7 @@ public class HexedBloodPyramidStructure extends Structure {
                         -1
                 ));
 
-                // --- CORNER PIECE (UNCHANGED) ---
+                // --- CORNER ---
                 builder.addPiece(piece(
                         manager,
                         CORNER,

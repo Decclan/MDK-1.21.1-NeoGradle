@@ -148,11 +148,91 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 id, size
         );
 
-        // 1.21+ CORRECT validity check
-        if (size.equals(BlockPos.ZERO)) {
+        // --- ROTATION-AWARE SIZE ---
+        BlockPos rotatedSize = switch (rotation) {
+            case CLOCKWISE_90, COUNTERCLOCKWISE_90 ->
+                    new BlockPos(size.getZ(), size.getY(), size.getX());
+            default ->
+                    new BlockPos(size.getX(), size.getY(), size.getZ());
+        };
+
+        // --- COMPUTE BOUNDS ---
+        BlockPos min = origin;
+        BlockPos max = origin.offset(
+                rotatedSize.getX() - 1,
+                rotatedSize.getY() - 1,
+                rotatedSize.getZ() - 1
+        );
+
+        // --- HEIGHT LIMITS ---
+        int minY = level.getMinBuildHeight();
+        int maxY = level.getMaxBuildHeight() - 1;
+
+        // Compute how much we need to move
+        int shiftUp = 0;
+        int shiftDown = 0;
+
+        if (min.getY() < minY) {
+            shiftUp = minY - min.getY();
+        }
+
+        if (max.getY() > maxY) {
+            shiftDown = max.getY() - maxY;
+        }
+
+        int structureHeight = rotatedSize.getY();
+        int worldHeight = maxY - minY + 1;
+
+        if (structureHeight > worldHeight) {
+            LOGGER.warn(
+                    "Structure {} too tall for dimension: height={} allowed={}",
+                    id, structureHeight, worldHeight
+            );
+            return false;
+        }
+
+        // Apply vertical adjustment
+        int yOffset = shiftUp - shiftDown;
+
+        if (yOffset != 0) {
+            origin = origin.offset(0, yOffset, 0);
+
+            // Recompute bounds after shift
+            min = origin;
+            max = origin.offset(
+                    rotatedSize.getX() - 1,
+                    rotatedSize.getY() - 1,
+                    rotatedSize.getZ() - 1
+            );
+
+            LOGGER.info(
+                    "Adjusted structure {} vertically by {} to fit bounds. New: {} -> {}",
+                    id, yOffset, min, max
+            );
+        }
+
+        // --- WORLD BORDER CHECK ---
+        BlockPos corner1 = min;
+        BlockPos corner2 = new BlockPos(max.getX(), min.getY(), min.getZ());
+        BlockPos corner3 = new BlockPos(min.getX(), min.getY(), max.getZ());
+        BlockPos corner4 = max;
+
+        if (!level.getWorldBorder().isWithinBounds(corner1) ||
+                !level.getWorldBorder().isWithinBounds(corner2) ||
+                !level.getWorldBorder().isWithinBounds(corner3) ||
+                !level.getWorldBorder().isWithinBounds(corner4)) {
+
+            LOGGER.warn(
+                    "Structure {} exceeds world border: {} -> {}",
+                    id, min, max
+            );
+            return false;
+        }
+
+        if (min.getY() < minY || max.getY() > maxY) {
             LOGGER.error(
-                    "Structure {} is EMPTY — resource not found or shadowed by another pack",
-                    id
+                    "Structure {} still out of bounds after adjustment: {} -> {}",
+                    id, min, max
             );
             return false;
         }
