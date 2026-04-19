@@ -20,25 +20,25 @@ public class HexedWatchTowerStructure extends Structure {
     public static final MapCodec<HexedWatchTowerStructure> CODEC =
             simpleCodec(HexedWatchTowerStructure::new);
 
-    private static final ResourceLocation FOUNDATION = rl("hexed_watch_tower_foundation");
-    private static final ResourceLocation BASE = rl("hexed_watch_tower_base");
+    private static final ResourceLocation FOUNDATION = rl("hexed_watch_tower/hexed_watch_tower_foundation");
+    private static final ResourceLocation BASE = rl("hexed_watch_tower/hexed_watch_tower_base");
 
     private static final ResourceLocation[] COLUMNS = {
-            rl("hexed_watch_tower_column"),
-            rl("hexed_watch_tower_column_2"),
-            rl("hexed_watch_tower_column_3"),
-            rl("hexed_watch_tower_column_4"),
-            rl("hexed_watch_tower_column_5"),
-            rl("hexed_watch_tower_column_6")
+            rl("hexed_watch_tower/hexed_watch_tower_column_1"),
+            rl("hexed_watch_tower/hexed_watch_tower_column_2"),
+            rl("hexed_watch_tower/hexed_watch_tower_column_3"),
+            rl("hexed_watch_tower/hexed_watch_tower_column_4"),
+            rl("hexed_watch_tower/hexed_watch_tower_column_5"),
+            rl("hexed_watch_tower/hexed_watch_tower_column_6")
     };
 
     private static final ResourceLocation[] TOPS = {
-            rl("hexed_watch_tower_top"),
-            rl("hexed_watch_tower_top_2"),
-            rl("hexed_watch_tower_top_3"),
-            rl("hexed_watch_tower_top_4"),
-            rl("hexed_watch_tower_top_5"),
-            rl("hexed_watch_tower_top_6")
+            rl("hexed_watch_tower/hexed_watch_tower_top_1"),
+            rl("hexed_watch_tower/hexed_watch_tower_top_2"),
+            rl("hexed_watch_tower/hexed_watch_tower_top_3"),
+            rl("hexed_watch_tower/hexed_watch_tower_top_4"),
+            rl("hexed_watch_tower/hexed_watch_tower_top_5"),
+            rl("hexed_watch_tower/hexed_watch_tower_top_6")
     };
 
     public HexedWatchTowerStructure(StructureSettings settings) {
