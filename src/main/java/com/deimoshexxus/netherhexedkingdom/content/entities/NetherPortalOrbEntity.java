@@ -16,7 +16,6 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -118,37 +117,40 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
 
         Rotation rotation = getRotationFromOwner();
 
-        BlockPos portalOrigin =
-                centerPos.offset(rotateOffset(PORTAL_OFFSET, rotation));
-
-        BlockPos baseOrigin =
-                centerPos.offset(rotateOffset(BASE_OFFSET, rotation));
-
-        boolean portalPlaced = placeTemplate(level, PORTAL_ID, portalOrigin, rotation);
-
-        // If portal fails, HARD FAIL immediately
-        if (!portalPlaced) {
-            LOGGER.warn("Portal placement failed → aborting full operation");
+        // 1. Find a SAFE anchor first (this is the fix)
+        BlockPos anchor = findSafeAnchor(level, centerPos);
+        if (anchor == null) {
+            LOGGER.warn("No valid anchor found at {}", centerPos);
             return false;
         }
 
-        // Base is OPTIONAL (soft failure allowed)
+        BlockPos portalOrigin = anchor.offset(rotateOffset(PORTAL_OFFSET, rotation));
+        BlockPos baseOrigin   = portalOrigin.below(3); // 🔥 FIX: always directly under portal
+
+        boolean portalPlaced = placeTemplate(level, PORTAL_ID, portalOrigin, rotation);
+
+        if (!portalPlaced) {
+            LOGGER.warn("Portal placement failed → aborting");
+            return false;
+        }
+
+        // Base is now deterministic relative to portal, NOT centerPos
         boolean basePlaced = placeTemplate(level, BASE_ID, baseOrigin, rotation);
 
         if (!basePlaced) {
-            LOGGER.warn("Base failed but portal succeeded → treating as SUCCESS");
+            LOGGER.warn("Base failed but portal succeeded → continuing");
         }
 
         level.playSound(
                 null,
-                centerPos,
+                portalOrigin,
                 SoundEvents.PORTAL_TRIGGER,
                 SoundSource.BLOCKS,
                 1.5F,
                 0.9F + level.random.nextFloat() * 0.2F
         );
 
-        spawnPortalParticles(level, centerPos, rotation);
+        spawnPortalParticles(level, portalOrigin, rotation);
 
         return true;
     }
@@ -197,7 +199,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
         boolean foundGround = false;
 
         for (int i = 0; i < 128; i++) {
-            if (!level.getBlockState(cursor).isAir()) {
+            if (!level.getBlockState(cursor).canBeReplaced()) {
                 foundGround = true;
                 break;
             }
@@ -228,7 +230,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 return false;
             }
 
-            if (!level.getBlockState(check).isAir()) {
+            if (!level.getBlockState(check).canBeReplaced()) {
                 LOGGER.warn("Blocked space for {} at {}", id, check);
                 return false;
             }
@@ -309,6 +311,30 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                     0.01
             );
         }
+    }
+
+    private BlockPos findSafeAnchor(ServerLevel level, BlockPos start) {
+
+        int minY = level.getMinBuildHeight();
+        int maxY = level.getMaxBuildHeight() - 5; // keep safety margin
+
+        BlockPos.MutableBlockPos pos = start.mutable();
+
+        // Clamp initial Y
+        pos.setY(Math.min(pos.getY(), maxY));
+
+        // 1. go down until we find solid ground
+        while (pos.getY() > minY) {
+            BlockPos below = pos.below();
+
+            if (!level.getBlockState(below).canBeReplaced()) {
+                return below.above(); // stand on top
+            }
+
+            pos.move(0, -1, 0);
+        }
+
+        return null;
     }
 
     private static BlockPos rotateOffset(BlockPos offset, Rotation rotation) {
