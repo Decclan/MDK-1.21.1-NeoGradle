@@ -32,88 +32,142 @@ public class HexedVolcanPitStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedVolcanPit] findGenerationPoint called");
-
         ChunkPos chunkPos = context.chunkPos();
-        int centerX = chunkPos.getMiddleBlockX();
-        int centerZ = chunkPos.getMiddleBlockZ();
+        int x = chunkPos.getMiddleBlockX();
+        int z = chunkPos.getMiddleBlockZ();
 
-        // --- SAFE NETHER RANGE ---
-        int minY = 32;
-        int maxY = 90;
+        int minBuild = context.heightAccessor().getMinBuildHeight();
+        int maxBuild = context.heightAccessor().getMaxBuildHeight();
 
-        int startY = context.random().nextInt(minY, maxY);
+        var generator = context.chunkGenerator();
+        var manager = context.structureTemplateManager();
 
-        var column = context.chunkGenerator().getBaseColumn(
-                centerX,
-                centerZ,
+        StructureTemplate mainTemplate = manager.getOrCreate(MAIN);
+        StructureTemplate foundationTemplate = manager.getOrCreate(FOUNDATION);
+
+        // --- Terrain reference (Basalt Deltas is uneven, so we anchor carefully) ---
+        int surfaceY = generator.getFirstOccupiedHeight(
+                x,
+                z,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 context.heightAccessor(),
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
+        for (int attempt = 0; attempt < 4; attempt++) {
 
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
-                break;
+            // Strong downward bias into basalt delta terrain
+            int yOffset = context.random().nextInt(-18, -4);
+            int y = surfaceY + yOffset;
+
+            // Clamp into valid Nether build space
+            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - 40);
+
+            BlockPos basePos = new BlockPos(
+                    x - mainTemplate.getSize().getX() / 2,
+                    y,
+                    z - mainTemplate.getSize().getZ() / 2
+            );
+
+            Rotation rotation = Rotation.getRandom(context.random());
+
+            var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
+                    .setRotation(rotation);
+
+            var box = mainTemplate.getBoundingBox(settings, basePos);
+
+            // Reject only completely invalid placements
+            if (box.maxY() < minBuild || box.minY() > maxBuild) {
+                continue;
             }
-            y--;
-        }
 
-        if (!foundGround) {
-            return Optional.empty();
-        }
+            if (!isSolidEnough(context, basePos)) {
+                continue;
+            }
 
-        Rotation rotation = Rotation.getRandom(context.random());
+            // --- Foundation placement (correctly anchored under rotated main) ---
+            int foundationY = basePos.getY() - foundationTemplate.getSize().getY();
 
-        StructureTemplateManager manager = context.structureTemplateManager();
-        StructureTemplate baseTemplate = manager.getOrCreate(MAIN);
-
-        // --- CENTER THE MAIN TEMPLATE ---
-        BlockPos basePos = new BlockPos(
-                centerX - baseTemplate.getSize().getX() / 2,
-                y + 1,
-                centerZ - baseTemplate.getSize().getZ() / 2
-        );
-
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedVolcanPit] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
-        );
-
-        return Optional.of(new GenerationStub(basePos, builder -> {
-
-            // --- MAIN ---
-            builder.addPiece(new HexedVolcanPitPiece(
-                    manager,
-                    MAIN,
-                    basePos,
-                    rotation,
-                    0
-            ));
-
-            // --- FOUNDATION ---
-            StructureTemplate foundationTemplate =
-                    manager.getOrCreate(FOUNDATION);
-
-            int foundationY =
-                    basePos.getY() - foundationTemplate.getSize().getY();
-
-            builder.addPiece(new HexedVolcanPitPiece(
-                    manager,
-                    FOUNDATION,
-                    new BlockPos(basePos.getX(), foundationY, basePos.getZ()),
-                    rotation,
-                    -1
-            ));
+            BlockPos foundationPos = new BlockPos(
+                    basePos.getX(),
+                    foundationY,
+                    basePos.getZ()
+            );
 
             NetherHexedKingdom.LOGGER.info(
-                    "[HexedVolcanPit] Structure assembled successfully at {}",
-                    basePos
+                    "[HexedVolcanPit] SUCCESS at {} surfaceY={} offset={} rot={} attempt={}",
+                    basePos,
+                    surfaceY,
+                    yOffset,
+                    rotation,
+                    attempt
             );
-        }));
+
+            return Optional.of(new GenerationStub(basePos, builder -> {
+
+                builder.addPiece(new HexedVolcanPitPiece(
+                        manager,
+                        MAIN,
+                        basePos,
+                        rotation,
+                        0
+                ));
+
+                builder.addPiece(new HexedVolcanPitPiece(
+                        manager,
+                        FOUNDATION,
+                        foundationPos,
+                        rotation,
+                        -1
+                ));
+
+                NetherHexedKingdom.LOGGER.info(
+                        "[HexedVolcanPit] Assembled successfully at {}",
+                        basePos
+                );
+            }));
+        }
+
+        NetherHexedKingdom.LOGGER.debug(
+                "[HexedVolcanPit] Failed to place in chunk {}",
+                chunkPos
+        );
+
+        return Optional.empty();
+    }
+
+    /**
+     * Ensures structure is embedded into basalt terrain instead of floating in air pockets.
+     */
+    private boolean isSolidEnough(GenerationContext context, BlockPos pos) {
+
+        var column = context.chunkGenerator().getBaseColumn(
+                pos.getX(),
+                pos.getZ(),
+                context.heightAccessor(),
+                context.randomState()
+        );
+
+        int solid = 0;
+        int total = 0;
+
+        for (int dy = -6; dy <= 6; dy++) {
+
+            int y = pos.getY() + dy;
+
+            if (y < context.heightAccessor().getMinBuildHeight()
+                    || y > context.heightAccessor().getMaxBuildHeight()) {
+                continue;
+            }
+
+            total++;
+
+            if (column.getBlock(y).canOcclude()) {
+                solid++;
+            }
+        }
+
+        return total > 0 && ((float) solid / total) >= 0.65f;
     }
 
     @Override

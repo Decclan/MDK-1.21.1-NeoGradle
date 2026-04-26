@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 
@@ -31,33 +32,75 @@ public class HexedBullionTempleStructure extends Structure {
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 
-        // --- EMBEDDED RANGE (Nether mid-body, avoids lava oceans & roof) ---
-        int minY = 48;
-        int maxY = 96;
+        // --- Get terrain reference (but DO NOT trust Nether ceiling) ---
+        int surfaceY = context.chunkGenerator().getFirstOccupiedHeight(
+                x,
+                z,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                context.heightAccessor(),
+                context.randomState()
+        );
 
-        // Try multiple attempts to find a good embedded location
-        for (int attempt = 0; attempt < 5; attempt++) {
+        // Hard cap to avoid bedrock ceiling influence
+        surfaceY = Math.min(surfaceY, 110);
 
-            int y = context.random().nextIntBetweenInclusive(minY, maxY);
+        var manager = context.structureTemplateManager();
+        var templateOpt = manager.get(MAIN);
+
+        if (templateOpt.isEmpty()) {
+            NetherHexedKingdom.LOGGER.error(
+                    "[HexedBullionTemple] Missing template {}",
+                    MAIN
+            );
+            return Optional.empty();
+        }
+
+        var template = templateOpt.get();
+        int structureHeight = template.getSize().getY();
+
+        // Try multiple attempts
+        for (int attempt = 0; attempt < 4; attempt++) {
+
+            // --- ALWAYS push downward into terrain ---
+            int yOffset = context.random().nextInt(12, 32);
+            int y = surfaceY - yOffset;
+
+            // Ensure full structure fits under max height
+            y = Math.min(y, 120 - structureHeight);
+
+            // Final clamp (absolute safety)
+            y = net.minecraft.util.Mth.clamp(y, 32, 100);
+
             BlockPos center = new BlockPos(x, y, z);
 
-            // Validate terrain density (we want mostly solid)
             if (!isValidEmbedding(context, center)) {
                 continue;
             }
 
             Rotation rotation = Rotation.getRandom(context.random());
 
+            var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
+                    .setRotation(rotation);
+
+            BoundingBox box = template.getBoundingBox(settings, center);
+
+            // --- STRICT containment check ---
+            if (box.minY() < 32 || box.maxY() > 120) {
+                continue;
+            }
+
             NetherHexedKingdom.LOGGER.debug(
-                    "[HexedBullionTemple] SUCCESS at {} rot={} attempt={}",
+                    "[HexedBullionTemple] SUCCESS at {} (surfaceY={}, offset={}) rot={} attempt={}",
                     center,
+                    surfaceY,
+                    yOffset,
                     rotation,
                     attempt
             );
 
             return Optional.of(new GenerationStub(center, builder -> {
                 builder.addPiece(new HexedBullionTemplePiece(
-                        context.structureTemplateManager(),
+                        manager,
                         MAIN,
                         center,
                         rotation,
@@ -66,7 +109,6 @@ public class HexedBullionTempleStructure extends Structure {
             }));
         }
 
-        // Failed all attempts
         NetherHexedKingdom.LOGGER.debug(
                 "[HexedBullionTemple] FAILED in chunk {}",
                 chunkPos
@@ -90,8 +132,8 @@ public class HexedBullionTempleStructure extends Structure {
         int solid = 0;
         int total = 0;
 
-        // Sample a vertical slice around the center
-        for (int dy = -6; dy <= 6; dy++) {
+        // Wider vertical sampling (better for larger structures)
+        for (int dy = -10; dy <= 10; dy++) {
             int y = center.getY() + dy;
 
             if (y < context.heightAccessor().getMinBuildHeight() ||
@@ -106,8 +148,8 @@ public class HexedBullionTempleStructure extends Structure {
             }
         }
 
-        // Require at least 70% solid blocks → embedded in terrain
-        return total > 0 && ((float) solid / total) >= 0.7f;
+        // Slightly stricter = avoids exposed placements
+        return total > 0 && ((float) solid / total) >= 0.75f;
     }
 
     @Override

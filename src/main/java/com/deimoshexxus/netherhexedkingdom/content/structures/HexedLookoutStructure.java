@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -29,82 +30,88 @@ public class HexedLookoutStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedLookout] findGenerationPoint called");
-
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedLookout] Chunk {}, evaluating position x={}, z={}",
-                chunkPos, x, z
-        );
+        int minBuild = context.heightAccessor().getMinBuildHeight();
+        int maxBuild = context.heightAccessor().getMaxBuildHeight();
 
-        // --- SAFE NETHER RANGE ---
-        int minY = 64;
-        int maxY = 96;
+        var generator = context.chunkGenerator();
 
-        int startY = context.random().nextInt(minY, maxY);
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedLookout] Starting vertical scan at Y={}",
-                startY
-        );
-
-        var column = context.chunkGenerator().getBaseColumn(
+        // Surface reference (Nether "ceiling-aware")
+        int surfaceY = generator.getFirstOccupiedHeight(
                 x,
                 z,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 context.heightAccessor(),
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
+        var manager = context.structureTemplateManager();
+        var templateOpt = manager.get(MAIN);
 
-        // Walk downward to find solid ground
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
-                break;
-            }
-            y--;
-        }
-
-        if (!foundGround) {
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedLookout] No solid ground found in chunk {}, aborting",
-                    chunkPos
-            );
+        if (templateOpt.isEmpty()) {
+            NetherHexedKingdom.LOGGER.error("[HexedLookout] Missing template {}", MAIN);
             return Optional.empty();
         }
 
-        BlockPos basePos = new BlockPos(x, y + 1, z);
-        Rotation rotation = Rotation.getRandom(context.random());
+        var template = templateOpt.get();
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedLookout] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
-        );
+        // --- Try multiple placements ---
+        for (int attempt = 0; attempt < 4; attempt++) {
 
-        return Optional.of(new GenerationStub(basePos, builder -> {
+            // Strong downward bias (keeps it embedded, avoids roof)
+            int yOffset = context.random().nextInt(-24, -6);
+            int y = surfaceY + yOffset;
 
-            StructureTemplateManager manager =
-                    context.structureTemplateManager();
+            // Clamp to actual dimension limits (not hardcoded Nether guesses)
+            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - 8);
 
-            // --- BASE ---
-            builder.addPiece(new HexedLookoutPiece(
-                    manager,
-                    MAIN,
-                    basePos,
-                    rotation,
-                    0
-            ));
+            // Extra protection: avoid Nether roof zone specifically
+            if (y > maxBuild - 20) {
+                continue;
+            }
 
+            BlockPos pos = new BlockPos(x, y, z);
+            Rotation rotation = Rotation.getRandom(context.random());
+
+            var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
+                    .setRotation(rotation);
+
+            BoundingBox box = template.getBoundingBox(settings, pos);
+
+            // Only reject if completely outside playable range
+            if (box.maxY() < minBuild || box.minY() > maxBuild) {
+                continue;
+            }
 
             NetherHexedKingdom.LOGGER.info(
-                    "[HexedLookout] Structure assembled successfully at {}",
-                    basePos
+                    "[HexedLookout] SUCCESS at {} (surfaceY={}, offset={}, attempt={}) rot={}",
+                    pos,
+                    surfaceY,
+                    yOffset,
+                    attempt,
+                    rotation
             );
-        }));
+
+            return Optional.of(new GenerationStub(pos, builder -> {
+                builder.addPiece(new HexedLookoutPiece(
+                        manager,
+                        MAIN,
+                        pos,
+                        rotation,
+                        0
+                ));
+            }));
+        }
+
+        NetherHexedKingdom.LOGGER.debug(
+                "[HexedLookout] Failed to find valid position in chunk {}",
+                chunkPos
+        );
+
+        return Optional.empty();
     }
 
     @Override
