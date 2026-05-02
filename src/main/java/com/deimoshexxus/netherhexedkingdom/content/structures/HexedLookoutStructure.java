@@ -38,8 +38,17 @@ public class HexedLookoutStructure extends Structure {
         int maxBuild = context.heightAccessor().getMaxBuildHeight();
 
         var generator = context.chunkGenerator();
+        var manager = context.structureTemplateManager();
 
-        // Surface reference (Nether "ceiling-aware")
+        var templateOpt = manager.get(MAIN);
+        if (templateOpt.isEmpty()) {
+            NetherHexedKingdom.LOGGER.error("[HexedLookout] Missing template {}", MAIN);
+            return Optional.empty();
+        }
+
+        var template = templateOpt.get();
+
+        // --- Nether-safe surface reference ---
         int surfaceY = generator.getFirstOccupiedHeight(
                 x,
                 z,
@@ -48,51 +57,56 @@ public class HexedLookoutStructure extends Structure {
                 context.randomState()
         );
 
-        var manager = context.structureTemplateManager();
-        var templateOpt = manager.get(MAIN);
+        // Hard cap to ignore Nether ceiling
+        surfaceY = Math.min(surfaceY, 110);
 
-        if (templateOpt.isEmpty()) {
-            NetherHexedKingdom.LOGGER.error("[HexedLookout] Missing template {}", MAIN);
-            return Optional.empty();
-        }
-
-        var template = templateOpt.get();
-
-        // --- Try multiple placements ---
         for (int attempt = 0; attempt < 4; attempt++) {
 
-            // Strong downward bias (keeps it embedded, avoids roof)
-            int yOffset = context.random().nextInt(-24, -6);
-            int y = surfaceY + yOffset;
+            // Push DOWN into terrain (fixes ceiling spawning)
+            int yOffset = context.random().nextInt(6, 24);
+            int y = surfaceY - yOffset;
 
-            // Clamp to actual dimension limits (not hardcoded Nether guesses)
-            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - 8);
+            int structureHeight = template.getSize().getY();
 
-            // Extra protection: avoid Nether roof zone specifically
-            if (y > maxBuild - 20) {
-                continue;
-            }
+            // Clamp using structure height
+            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - structureHeight);
 
-            BlockPos pos = new BlockPos(x, y, z);
             Rotation rotation = Rotation.getRandom(context.random());
 
             var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
                     .setRotation(rotation);
 
+            // --- Rotation aware centering ---
+            var size = template.getSize();
+
+            int sizeX = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.CLOCKWISE_180)
+                    ? size.getZ()
+                    : size.getX();
+
+            int sizeZ = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90)
+                    ? size.getX()
+                    : size.getZ();
+
+            BlockPos pos = new BlockPos(
+                    x - sizeX / 2,
+                    y,
+                    z - sizeZ / 2
+            );
+
             BoundingBox box = template.getBoundingBox(settings, pos);
 
-            // Only reject if completely outside playable range
-            if (box.maxY() < minBuild || box.minY() > maxBuild) {
+            // STRICT bounds check (this is what actually prevents out-of-world placement)
+            if (box.minY() < minBuild || box.maxY() > maxBuild) {
                 continue;
             }
 
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedLookout] SUCCESS at {} (surfaceY={}, offset={}, attempt={}) rot={}",
+            NetherHexedKingdom.LOGGER.debug(
+                    "[HexedLookout] SUCCESS at {} (surfaceY={}, offset={}, rot={}, attempt={})",
                     pos,
                     surfaceY,
                     yOffset,
-                    attempt,
-                    rotation
+                    rotation,
+                    attempt
             );
 
             return Optional.of(new GenerationStub(pos, builder -> {

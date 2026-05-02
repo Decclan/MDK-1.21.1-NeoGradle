@@ -81,8 +81,9 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
 
     public HexanGuardEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.LAVA, 16.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, 8.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, 8.0F);
     }
 
     // safe clear helper
@@ -362,12 +363,12 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         this.targetSelector.addGoal(1, hurtBy);
 
         // 2..n: prefer players, then hostile mobs / villagers / golems etc.
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, /*checkSight*/ true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, /*checkSight*/ true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Villager.class, /*checkSight*/ true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, /*checkSight*/ false)); //checkSight true = stop combat if LOS broken
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, /*checkSight*/ false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Villager.class, /*checkSight*/ false));
         // explicit zombified-type targets or other monsters you want prioritized:
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Piglin.class, /*checkSight*/ true));
-        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, PiglinBrute.class, /*checkSight*/ true));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Piglin.class, /*checkSight*/ false));
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, PiglinBrute.class, /*checkSight*/ false));
 
         // Optional: keep your custom alert goal if you want a custom radius or additional logic.
         // Run this after HurtByTarget which gives the guard a target (lower priority number = higher priority,
@@ -379,21 +380,26 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         // Goals
         // -----------------------
         // Movement and actions: lower numbers = higher priority
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 
-        // variant behavior
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        // Combat first priority. Variant behavior
         if (getVariant() == Variant.MELEE) {
-            this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2D, false));
-            this.goalSelector.addGoal(5, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
+            this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+            this.goalSelector.addGoal(2, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
         } else if (getVariant() == Variant.GRENADIER) {
-            this.goalSelector.addGoal(4, new ThrowGrenadeGoal(this));
-            this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
+            this.goalSelector.addGoal(1, new ThrowGrenadeGoal(this));
+            this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
         } else { // ranged
-            this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0D, 15, 20.0F));
+            this.goalSelector.addGoal(1, new RangedBowAttackGoal<>(this, 1.0D, 15, 20.0F));
+            this.goalSelector.addGoal(2, new BreakDoorGoal(this, difficulty -> difficulty != Difficulty.PEACEFUL));
         }
+
+        // Target-focused looking
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+
+        // Movement
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
         // Avoidance/utility near bottom so attack goals can override when needed
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Cat.class, 8.0F, 1.0, 1.2));

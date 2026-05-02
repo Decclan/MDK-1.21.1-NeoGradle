@@ -5,10 +5,12 @@ import com.deimoshexxus.netherhexedkingdom.content.ModStructures;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
@@ -45,7 +47,7 @@ public class HexedVolcanPitStructure extends Structure {
         StructureTemplate mainTemplate = manager.getOrCreate(MAIN);
         StructureTemplate foundationTemplate = manager.getOrCreate(FOUNDATION);
 
-        // --- Terrain reference (Basalt Deltas is uneven, so we anchor carefully) ---
+        // --- Nether-safe terrain reference ---
         int surfaceY = generator.getFirstOccupiedHeight(
                 x,
                 z,
@@ -54,30 +56,52 @@ public class HexedVolcanPitStructure extends Structure {
                 context.randomState()
         );
 
+        // Prevent ceiling anchoring
+        surfaceY = Math.min(surfaceY, 110);
+
         for (int attempt = 0; attempt < 4; attempt++) {
 
-            // Strong downward bias into basalt delta terrain
-            int yOffset = context.random().nextInt(-18, -4);
-            int y = surfaceY + yOffset;
+            // Push downward into terrain
+            int yOffset = context.random().nextInt(4, 18);
+            int y = surfaceY - yOffset;
 
-            // Clamp into valid Nether build space
-            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - 40);
+            int mainHeight = mainTemplate.getSize().getY();
+            int foundationHeight = foundationTemplate.getSize().getY();
 
-            BlockPos basePos = new BlockPos(
-                    x - mainTemplate.getSize().getX() / 2,
-                    y,
-                    z - mainTemplate.getSize().getZ() / 2
-            );
+            // Clamp using REAL vertical footprint
+            y = Mth.clamp(y, minBuild + foundationHeight, maxBuild - mainHeight);
 
             Rotation rotation = Rotation.getRandom(context.random());
+            StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rotation);
 
-            var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
-                    .setRotation(rotation);
+            // --- ROTATION-AWARE CENTERING ---
+            var size = mainTemplate.getSize();
 
-            var box = mainTemplate.getBoundingBox(settings, basePos);
+            int sizeX = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.CLOCKWISE_180)
+                    ? size.getZ()
+                    : size.getX();
 
-            // Reject only completely invalid placements
-            if (box.maxY() < minBuild || box.minY() > maxBuild) {
+            int sizeZ = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90)
+                    ? size.getX()
+                    : size.getZ();
+
+            BlockPos basePos = new BlockPos(
+                    x - sizeX / 2,
+                    y,
+                    z - sizeZ / 2
+            );
+
+            // --- Compute bounding boxes AFTER final position ---
+            var mainBox = mainTemplate.getBoundingBox(settings, basePos);
+
+            BlockPos foundationPos = basePos.below(foundationHeight);
+            var foundationBox = foundationTemplate.getBoundingBox(settings, foundationPos);
+
+            int combinedMinY = Math.min(mainBox.minY(), foundationBox.minY());
+            int combinedMaxY = Math.max(mainBox.maxY(), foundationBox.maxY());
+
+            // Hard bounds check
+            if (combinedMinY < minBuild || combinedMaxY > maxBuild) {
                 continue;
             }
 
@@ -85,17 +109,8 @@ public class HexedVolcanPitStructure extends Structure {
                 continue;
             }
 
-            // --- Foundation placement (correctly anchored under rotated main) ---
-            int foundationY = basePos.getY() - foundationTemplate.getSize().getY();
-
-            BlockPos foundationPos = new BlockPos(
-                    basePos.getX(),
-                    foundationY,
-                    basePos.getZ()
-            );
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedVolcanPit] SUCCESS at {} surfaceY={} offset={} rot={} attempt={}",
+            NetherHexedKingdom.LOGGER.debug(
+                    "[HexedVolcanPit] SUCCESS at {} (surfaceY={}, offset={}, rot={}, attempt={})",
                     basePos,
                     surfaceY,
                     yOffset,
@@ -118,13 +133,8 @@ public class HexedVolcanPitStructure extends Structure {
                         FOUNDATION,
                         foundationPos,
                         rotation,
-                        -1
+                        0 // IMPORTANT: not -1
                 ));
-
-                NetherHexedKingdom.LOGGER.info(
-                        "[HexedVolcanPit] Assembled successfully at {}",
-                        basePos
-                );
             }));
         }
 
