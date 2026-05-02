@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.chunk.BlockColumn;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -19,19 +20,12 @@ public class HexedOutpostStructure extends Structure {
     public static final MapCodec<HexedOutpostStructure> CODEC =
             simpleCodec(HexedOutpostStructure::new);
 
-    private static final ResourceLocation FOUNDATION =
-            rl("hexed_outpost_foundation");
-
-    private static final ResourceLocation BASE =
-            rl("hexed_outpost");
+    private static final ResourceLocation FOUNDATION = rl("hexed_outpost_foundation");
+    private static final ResourceLocation BASE = rl("hexed_outpost");
 
     private static final ResourceLocation[] TOPS = {
             rl("hexed_outpost_top"),
-            rl("hexed_outpost_top_2"),
-//            rl("hexed_outpost_top_3"),
-//            rl("hexed_outpost_top_4"),
-//            rl("hexed_outpost_top_5"),
-//            rl("hexed_outpost_top_6")
+            rl("hexed_outpost_top_2")
     };
 
     public HexedOutpostStructure(StructureSettings settings) {
@@ -41,106 +35,87 @@ public class HexedOutpostStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedOutpost] findGenerationPoint called");
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMiddleBlockX();
+        int z = chunk.getMiddleBlockZ();
 
-        ChunkPos chunkPos = context.chunkPos();
-        int centerX = chunkPos.getMiddleBlockX();
-        int centerZ = chunkPos.getMiddleBlockZ();
-
-        // --- SAFE NETHER RANGE ---
-        int minY = 31; // nbt has "lava layer" at bottom
+        int minY = 31;
         int maxY = 64;
 
         int startY = context.random().nextInt(minY, maxY);
 
-        var column = context.chunkGenerator().getBaseColumn(
-                centerX,
-                centerZ,
+        BlockColumn column = context.chunkGenerator().getBaseColumn(
+                x, z,
                 context.heightAccessor(),
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
-
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
-                break;
-            }
-            y--;
-        }
-
-        if (!foundGround) {
-            return Optional.empty();
-        }
+        int groundY = findGround(column, startY, minY);
+        if (groundY == -1) return Optional.empty();
 
         Rotation rotation = Rotation.getRandom(context.random());
-
         StructureTemplateManager manager = context.structureTemplateManager();
-        StructureTemplate baseTemplate = manager.getOrCreate(BASE);
 
-        // --- CENTER THE BASE TEMPLATE ---
+        // --- LOAD TEMPLATES ONCE ---
+        StructureTemplate base = manager.getOrCreate(BASE);
+        StructureTemplate foundation = manager.getOrCreate(FOUNDATION);
+
+        ResourceLocation topId = TOPS[context.random().nextInt(TOPS.length)];
+        StructureTemplate top = manager.getOrCreate(topId);
+
+        // --- ROTATION-AWARE SIZES ---
+        var baseSize = base.getSize(rotation);
+        var foundationSize = foundation.getSize(rotation);
+
+        // --- CENTER BASE ---
         BlockPos basePos = new BlockPos(
-                centerX - baseTemplate.getSize().getX() / 2,
-                y + 1,
-                centerZ - baseTemplate.getSize().getZ() / 2
-        );
-
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedOutpost] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
+                x - baseSize.getX() / 2,
+                groundY + 1,
+                z - baseSize.getZ() / 2
         );
 
         return Optional.of(new GenerationStub(basePos, builder -> {
 
-            // --- BASE ---
-            builder.addPiece(new HexedOutpostPiece(
-                    manager,
-                    BASE,
-                    basePos,
-                    rotation,
-                    0
-            ));
+            int currentY = basePos.getY();
 
-            // --- FOUNDATION ---
-            StructureTemplate foundationTemplate =
-                    manager.getOrCreate(FOUNDATION);
+            // FOUNDATION
+            currentY -= foundationSize.getY();
+            builder.addPiece(piece(manager, FOUNDATION, basePos.atY(currentY), rotation, -1));
 
-            int foundationY =
-                    basePos.getY() - foundationTemplate.getSize().getY();
+            // BASE
+            currentY += foundationSize.getY();
+            builder.addPiece(piece(manager, BASE, basePos, rotation, 0));
 
-            builder.addPiece(new HexedOutpostPiece(
-                    manager,
-                    FOUNDATION,
-                    new BlockPos(basePos.getX(), foundationY, basePos.getZ()),
-                    rotation,
-                    -1
-            ));
+            // TOP
+            currentY += baseSize.getY();
+            builder.addPiece(piece(manager, topId, basePos.atY(currentY), rotation, 1));
 
-            // --- TOPS ---
-            ResourceLocation topPiece =
-                    TOPS[context.random().nextInt(TOPS.length)];
-
-            StructureTemplate topTemplate =
-                    manager.getOrCreate(topPiece);
-
-            int topY =
-                    basePos.getY() + baseTemplate.getSize().getY();
-
-            builder.addPiece(new HexedOutpostPiece(
-                    manager,
-                    topPiece,
-                    new BlockPos(basePos.getX(), topY, basePos.getZ()),
-                    rotation,
-                    1
-            ));
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedOutpost] Structure assembled successfully at {}",
-                    basePos
+            NetherHexedKingdom.LOGGER.debug(
+                    "[Outpost] Generated at {} (groundY={})",
+                    basePos, groundY
             );
         }));
+    }
+
+    // --- HELPERS ---
+
+    private static int findGround(BlockColumn column, int startY, int minY) {
+        for (int y = startY; y >= minY; y--) {
+            if (column.getBlock(y).canOcclude()) {
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    private static HexedOutpostPiece piece(
+            StructureTemplateManager manager,
+            ResourceLocation id,
+            BlockPos pos,
+            Rotation rotation,
+            int depth
+    ) {
+        return new HexedOutpostPiece(manager, id, pos, rotation, depth);
     }
 
     @Override

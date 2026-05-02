@@ -32,7 +32,7 @@ public class HexedBullionTempleStructure extends Structure {
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 
-        // --- Get terrain reference (but DO NOT trust Nether ceiling) ---
+        // --- Get terrain reference, avoid ceiling
         int surfaceY = context.chunkGenerator().getFirstOccupiedHeight(
                 x,
                 z,
@@ -56,47 +56,49 @@ public class HexedBullionTempleStructure extends Structure {
         }
 
         var template = templateOpt.get();
-        int structureHeight = template.getSize().getY();
 
-        // Try multiple attempts
         for (int attempt = 0; attempt < 4; attempt++) {
 
-            // --- ALWAYS push downward into terrain ---
             int yOffset = context.random().nextInt(12, 32);
             int y = surfaceY - yOffset;
 
-            // Ensure full structure fits under max height
-            y = Math.min(y, 120 - structureHeight);
+            int minBuild = context.heightAccessor().getMinBuildHeight();
+            int maxBuild = context.heightAccessor().getMaxBuildHeight();
 
-            // Final clamp (absolute safety)
-            y = net.minecraft.util.Mth.clamp(y, 32, 100);
+            int structureHeight = template.getSize().getY();
 
-            BlockPos center = new BlockPos(x, y, z);
-
-            if (!isValidEmbedding(context, center)) {
-                continue;
-            }
+            y = net.minecraft.util.Mth.clamp(y, minBuild + 8, maxBuild - structureHeight);
 
             Rotation rotation = Rotation.getRandom(context.random());
 
             var settings = new net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings()
                     .setRotation(rotation);
 
-            BoundingBox box = template.getBoundingBox(settings, center);
+            var size = template.getSize();
 
-            // --- STRICT containment check ---
-            if (box.minY() < 32 || box.maxY() > 120) {
+            int sizeX = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.CLOCKWISE_180)
+                    ? size.getZ()
+                    : size.getX();
+
+            int sizeZ = (rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90)
+                    ? size.getX()
+                    : size.getZ();
+
+            BlockPos center = new BlockPos(
+                    x - sizeX / 2,
+                    y,
+                    z - sizeZ / 2
+            );
+
+            if (!isValidEmbedding(context, center)) {
                 continue;
             }
 
-            NetherHexedKingdom.LOGGER.debug(
-                    "[HexedBullionTemple] SUCCESS at {} (surfaceY={}, offset={}) rot={} attempt={}",
-                    center,
-                    surfaceY,
-                    yOffset,
-                    rotation,
-                    attempt
-            );
+            BoundingBox box = template.getBoundingBox(settings, center);
+
+            if (box.minY() < minBuild || box.maxY() > maxBuild) {
+                continue;
+            }
 
             return Optional.of(new GenerationStub(center, builder -> {
                 builder.addPiece(new HexedBullionTemplePiece(

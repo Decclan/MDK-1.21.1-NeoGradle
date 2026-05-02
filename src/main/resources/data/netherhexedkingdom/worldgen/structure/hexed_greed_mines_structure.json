@@ -26,7 +26,7 @@
           "type": "minecraft:wither_skeleton",
           "weight": 2,
           "minCount": 2,
-          "maxCount": 3
+          "maxCount": 5
         },
         {
           "type": "netherhexedkingdom:hexan_guard",
@@ -36,13 +36,19 @@
         },
         {
           "type": "netherhexedkingdom:decayed_zombie",
-          "weight": 2,
+          "weight": 1,
           "minCount": 1,
-          "maxCount": 3
+          "maxCount": 2
         },
         {
           "type": "netherhexedkingdom:decayed_zombie_husk",
-          "weight": 2,
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "type": "netherhexedkingdom:decayed_zombified_piglin",
+          "weight": 1,
           "minCount": 1,
           "maxCount": 2
         }

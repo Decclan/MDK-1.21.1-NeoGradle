@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
+
 
 import java.util.Optional;
 
@@ -30,66 +32,132 @@ public class HexedGreedMinesStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedGreedMines] findGenerationPoint called");
+        ChunkPos chunkPos = context.chunkPos();
+        int x = chunkPos.getMiddleBlockX();
+        int z = chunkPos.getMiddleBlockZ();
 
-        int x = context.chunkPos().getMiddleBlockX();
-        int z = context.chunkPos().getMiddleBlockZ();
+        // --- Hard vertical band ---
+        final int MIN_Y = 31;
+        final int MAX_Y = 42;
 
-        int y = context.random().nextInt(34, 44);
-
-        BlockPos startPos = new BlockPos(x, y, z);
-        Rotation rotation = Rotation.getRandom(context.random());
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedGreedMines] Chunk {}, start position {}",
-                context.chunkPos(),
-                startPos
+        // Get terrain reference (important for "burying")
+        int surfaceY = context.chunkGenerator().getFirstOccupiedHeight(
+                x,
+                z,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                context.heightAccessor(),
+                context.randomState()
         );
 
-        var poolRegistry = context.registryAccess()
-                .registryOrThrow(Registries.TEMPLATE_POOL);
+        // Clamp surface into our allowed band (prevents roof nonsense)
+        surfaceY = net.minecraft.util.Mth.clamp(surfaceY, MIN_Y, MAX_Y);
 
-        Optional<Holder.Reference<StructureTemplatePool>> poolOpt =
-                poolRegistry.getHolder(HEXED_GREED_MINES_START);
-
-        if (poolOpt.isEmpty()) {
-            NetherHexedKingdom.LOGGER.error(
-                    "[HexedGreedMines] Start pool NOT found: {}",
-                    HEXED_GREED_MINES_START.location()
-            );
-            return Optional.empty();
-        }
-
-//        NetherHexedKingdom.LOGGER.info(
-//                "[HexedGreedMines] Start pool found: {}",
-//                HEXED_GREED_MINES_START.location()
-//        );
-
-        Optional<GenerationStub> result = JigsawPlacement.addPieces(
-                context,
-                poolOpt.get(),
-                Optional.empty(),
-                7,                // max depth
-                startPos,
-                false,
-                Optional.empty(),
-                128,
-                PoolAliasLookup.EMPTY,
-                JigsawStructure.DEFAULT_DIMENSION_PADDING,
-                JigsawStructure.DEFAULT_LIQUID_SETTINGS
+        var column = context.chunkGenerator().getBaseColumn(
+                x,
+                z,
+                context.heightAccessor(),
+                context.randomState()
         );
 
-        if (result.isEmpty()) {
-            NetherHexedKingdom.LOGGER.error(
-                    "[HexedGreedMines] JigsawPlacement returned EMPTY"
+        // Try a few times to find a GOOD embedded position
+        for (int attempt = 0; attempt < 5; attempt++) {
+
+            // Bias downward so it's actually buried
+            int yOffset = context.random().nextInt(-20, -4);
+            int y = surfaceY + yOffset;
+
+            // Clamp hard to required band
+            y = net.minecraft.util.Mth.clamp(y, MIN_Y, MAX_Y);
+
+            BlockPos startPos = new BlockPos(x, y, z);
+
+            if (!isValidEmbedding(context, startPos)) {
+                continue;
+            }
+
+            var poolRegistry = context.registryAccess()
+                    .registryOrThrow(Registries.TEMPLATE_POOL);
+
+            Optional<Holder.Reference<StructureTemplatePool>> poolOpt =
+                    poolRegistry.getHolder(HEXED_GREED_MINES_START);
+
+            if (poolOpt.isEmpty()) {
+                NetherHexedKingdom.LOGGER.error(
+                        "[HexedGreedMines] Missing start pool {}",
+                        HEXED_GREED_MINES_START.location()
+                );
+                return Optional.empty();
+            }
+
+            Optional<GenerationStub> result = JigsawPlacement.addPieces(
+                    context,
+                    poolOpt.get(),
+                    Optional.empty(),
+                    7,
+                    startPos,
+                    false,
+                    Optional.empty(),
+                    128,
+                    PoolAliasLookup.EMPTY,
+                    JigsawStructure.DEFAULT_DIMENSION_PADDING,
+                    JigsawStructure.DEFAULT_LIQUID_SETTINGS
             );
-            return Optional.empty();
+
+            if (result.isPresent()) {
+                NetherHexedKingdom.LOGGER.debug(
+                        "[HexedGreedMines] SUCCESS at {} (surfaceY={}, offset={}) attempt={}",
+                        startPos,
+                        surfaceY,
+                        yOffset,
+                        attempt
+                );
+                return result;
+            }
         }
 
-//        NetherHexedKingdom.LOGGER.info(
-//                "[HexedGreedMines] JigsawPlacement succeeded"
-//        );
+        NetherHexedKingdom.LOGGER.debug(
+                "[HexedGreedMines] FAILED in chunk {}",
+                chunkPos
+        );
 
-        return result;
+        return Optional.empty();
+    }
+
+    private boolean isValidEmbedding(
+            GenerationContext context,
+            BlockPos center
+    ) {
+        int solidChecks = 0;
+        int totalChecks = 0;
+
+        var generator = context.chunkGenerator();
+
+        // Sample a 5x5 area around the structure center
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+
+                int sampleX = center.getX() + dx * 4;
+                int sampleZ = center.getZ() + dz * 4;
+
+                int surfaceY = generator.getBaseHeight(
+                        sampleX,
+                        sampleZ,
+                        net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                        context.heightAccessor(),
+                        context.randomState()
+                );
+
+                totalChecks++;
+
+                // If terrain is ABOVE our structure → it's buried here
+                if (surfaceY > center.getY() + 4) {
+                    solidChecks++;
+                }
+            }
+        }
+
+        // Require most samples to be above → properly embedded
+        return totalChecks > 0 && ((float) solidChecks / totalChecks) >= 0.7f;
     }
 
     @Override

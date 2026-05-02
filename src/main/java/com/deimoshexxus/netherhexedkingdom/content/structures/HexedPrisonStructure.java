@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -24,6 +25,10 @@ public class HexedPrisonStructure extends Structure {
     public static final MapCodec<HexedPrisonStructure> CODEC =
             simpleCodec(HexedPrisonStructure::new);
 
+    private static final int MIN_Y = 32;
+    private static final int MAX_Y = 64;
+    private static final int MAX_DEPTH = 7;
+
     public HexedPrisonStructure(StructureSettings settings) {
         super(settings);
     }
@@ -31,20 +36,25 @@ public class HexedPrisonStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[HexedPrison] findGenerationPoint called");
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMiddleBlockX();
+        int z = chunk.getMiddleBlockZ();
 
-        int x = context.chunkPos().getMiddleBlockX();
-        int z = context.chunkPos().getMiddleBlockZ();
+        Rotation rotation = Rotation.getRandom(context.random());
 
-        int y = context.random().nextInt(31, 64);
+        // --- HEIGHTMAP-BASED Y (CRITICAL FIX) ---
+        int surfaceY = context.chunkGenerator().getFirstFreeHeight(
+                x,
+                z,
+                Heightmap.Types.WORLD_SURFACE_WG,
+                context.heightAccessor(),
+                context.randomState()
+        );
+
+        // Clamp into your intended nether band if needed
+        int y = Math.max(MIN_Y, Math.min(surfaceY, MAX_Y));
 
         BlockPos startPos = new BlockPos(x, y, z);
-        Rotation rotation = Rotation.getRandom(context.random());
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedPrison] Chunk {}, start position {}",
-                context.chunkPos(),
-                startPos
-        );
 
         var poolRegistry = context.registryAccess()
                 .registryOrThrow(Registries.TEMPLATE_POOL);
@@ -54,22 +64,17 @@ public class HexedPrisonStructure extends Structure {
 
         if (poolOpt.isEmpty()) {
             NetherHexedKingdom.LOGGER.error(
-                    "[HexedPrison] Start pool NOT found: {}",
+                    "[HexedPrison] Missing start pool: {}",
                     HEXED_PRISON_START.location()
             );
             return Optional.empty();
         }
 
-//        NetherHexedKingdom.LOGGER.info(
-//                "[HexedPrison] Start pool found: {}",
-//                HEXED_PRISON_START.location()
-//        );
-
         Optional<GenerationStub> result = JigsawPlacement.addPieces(
                 context,
                 poolOpt.get(),
                 Optional.empty(),
-                7,                // max depth
+                MAX_DEPTH,
                 startPos,
                 false,
                 Optional.empty(),
@@ -80,15 +85,17 @@ public class HexedPrisonStructure extends Structure {
         );
 
         if (result.isEmpty()) {
-            NetherHexedKingdom.LOGGER.error(
-                    "[HexedPrison] JigsawPlacement returned EMPTY"
+            NetherHexedKingdom.LOGGER.debug(
+                    "[HexedPrison] Generation failed at {}",
+                    startPos
             );
             return Optional.empty();
         }
 
-//        NetherHexedKingdom.LOGGER.info(
-//                "[HexedPrison] JigsawPlacement succeeded"
-//        );
+        NetherHexedKingdom.LOGGER.debug(
+                "[HexedPrison] Generated at {}",
+                startPos
+        );
 
         return result;
     }
