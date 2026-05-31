@@ -23,10 +23,6 @@ public class HexedNetherFossilStructure extends Structure {
     public static final MapCodec<HexedNetherFossilStructure> CODEC =
             simpleCodec(HexedNetherFossilStructure::new);
 
-
-//    private static final ResourceLocation MAIN =
-//            rl("hexed_nether_fossil");
-
     private static final ResourceLocation[] FOSSILS = {
             rl("nether_fossils/fossil_masoniae_1"),
             rl("nether_fossils/fossil_masoniae_2"),
@@ -71,24 +67,6 @@ public class HexedNetherFossilStructure extends Structure {
         if (groundY == -1) {
             return Optional.empty();
         }
-
-//        BlockPos basePos = new BlockPos(x, groundY + 1, z);
-//        Rotation rotation = Rotation.getRandom(context.random());
-//
-//        StructureTemplateManager templateManager = context.structureTemplateManager();
-//        StructureTemplate template = templateManager.getOrCreate(MAIN);
-//
-//        if (template == null) {
-//            return Optional.empty();
-//        }
-//
-//        // Get rotated size
-//        var size = template.getSize(rotation);
-//
-//        BoundingBox box = BoundingBox.fromCorners(
-//                basePos,
-//                basePos.offset(size.getX(), size.getY(), size.getZ())
-//        );
 
         ResourceLocation chosen = FOSSILS[
                 context.random().nextInt(FOSSILS.length)

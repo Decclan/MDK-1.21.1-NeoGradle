@@ -33,8 +33,6 @@ public class NetherHexedKingdom {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     /* Deferred registers (kept here so content classes can reference them) */
-//    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
-//    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public NetherHexedKingdom(IEventBus modEventBus, ModContainer modContainer) {
@@ -45,10 +43,6 @@ public class NetherHexedKingdom {
 
         modEventBus.addListener(ModEntitySpawnEvents::registerSpawnPlacements);
 
-        // register our content's deferred registers to the mod event bus
-
-//        BLOCKS.register(modEventBus);
-//        ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
         // register content classes (these will call BLOCKS/ITEMS/CREATIVE_MODE_TABS behind the scenes)
