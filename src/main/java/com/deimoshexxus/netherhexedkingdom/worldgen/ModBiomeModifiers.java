@@ -25,6 +25,8 @@ public class ModBiomeModifiers {
 
     public static final ResourceKey<BiomeModifier> ADD_GARGOYLE_POSSESSED = registerKey("add_gargoyle_possessed");
 
+    public static final ResourceKey<BiomeModifier> ADD_DECAYED_ZOMBIFIED_PIGLIN = registerKey("add_decayed_zombified_piglin");
+
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         // CF -> PF -> BM
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -43,8 +45,8 @@ public class ModBiomeModifiers {
                         List.of(new MobSpawnSettings.SpawnerData(
                                 EntityType.WITHER_SKELETON,
                                 20, // weight
-                                1,  // min
-                                3   // max
+                                2,  // min
+                                5   // max
                         ))
                 )
         );
@@ -54,9 +56,9 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.BASALT_DELTAS)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.GARGOYLE_POSSESSED.get(),
-                                50,
-                                2,
-                                5
+                                10,
+                                1,
+                                3
                         ))
                 )
         );

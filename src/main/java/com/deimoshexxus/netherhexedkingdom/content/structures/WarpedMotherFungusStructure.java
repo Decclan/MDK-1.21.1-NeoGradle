@@ -7,8 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 import java.util.Optional;
@@ -17,7 +20,6 @@ public class WarpedMotherFungusStructure extends Structure {
 
     public static final MapCodec<WarpedMotherFungusStructure> CODEC =
             simpleCodec(WarpedMotherFungusStructure::new);
-
 
     private static final ResourceLocation MAIN =
             rl("warped_mother_fungus");
@@ -29,26 +31,15 @@ public class WarpedMotherFungusStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        NetherHexedKingdom.LOGGER.info("[WarpedMotherFungus] findGenerationPoint called");
-
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
-
-        NetherHexedKingdom.LOGGER.info(
-                "[WarpedMotherFungus] Chunk {}, evaluating position x={}, z={}",
-                chunkPos, x, z
-        );
 
         // --- SAFE NETHER RANGE ---
         int minY = 32;
         int maxY = 80;
 
-        int startY = context.random().nextInt(minY, maxY);
-        NetherHexedKingdom.LOGGER.info(
-                "[WarpedMotherFungus] Starting vertical scan at Y={}",
-                startY
-        );
+        int startY = context.random().nextIntBetweenInclusive(minY, maxY);
 
         var column = context.chunkGenerator().getBaseColumn(
                 x,
@@ -57,53 +48,56 @@ public class WarpedMotherFungusStructure extends Structure {
                 context.randomState()
         );
 
-        int y = startY;
-        boolean foundGround = false;
+        int groundY = -1;
 
-        // Walk downward to find solid ground
-        for (int i = 0; i < 24 && y > minY; i++) {
-            if (column.getBlock(y).isSolid()) {
-                foundGround = true;
+        // Scan downward fully (no artificial cap)
+        for (int y = startY; y >= minY; y--) {
+            if (column.getBlock(y).canOcclude()) {
+                groundY = y;
                 break;
             }
-            y--;
         }
 
-        if (!foundGround) {
-            NetherHexedKingdom.LOGGER.info(
-                    "[WarpedMotherFungus] No solid ground found in chunk {}, aborting",
-                    chunkPos
-            );
+        if (groundY == -1) {
             return Optional.empty();
         }
 
-        BlockPos basePos = new BlockPos(x, y + 1, z);
+        BlockPos basePos = new BlockPos(x, groundY + 1, z);
         Rotation rotation = Rotation.getRandom(context.random());
 
-        NetherHexedKingdom.LOGGER.info(
-                "[WarpedMotherFungus] Ground found at Y={}, placing base at {} with rotation {}",
-                y, basePos, rotation
+        StructureTemplateManager templateManager = context.structureTemplateManager();
+        StructureTemplate template = templateManager.getOrCreate(MAIN);
+
+        var size = template.getSize(rotation);
+
+        BoundingBox box = BoundingBox.fromCorners(
+                basePos,
+                basePos.offset(size.getX(), size.getY(), size.getZ())
         );
+
+        // --- SURFACE SAFETY CHECK ---
+        int surface = context.chunkGenerator().getFirstFreeHeight(
+                x,
+                z,
+                Heightmap.Types.WORLD_SURFACE_WG,
+                context.heightAccessor(),
+                context.randomState()
+        );
+
+        // Reject if poking into open air ceiling / surface
+        if (box.maxY() > surface) {
+            return Optional.empty();
+        }
 
         return Optional.of(new GenerationStub(basePos, builder -> {
 
-            StructureTemplateManager manager =
-                    context.structureTemplateManager();
-
-            // --- BASE ---
             builder.addPiece(new WarpedMotherFungusPiece(
-                    manager,
+                    templateManager,
                     MAIN,
                     basePos,
                     rotation,
                     0
             ));
-
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[WarpedMotherFungus] Structure assembled successfully at {}",
-                    basePos
-            );
         }));
     }
 
