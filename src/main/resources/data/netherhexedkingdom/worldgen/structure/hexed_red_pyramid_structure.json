@@ -1,6 +1,6 @@
 {
-  "type": "netherhexedkingdom:hexed_blood_pyramid_structure",
-  "biomes": "#netherhexedkingdom:has_hexed_blood_pyramid_structure",
+  "type": "netherhexedkingdom:hexed_red_pyramid_structure",
+  "biomes": "#netherhexedkingdom:has_hexed_red_pyramid_structure",
 
   "step": "surface_structures",
 

@@ -14,10 +14,10 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-public class HexedBloodPyramidPiece extends TemplateStructurePiece {
+public class HexedRedPyramidPiece extends TemplateStructurePiece {
 
     // Runtime constructor (worldgen)
-    public HexedBloodPyramidPiece(
+    public HexedRedPyramidPiece(
             StructureTemplateManager templateManager,
             ResourceLocation templateId,
             BlockPos pos,
@@ -25,7 +25,7 @@ public class HexedBloodPyramidPiece extends TemplateStructurePiece {
             int genDepth
     ) {
         super(
-                ModStructurePieces.HEXED_BLOOD_PYRAMID_PIECE.get(),
+                ModStructurePieces.HEXED_RED_PYRAMID_PIECE.get(),
                 genDepth,
                 templateManager,
                 templateId,
@@ -36,15 +36,15 @@ public class HexedBloodPyramidPiece extends TemplateStructurePiece {
     }
 
     // NBT constructor (loading from disk)
-    public HexedBloodPyramidPiece(
+    public HexedRedPyramidPiece(
             StructurePieceSerializationContext context,
             CompoundTag tag
     ) {
         super(
-                ModStructurePieces.HEXED_BLOOD_PYRAMID_PIECE.get(),
+                ModStructurePieces.HEXED_RED_PYRAMID_PIECE.get(),
                 tag,
                 context.structureTemplateManager(),
-                HexedBloodPyramidPiece::makeSettingsFromTemplate
+                HexedRedPyramidPiece::makeSettingsFromTemplate
         );
     }
 

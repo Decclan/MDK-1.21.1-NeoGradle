@@ -15,27 +15,27 @@ import net.minecraft.world.level.chunk.BlockColumn;
 
 import java.util.Optional;
 
-public class HexedBloodPyramidStructure extends Structure {
+public class HexedRedPyramidStructure extends Structure {
 
-    public static final MapCodec<HexedBloodPyramidStructure> CODEC =
-            simpleCodec(HexedBloodPyramidStructure::new);
+    public static final MapCodec<HexedRedPyramidStructure> CODEC =
+            simpleCodec(HexedRedPyramidStructure::new);
 
     private static final ResourceLocation CORNER =
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_corner");
+            rl("hexed_red_pyramid/hexed_red_pyramid_corner");
 
     private static final ResourceLocation[] FOUNDATIONS = {
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_1"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_2"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_3"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_4"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_5"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_6"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_7"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_8"),
-            rl("hexed_blood_pyramid/hexed_blood_pyramid_foundation_9")
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_1"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_2"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_3"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_4"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_5"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_6"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_7"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_8"),
+            rl("hexed_red_pyramid/hexed_red_pyramid_foundation_9")
     };
 
-    public HexedBloodPyramidStructure(StructureSettings settings) {
+    public HexedRedPyramidStructure(StructureSettings settings) {
         super(settings);
     }
 
@@ -152,7 +152,7 @@ public class HexedBloodPyramidStructure extends Structure {
             }
 
             NetherHexedKingdom.LOGGER.debug(
-                    "[BloodPyramid] Generated at {} (groundY={})",
+                    "[RedPyramid] Generated at {} (groundY={})",
                     startPos,
                     groundY
             );
@@ -170,14 +170,14 @@ public class HexedBloodPyramidStructure extends Structure {
         return -1;
     }
 
-    private static HexedBloodPyramidPiece piece(
+    private static HexedRedPyramidPiece piece(
             StructureTemplateManager manager,
             ResourceLocation id,
             BlockPos pos,
             Rotation rotation,
             int depth
     ) {
-        return new HexedBloodPyramidPiece(manager, id, pos, rotation, depth);
+        return new HexedRedPyramidPiece(manager, id, pos, rotation, depth);
     }
 
     private static BlockPos rotateOffset(BlockPos offset, Rotation rotation) {
@@ -200,7 +200,7 @@ public class HexedBloodPyramidStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return ModStructures.HEXED_BLOOD_PYRAMID_STRUCTURE.get();
+        return ModStructures.HEXED_RED_PYRAMID_STRUCTURE.get();
     }
 
     private static ResourceLocation rl(String path) {

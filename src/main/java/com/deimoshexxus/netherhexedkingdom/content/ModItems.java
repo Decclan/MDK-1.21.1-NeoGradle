@@ -40,41 +40,6 @@ public class ModItems {
             ITEMS.register("nether_portal_orb",
                     () -> new NetherPortalOrbItem(new Item.Properties().stacksTo(1)));
 
-
-//    public static final DeferredItem<Item> ANCIENT_FRAGMENT = registerItem("ancient_fragment");
-//    public static final DeferredItem<Item> ANCIENT_CORE = registerItem("ancient_core");
-//
-//    public static final DeferredItem<Item> SOUL_INFUSED_SHARD = registerItem("soul_infused_shard");
-//    public static final DeferredItem<Item> HEXAN_CRYSTAL = registerItem("hexan_crystal");
-//
-//    // --- Magical & Alchemical Materials ---
-//
-//    public static final DeferredItem<Item> VOID_ESSENCE = registerItem("void_essence");
-//    public static final DeferredItem<Item> NETHER_EMBER = registerItem("nether_ember");
-//    public static final DeferredItem<Item> RUBRUM_CATALYST = registerItem("rubrum_catalyst");
-//    public static final DeferredItem<Item> BLOOD_INFUSED_GEM = registerItem("blood_infused_gem");
-//
-//    // --- Relics & Artifacts ---
-//
-//    public static final DeferredItem<Item> RELIC_OF_THE_DEEP = registerItem("relic_of_the_deep");
-//    public static final DeferredItem<Item> RELIC_OF_FIRE = registerItem("relic_of_fire");
-//    public static final DeferredItem<Item> RELIC_OF_TIME = registerItem("relic_of_time");
-//    public static final DeferredItem<Item> FORBIDDEN_BOOK_OF_SCORCHED_HEARTS = registerItem("forbidden_book_of_scorched_hearts");
-//
-//    // --- Basic Consumables (example) ---
-//
-//    public static final DeferredItem<Item> ADUSTUS_FRUIT = ITEMS.register("adustus_fruit",
-//            () -> new Item(new Item.Properties()
-//                    .food(new FoodProperties.Builder()
-//                            .nutrition(4)
-//                            .saturationModifier(0.4f)
-//                            .alwaysEdible()
-//                            .build())
-//                    .stacksTo(64)));
-//
-//    // --- Placeholder for Future Equipment ---
-
-
     // --- Consumables ---
 
     public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",
@@ -114,40 +79,6 @@ public class ModItems {
             )
     );
 
-//    public static final DeferredItem<BlockItem> LINGZHI_MUSHROOM_ITEM =
-//            ITEMS.register("lingzhi_mushroom",
-//                    () -> new BlockItem(ModBlocks.LINGZHI_MUSHROOM.get(),
-//                            new Item.Properties()
-//                    ));
-
-
-//    public static final DeferredItem<Item> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",
-//            () -> new Item(new Item.Properties()
-//                    .food(new FoodProperties.Builder()
-//                            .nutrition(4)
-//                            .saturationModifier(0.6f)
-//                            .alwaysEdible()
-//                            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f) // 10s regen II
-//                            .build())
-//                    .stacksTo(64)));
-//
-//    public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_BLOCK_ITEM = NetherHexedKingdom.ITEMS.register("masoniae_mushroom",
-//            () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(), new Item.Properties()
-//                    .food(new FoodProperties.Builder()
-//                            .nutrition(4)
-//                            .saturationModifier(0.6f)
-//                            .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0f)
-//                            .build()
-//                    )
-//            )
-//    );
-
-
-//    public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_ITEM =
-//            ITEMS.register("masoniae_mushroom",
-//                    () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(), new Item.Properties()));
-
-    // redundant?
     public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
             ITEMS.register("eternal_light_block",
                     () -> new BlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), new Item.Properties()));
@@ -213,6 +144,43 @@ public class ModItems {
                             new Item.Properties()
                     )
             );
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_HORSE_SPAWN_EGG =
+            ITEMS.register("hexed_zombie_horse_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE_HORSE,
+                            0x4A4A4A,
+                            0x3D7A3D,
+                            new Item.Properties()
+                    ));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> WITHER_SKELETON_HORSE_SPAWN_EGG =
+            ITEMS.register("wither_skeleton_horse_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.WITHER_SKELETON_HORSE,
+                            0x2A2A2A,
+                            0xCCCCCC,
+                            new Item.Properties()
+                    ));
+
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> HEXED_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG =
+            ITEMS.register("hexed_zombie_horse_jockey_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY,
+                            0x4A4A4A,
+                            0x97bf97,
+                            new Item.Properties()
+                    ));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> WITHER_SKELETON_HORSE_JOCKEY_SPAWN_EGG =
+            ITEMS.register("wither_skeleton_horse_jockey_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.WITHER_SKELETON_HORSE_JOCKEY,
+                            0x2A2A2A,
+                            0xd6baba,
+                            new Item.Properties()
+                    ));
 
 
 

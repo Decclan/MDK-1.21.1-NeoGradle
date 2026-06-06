@@ -56,9 +56,9 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.BASALT_DELTAS)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.GARGOYLE_POSSESSED.get(),
-                                10,
+                                8,
                                 1,
-                                3
+                                2
                         ))
                 )
         );
