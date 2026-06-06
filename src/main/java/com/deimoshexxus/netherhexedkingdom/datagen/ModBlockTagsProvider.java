@@ -21,25 +21,24 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(ModBlocks.MILITUS_ALLOY_BLOCK.get())
-                .add(ModBlocks.MILITUS_ALLOY_ORE.get())
-                .add(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get())
-                .add(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get())
-                .add(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get())
-                .add(ModBlocks.IRON_PLATE_BLOCK.get())
-                .add(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get());
+                .add(ModBlocks.MILITUS_ALLOY_BLOCK.value())
+                .add(ModBlocks.MILITUS_ALLOY_ORE.value())
+                .add(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.value())
+                .add(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.value())
+                .add(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.value())
+                .add(ModBlocks.IRON_PLATE_BLOCK.value())
+                .add(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.value());
 
         tag(BlockTags.NEEDS_IRON_TOOL)
-                .add(ModBlocks.MILITUS_ALLOY_BLOCK.get())
-                .add(ModBlocks.MILITUS_ALLOY_ORE.get());
+                .add(ModBlocks.MILITUS_ALLOY_BLOCK.value())
+                .add(ModBlocks.MILITUS_ALLOY_ORE.value());
 
         tag(BlockTags.REPLACEABLE)
-                .add(ModBlocks.LINGZHI_MUSHROOM.get());
+                .add(ModBlocks.LINGZHI_MUSHROOM.value());
 
         tag(BlockTags.FLOWERS)
-                .add(ModBlocks.LINGZHI_MUSHROOM.get());
+                .add(ModBlocks.LINGZHI_MUSHROOM.value());
     }
-
     @Override
     public String getName() {
         return "Nether Hexed Kingdom Block Tags";

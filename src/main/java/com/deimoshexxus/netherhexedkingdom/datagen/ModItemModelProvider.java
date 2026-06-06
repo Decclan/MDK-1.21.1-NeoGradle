@@ -28,6 +28,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         spawnEggItem(ModItems.DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG.get());
         spawnEggItem(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
         spawnEggItem(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_HORSE_SPAWN_EGG.get());
+        spawnEggItem(ModItems.WITHER_SKELETON_HORSE_SPAWN_EGG.get());
+        spawnEggItem(ModItems.HEXED_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG.get());
+        spawnEggItem(ModItems.WITHER_SKELETON_HORSE_JOCKEY_SPAWN_EGG.get());
 
         basicItem(ModItems.MILITUS_ALLOY_HELMET.get());
         basicItem(ModItems.MILITUS_ALLOY_CHESTPLATE.get());

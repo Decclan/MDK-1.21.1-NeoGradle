@@ -1,10 +1,8 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
-import com.deimoshexxus.netherhexedkingdom.content.entities.GargoylePossessedEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.HexanGuardEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.DecayedZombieEntity;
-import com.deimoshexxus.netherhexedkingdom.content.entities.DecayedZombieHuskEntity;
+import com.deimoshexxus.netherhexedkingdom.content.entities.*;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,5 +18,9 @@ public class ModEntityAttributes {
         event.put(ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(), DecayedZombieHuskEntity.createAttributes().build());
         event.put(ModEntities.HEXAN_GUARD.get(), HexanGuardEntity.createAttributes().build());
         event.put(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedEntity.createAttributes().build());
+        event.put(ModEntities.HEXED_ZOMBIE_HORSE.get(), HexedZombieHorseEntity.createAttributes().build());
+        event.put(ModEntities.WITHER_SKELETON_HORSE.get(), WitherSkeletonHorseEntity.createAttributes().build());
+        event.put(ModEntities.WITHER_SKELETON_HORSE_JOCKEY.get(), Skeleton.createAttributes().build());
+        event.put(ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(), Skeleton.createAttributes().build());
     }
 }

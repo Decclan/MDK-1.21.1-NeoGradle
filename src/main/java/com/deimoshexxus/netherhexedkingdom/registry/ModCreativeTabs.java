@@ -36,6 +36,10 @@ public class ModCreativeTabs {
                         output.accept(ModItems.DECAYED_ZOMBIFIED_PIGLIN_SPAWN_EGG.get());
                         output.accept(ModItems.HEXAN_GUARD_SPAWN_EGG.get());
                         output.accept(ModItems.GARGOYLE_POSSESSED_SPAWN_EGG.get());
+                        output.accept(ModItems.HEXED_ZOMBIE_HORSE_SPAWN_EGG.get());
+                        output.accept(ModItems.WITHER_SKELETON_HORSE_SPAWN_EGG.get());
+                        output.accept(ModItems.HEXED_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG.get());
+                        output.accept(ModItems.WITHER_SKELETON_HORSE_JOCKEY_SPAWN_EGG.get());
                         output.accept(ModItems.MILITUS_ALLOY_HELMET.get());
                         output.accept(ModItems.MILITUS_ALLOY_CHESTPLATE.get());
                         output.accept(ModItems.MILITUS_ALLOY_LEGGINGS.get());
