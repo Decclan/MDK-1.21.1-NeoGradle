@@ -19,8 +19,9 @@ public class ModEntityAttributes {
         event.put(ModEntities.HEXAN_GUARD.get(), HexanGuardEntity.createAttributes().build());
         event.put(ModEntities.GARGOYLE_POSSESSED.get(), GargoylePossessedEntity.createAttributes().build());
         event.put(ModEntities.HEXED_ZOMBIE_HORSE.get(), HexedZombieHorseEntity.createAttributes().build());
+        event.put(ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(), Skeleton.createAttributes().build());
         event.put(ModEntities.WITHER_SKELETON_HORSE.get(), WitherSkeletonHorseEntity.createAttributes().build());
         event.put(ModEntities.WITHER_SKELETON_HORSE_JOCKEY.get(), Skeleton.createAttributes().build());
-        event.put(ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(), Skeleton.createAttributes().build());
+        event.put(ModEntities.GUARD_ZOMBIE_HORSE_JOCKEY.get(), HexanGuardEntity.createAttributes().build());
     }
 }

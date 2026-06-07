@@ -24,8 +24,8 @@ public class HexedZombieHorseEntity extends Horse {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Horse.createBaseHorseAttributes()
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 30.0D)
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.225D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 32.0D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH, 0.7D);
     }
 

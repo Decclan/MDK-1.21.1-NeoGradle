@@ -81,7 +81,7 @@ public class HexedZombieHorseJockeyEntity extends Skeleton {
             case 0 ->
                     this.setItemSlot(
                             EquipmentSlot.MAINHAND,
-                            new ItemStack(Items.STONE_SWORD)
+                            new ItemStack(Items.IRON_SWORD)
                     );
 
             case 1 ->

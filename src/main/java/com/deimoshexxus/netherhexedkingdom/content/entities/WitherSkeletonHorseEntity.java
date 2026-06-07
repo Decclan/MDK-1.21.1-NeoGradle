@@ -25,9 +25,9 @@ public class WitherSkeletonHorseEntity extends Horse {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Horse.createBaseHorseAttributes()
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 35.0D)
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH, 0.8D);
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 36.0D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH, 0.9D);
     }
 
     @Override

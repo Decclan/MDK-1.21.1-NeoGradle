@@ -124,6 +124,13 @@ public class ModEntities {
                             .build("wither_skeleton_horse_jockey")
             );
 
+    public static final DeferredHolder<EntityType<?>, EntityType<GuardZombieHorseJockeyEntity>> GUARD_ZOMBIE_HORSE_JOCKEY =
+            ENTITY_TYPES.register("guard_zombie_horse_jockey", () ->
+                    EntityType.Builder.of(GuardZombieHorseJockeyEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.99F)
+                            .build("guard_zombie_horse_jockey")
+            );
+
     public static void register(IEventBus bus) {
         ENTITY_TYPES.register(bus);
     }

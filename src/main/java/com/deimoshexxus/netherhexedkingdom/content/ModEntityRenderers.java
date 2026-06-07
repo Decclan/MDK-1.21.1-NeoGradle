@@ -28,6 +28,7 @@ public class ModEntityRenderers {
         event.registerEntityRenderer(ModEntities.WITHER_SKELETON_HORSE.get(), WitherSkeletonHorseRenderer::new);
         event.registerEntityRenderer(ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(), SkeletonRenderer::new);
         event.registerEntityRenderer(ModEntities.WITHER_SKELETON_HORSE_JOCKEY.get(), WitherSkeletonRenderer::new);
+        event.registerEntityRenderer(ModEntities.GUARD_ZOMBIE_HORSE_JOCKEY.get(), HexanGuardRenderer::new);
     }
 }
 

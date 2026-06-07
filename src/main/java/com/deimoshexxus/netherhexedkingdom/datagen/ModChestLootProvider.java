@@ -80,7 +80,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .add(LootItem.lootTableItem(Items.CHAINMAIL_CHESTPLATE).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.GOLDEN_SWORD).setWeight(3))
                                         .add(LootItem.lootTableItem(ModItems.IMPERIAL_COINS).setWeight(8))
-                                        .add(LootItem.lootTableItem(ModItems.ETERNAL_LIGHT_BLOCK_ITEM).setWeight(3))
+                                        .add(LootItem.lootTableItem(ModBlocks.ETERNAL_LIGHT_BLOCK).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.FEATHER).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 6))))
 
 
@@ -149,7 +149,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.MUNDANE)).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.AWKWARD)).setWeight(3))
                                         .add(LootItem.lootTableItem(ModItems.IMPERIAL_COINS).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(9, 24))))
-                                        .add(LootItem.lootTableItem(ModItems.ETERNAL_LIGHT_BLOCK_ITEM).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
+                                        .add(LootItem.lootTableItem(ModBlocks.ETERNAL_LIGHT_BLOCK).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
                                         .add(LootItem.lootTableItem(ModItems.NETHERITE_OXIDE).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.FEATHER).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 6))))
 
@@ -228,7 +228,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.MUNDANE)).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.AWKWARD)).setWeight(3))
                                         .add(LootItem.lootTableItem(ModItems.IMPERIAL_COINS).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(12, 32))))
-                                        .add(LootItem.lootTableItem(ModItems.ETERNAL_LIGHT_BLOCK_ITEM).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
+                                        .add(LootItem.lootTableItem(ModBlocks.ETERNAL_LIGHT_BLOCK).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
                                         .add(LootItem.lootTableItem(ModItems.NETHERITE_OXIDE).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.TIPPED_ARROW).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(8, 16)))
                                                 .apply(SetPotionFunction.setPotion(Potions.HARMING)))
