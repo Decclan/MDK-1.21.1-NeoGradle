@@ -1,7 +1,10 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 
 public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
 
@@ -93,5 +97,10 @@ public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
 //             .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0)
 //            .add(Attributes.MOVEMENT_SPEED, 0.23F)
 //            .add(Attributes.ATTACK_DAMAGE, 5.0);
+
+    public static boolean canSpawn(EntityType<DecayedZombifiedPiglinEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
+    }
 }
 

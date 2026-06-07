@@ -79,9 +79,9 @@ public class ModItems {
             )
     );
 
-    public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
-            ITEMS.register("eternal_light_block",
-                    () -> new BlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), new Item.Properties()));
+//    public static final DeferredItem<Item> ETERNAL_LIGHT_BLOCK_ITEM =
+//            ITEMS.register("eternal_light_block",
+//                    () -> new BlockItem(ModBlocks.ETERNAL_LIGHT_BLOCK.get(), new Item.Properties()));
 
     // --- Entity Eggs ---
 
@@ -182,6 +182,14 @@ public class ModItems {
                             new Item.Properties()
                     ));
 
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> GUARD_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG =
+            ITEMS.register("guard_zombie_horse_jockey_spawn_egg", () ->
+                    new DeferredSpawnEggItem(
+                            ModEntities.GUARD_ZOMBIE_HORSE_JOCKEY,
+                            0x4A4A4A,
+                            0x4f0634,
+                            new Item.Properties()
+                    ));
 
 
     // --- Armor ---

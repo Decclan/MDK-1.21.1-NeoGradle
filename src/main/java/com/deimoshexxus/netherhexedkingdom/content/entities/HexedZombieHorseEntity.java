@@ -1,8 +1,10 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 
 public class HexedZombieHorseEntity extends Horse {
@@ -24,8 +27,8 @@ public class HexedZombieHorseEntity extends Horse {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Horse.createBaseHorseAttributes()
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 30.0D)
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.225D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 32.0D)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH, 0.7D);
     }
 
@@ -88,6 +91,11 @@ public class HexedZombieHorseEntity extends Horse {
                                                EntityDimensions dimensions,
                                                float partialTick) {
         return new Vec3(0.0D, 0.6D, 0.0D);
+    }
+
+    public static boolean canSpawn(EntityType<HexedZombieHorseEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
     }
 
 }

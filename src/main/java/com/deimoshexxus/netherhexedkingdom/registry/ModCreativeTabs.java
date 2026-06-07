@@ -40,6 +40,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.WITHER_SKELETON_HORSE_SPAWN_EGG.get());
                         output.accept(ModItems.HEXED_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG.get());
                         output.accept(ModItems.WITHER_SKELETON_HORSE_JOCKEY_SPAWN_EGG.get());
+                        output.accept(ModItems.GUARD_ZOMBIE_HORSE_JOCKEY_SPAWN_EGG.get());
                         output.accept(ModItems.MILITUS_ALLOY_HELMET.get());
                         output.accept(ModItems.MILITUS_ALLOY_CHESTPLATE.get());
                         output.accept(ModItems.MILITUS_ALLOY_LEGGINGS.get());
@@ -69,10 +70,6 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.GARGOYLE_GOLD_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_OBSIDIAN_BLOCK.get());
                         output.accept(ModBlocks.GARGOYLE_AMETHYST_BLOCK.get());
-                        //output.accept(ModBlocks.MASONIAE_MUSHROOM.get());
-                        //output.accept(ModBlocks.LINGZHI_MUSHROOM.get());
-                        //output.accept(ModBlocks.GAS_SOURCE.get());
-                        // add future blocks/items here
                     })
                     .build());
 
