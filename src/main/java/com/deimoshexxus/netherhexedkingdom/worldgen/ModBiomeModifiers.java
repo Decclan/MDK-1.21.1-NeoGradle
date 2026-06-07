@@ -27,6 +27,16 @@ public class ModBiomeModifiers {
 
     public static final ResourceKey<BiomeModifier> ADD_DECAYED_ZOMBIFIED_PIGLIN = registerKey("add_decayed_zombified_piglin");
 
+    public static final ResourceKey<BiomeModifier> ADD_HEXED_ZOMBIE_HORSE = registerKey("add_hexed_zombie_horse");
+
+    public static final ResourceKey<BiomeModifier> ADD_WITHER_SKELETON_HORSE = registerKey("add_wither_skeleton_horse");
+
+    public static final ResourceKey<BiomeModifier> ADD_HEXED_ZOMBIE_HORSE_JOCKEY = registerKey("add_hexed_zombie_horse_jockey");
+
+    public static final ResourceKey<BiomeModifier> ADD_WITHER_SKELETON_HORSE_JOCKEY = registerKey("add_wither_skeleton_horse_jockey");
+
+    public static final ResourceKey<BiomeModifier> ADD_GUARD_ZOMBIE_HORSE_JOCKEY = registerKey("add_guard_zombie_horse_jockey");
+
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         // CF -> PF -> BM
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
@@ -56,9 +66,81 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.BASALT_DELTAS)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.GARGOYLE_POSSESSED.get(),
-                                8,
+                                5,
                                 1,
                                 2
+                        ))
+                )
+        );
+
+        context.register(ADD_DECAYED_ZOMBIFIED_PIGLIN,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(),
+                                5,
+                                1,
+                                2
+                        ))
+                )
+        );
+
+        context.register(ADD_HEXED_ZOMBIE_HORSE,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.CRIMSON_FOREST)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.HEXED_ZOMBIE_HORSE.get(),
+                                5,
+                                1,
+                                1
+                        ))
+                )
+        );
+
+        context.register(ADD_WITHER_SKELETON_HORSE,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.WITHER_SKELETON_HORSE.get(),
+                                5,
+                                1,
+                                2
+                        ))
+                )
+        );
+
+        context.register(ADD_HEXED_ZOMBIE_HORSE_JOCKEY,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.SOUL_SAND_VALLEY)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(),
+                                5,
+                                3,
+                                5
+                        ))
+                )
+        );
+
+        context.register(ADD_WITHER_SKELETON_HORSE_JOCKEY,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.WITHER_SKELETON_HORSE_JOCKEY.get(),
+                                10,
+                                1,
+                                3
+                        ))
+                )
+        );
+
+        context.register(ADD_GUARD_ZOMBIE_HORSE_JOCKEY,
+                new BiomeModifiers.AddSpawnsBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
+                        List.of(new MobSpawnSettings.SpawnerData(
+                                ModEntities.GUARD_ZOMBIE_HORSE_JOCKEY.get(),
+                                15,
+                                1,
+                                3
                         ))
                 )
         );

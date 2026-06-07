@@ -1,6 +1,9 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -9,6 +12,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 
 public class DecayedZombieEntity extends Zombie {
     public DecayedZombieEntity(EntityType<? extends Zombie> type, Level level) {
@@ -40,4 +44,9 @@ public class DecayedZombieEntity extends Zombie {
 //                .add(Attributes.ARMOR, 2.0)
 //                .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
 //    }
+
+    public static boolean canSpawn(EntityType<DecayedZombieEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
+    }
 }

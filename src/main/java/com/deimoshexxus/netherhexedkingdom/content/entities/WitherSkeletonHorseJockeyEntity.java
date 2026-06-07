@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.entity.MobSpawnType;
 
@@ -93,5 +95,10 @@ public class WitherSkeletonHorseJockeyEntity extends WitherSkeleton {
         horse.setBodyArmorItem(armor);
 
         this.startRiding(horse, true);
+    }
+
+    public static boolean canSpawn(EntityType<WitherSkeletonHorseJockeyEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
     }
 }

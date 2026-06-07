@@ -3,8 +3,10 @@ package com.deimoshexxus.netherhexedkingdom.content.entities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class DecayedZombieHuskEntity extends Zombie {
@@ -76,4 +79,9 @@ public class DecayedZombieHuskEntity extends Zombie {
 //            .add(Attributes.ATTACK_DAMAGE, 3.0)
 //            .add(Attributes.ARMOR, 2.0)
 //            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
+
+    public static boolean canSpawn(EntityType<DecayedZombieHuskEntity> type, LevelAccessor level,
+                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).isSolid();
+    }
 }
