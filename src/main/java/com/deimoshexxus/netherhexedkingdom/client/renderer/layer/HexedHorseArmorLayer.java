@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.DyedItemColor;
 
 public class HexedHorseArmorLayer<T extends Horse>
         extends RenderLayer<T, HorseModel<T>> {
@@ -77,12 +79,19 @@ public class HexedHorseArmorLayer<T extends Horse>
                         )
                 );
 
+        DyedItemColor dyed = armorStack.get(DataComponents.DYED_COLOR);
+
+        //| 0xFF000000 - model renderer expects ARGB, while rgb() returns only RGB
+        int color = dyed != null
+                ? dyed.rgb() | 0xFF000000
+                : 0xFFFFFFFF;
+
         this.armorModel.renderToBuffer(
                 poseStack,
                 consumer,
                 packedLight,
                 OverlayTexture.NO_OVERLAY,
-                -1
+                color
         );
     }
 }
