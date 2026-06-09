@@ -6,6 +6,7 @@ import com.deimoshexxus.netherhexedkingdom.content.entities.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -95,24 +96,27 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<HexedZombieHorseEntity>> HEXED_ZOMBIE_HORSE =
             ENTITY_TYPES.register("hexed_zombie_horse", () ->
                     EntityType.Builder.of(HexedZombieHorseEntity::new, MobCategory.MONSTER)
-                            .sized(1.3965F, 1.6F)
-                            //.passengerAttachments(0.0F, -0.7F, 0.0F)
+                            .sized(1.3965F, 1.4F)
+                            //.passengerAttachments(0.0F, 1.2F, 0.0F)
+                            .vehicleAttachment(new Vec3(0.0D, 0.0D, 0.0D))
                             .build("hexed_zombie_horse")
             );
 
     public static final DeferredHolder<EntityType<?>, EntityType<WitherSkeletonHorseEntity>> WITHER_SKELETON_HORSE =
             ENTITY_TYPES.register("wither_skeleton_horse", () ->
                     EntityType.Builder.of(WitherSkeletonHorseEntity::new, MobCategory.MONSTER)
-                            .sized(1.6758F, 1.92F) // 1.6758F, 1.92F // 1.3965F, 1.6F
+                            .sized(1.6758F, 1.6F)
+                            .vehicleAttachment(new Vec3(0.0D, 0.0D, 0.0D))
+                            //.passengerAttachments(0.0F, 0.0F, 0.0F)
                             .fireImmune()
                             .build("wither_skeleton_horse")
-
             );
 
     public static final DeferredHolder<EntityType<?>, EntityType<HexedZombieHorseJockeyEntity>> HEXED_ZOMBIE_HORSE_JOCKEY =
             ENTITY_TYPES.register("hexed_zombie_horse_jockey", () ->
                     EntityType.Builder.of(HexedZombieHorseJockeyEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.99F)
+                            .vehicleAttachment(new Vec3(0.0D, 0.7D, 0.0D))
                             .build("hexed_zombie_horse_jockey")
             );
 
@@ -120,6 +124,7 @@ public class ModEntities {
             ENTITY_TYPES.register("wither_skeleton_horse_jockey", () ->
                     EntityType.Builder.of(WitherSkeletonHorseJockeyEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.99F)
+                            .vehicleAttachment(new Vec3(0.0D, 1.0D, 0.0D))
                             .fireImmune()
                             .build("wither_skeleton_horse_jockey")
             );
@@ -128,6 +133,7 @@ public class ModEntities {
             ENTITY_TYPES.register("guard_zombie_horse_jockey", () ->
                     EntityType.Builder.of(GuardZombieHorseJockeyEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.99F)
+                            .vehicleAttachment(new Vec3(0.0D, 0.6D, 0.0D))
                             .build("guard_zombie_horse_jockey")
             );
 

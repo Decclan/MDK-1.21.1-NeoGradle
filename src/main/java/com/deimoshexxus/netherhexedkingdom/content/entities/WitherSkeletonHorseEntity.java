@@ -120,12 +120,20 @@ public class WitherSkeletonHorseEntity extends Horse {
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {return SoundEvents.SKELETON_HORSE_HURT;}
 
-    @Override
-    protected Vec3 getPassengerAttachmentPoint(Entity passenger,
-                                               EntityDimensions dimensions,
-                                               float partialTick) {
-        return new Vec3(0.0D, 0.8D, 0.0D);
-    }
+//    @Override
+//    protected Vec3 getPassengerAttachmentPoint(Entity passenger,
+//                                               EntityDimensions dimensions,
+//                                               float partialTick) {
+//        return new Vec3(0.0D, 0.8D, 0.0D);
+//    }
+
+//    @Override
+//    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dims, float partialTick) {
+//        return new Vec3(0.0D, 1.7D, 0.0D);
+//    }
+
+//        System.out.println(passenger.getClass().getSimpleName()
+//                + " -> " + vanilla);
 
     public static boolean canSpawn(EntityType<WitherSkeletonHorseEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {

@@ -3,6 +3,7 @@ package com.deimoshexxus.netherhexedkingdom;
 import com.deimoshexxus.netherhexedkingdom.content.*;
 import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
 import com.deimoshexxus.netherhexedkingdom.content.events.ModEntitySpawnEvents;
+import com.deimoshexxus.netherhexedkingdom.content.events.PiglinInfectionProgressEvents;
 import com.deimoshexxus.netherhexedkingdom.content.events.ZombifiedPiglinDecayEvents;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
 import com.deimoshexxus.netherhexedkingdom.registry.ModCreativeTabs;
@@ -51,6 +52,7 @@ public class NetherHexedKingdom {
 
         // Register Events
         NeoForge.EVENT_BUS.register(DecayInfectionEvents.class);
+        NeoForge.EVENT_BUS.register(PiglinInfectionProgressEvents.class);
         NeoForge.EVENT_BUS.register(ZombifiedPiglinDecayEvents.class);
 
         // register this class to NeoForge event bus for server / other events

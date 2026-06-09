@@ -78,7 +78,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(),
-                                5,
+                                10,
                                 1,
                                 2
                         ))
@@ -90,7 +90,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.CRIMSON_FOREST)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.HEXED_ZOMBIE_HORSE.get(),
-                                5,
+                                3,
                                 1,
                                 1
                         ))
@@ -102,7 +102,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.WITHER_SKELETON_HORSE.get(),
-                                5,
+                                2,
                                 1,
                                 2
                         ))
@@ -115,8 +115,8 @@ public class ModBiomeModifiers {
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(),
                                 5,
-                                3,
-                                5
+                                1,
+                                3
                         ))
                 )
         );

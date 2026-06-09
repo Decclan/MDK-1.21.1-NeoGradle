@@ -86,11 +86,36 @@ public class HexedZombieHorseEntity extends Horse {
         return SoundEvents.ZOMBIE_HORSE_HURT;
     }
 
+//    @Override
+//    protected Vec3 getPassengerAttachmentPoint(Entity passenger,
+//                                               EntityDimensions dimensions,
+//                                               float partialTick) {
+//        return new Vec3(0.0D, 0.6D, 0.0D);
+//    }
+//
+//
+//    @Override
+//    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dims, float partialTick) {
+//        return new Vec3(0.0D, 1.5D, 0.0D);
+//    }
+
     @Override
-    protected Vec3 getPassengerAttachmentPoint(Entity passenger,
-                                               EntityDimensions dimensions,
-                                               float partialTick) {
-        return new Vec3(0.0D, 0.6D, 0.0D);
+    public void tick() {
+        super.tick();
+
+        if (tickCount == 20) {
+            System.out.println(
+                    EntityType.HORSE.getDimensions()
+                            .attachments()
+                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
+            );
+
+            System.out.println(
+                    this.getType().getDimensions()
+                            .attachments()
+                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
+            );
+        }
     }
 
     public static boolean canSpawn(EntityType<HexedZombieHorseEntity> type, LevelAccessor level,
