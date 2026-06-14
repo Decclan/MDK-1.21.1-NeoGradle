@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import net.minecraft.core.BlockPos;
@@ -7,10 +8,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -105,6 +103,7 @@ public class GuardZombieHorseJockeyEntity extends HexanGuardEntity {
 //    }
 
 
+
     private void spawnMount(ServerLevel level) {
 
         HexedZombieHorseEntity horse = ModEntities.HEXED_ZOMBIE_HORSE.get().create(level);
@@ -134,6 +133,12 @@ public class GuardZombieHorseJockeyEntity extends HexanGuardEntity {
     }
     public static boolean canSpawn(EntityType<GuardZombieHorseJockeyEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.HEXED_ZOMBIE_HORSE.enabled.get()) {
+            return false;
+        }
+        if (!CommonConfig.GUARD_ZOMBIE_HORSE_JOCKEY.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 }

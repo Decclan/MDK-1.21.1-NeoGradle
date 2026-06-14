@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.structures;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModStructures;
 import com.mojang.serialization.MapCodec;
@@ -27,6 +28,10 @@ public class HexedBullionTempleStructure extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+
+        if (!CommonConfig.HEXED_BULLION_TEMPLE.get()) {
+            return Optional.empty();
+        }
 
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();

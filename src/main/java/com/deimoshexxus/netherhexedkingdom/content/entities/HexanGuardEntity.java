@@ -281,7 +281,7 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
                 this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.MILITUS_ALLOY_CHESTPLATE));
                 this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.MILITUS_ALLOY_LEGGINGS));
                 if (r.nextFloat() < 0.70F) this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MILITUS_ALLOY_HELMET));
-                if (r.nextFloat() < 0.70F) this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+//                if (r.nextFloat() < 0.70F) this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
 
                 int pick = r.nextInt(3);
                 ItemStack weapon = switch (pick) {

@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.structures;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModStructures;
 import com.mojang.serialization.MapCodec;
@@ -30,6 +31,10 @@ public class CrimsonMotherFungusStructure extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+
+        if (!CommonConfig.CRIMSON_MOTHER_FUNGUS.get()) {
+            return Optional.empty();
+        }
 
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();

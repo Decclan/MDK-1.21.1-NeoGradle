@@ -66,7 +66,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.BASALT_DELTAS)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.GARGOYLE_POSSESSED.get(),
-                                5,
+                                20,
                                 1,
                                 2
                         ))
@@ -78,7 +78,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(),
-                                5,
+                                10,
                                 1,
                                 2
                         ))
@@ -90,7 +90,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.CRIMSON_FOREST)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.HEXED_ZOMBIE_HORSE.get(),
-                                5,
+                                3,
                                 1,
                                 1
                         ))
@@ -114,8 +114,8 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.SOUL_SAND_VALLEY)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(),
-                                5,
-                                3,
+                                10,
+                                2,
                                 5
                         ))
                 )

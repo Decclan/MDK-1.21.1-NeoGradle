@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.structures;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModStructures;
 import com.mojang.serialization.MapCodec;
@@ -41,6 +42,11 @@ public class HexedRedPyramidStructure extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+
+        // gen in world true/false
+        if (!CommonConfig.HEXED_RED_PYRAMID.get()) {
+            return Optional.empty();
+        }
 
         ChunkPos chunk = context.chunkPos();
         int x = chunk.getMiddleBlockX();
