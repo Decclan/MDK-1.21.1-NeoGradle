@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -130,105 +131,111 @@ public class HexedZombieHorseJockeyEntity extends Skeleton {
         level.addFreshEntity(horse);
 
         this.startRiding(horse, true);
-        System.out.println(getClass());
-        System.out.println(getType());
-        System.out.println(getBbHeight());
-        System.out.println(getEyeHeight());
+//        System.out.println(getClass());
+//        System.out.println(getType());
+//        System.out.println(getBbHeight());
+//        System.out.println(getEyeHeight());
     }
 
     public static boolean canSpawn(EntityType<HexedZombieHorseJockeyEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.HEXED_ZOMBIE_HORSE.enabled.get()) {
+            return false;
+        }
+        if (!CommonConfig.HEXED_ZOMBIE_HORSE_JOCKEY.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (tickCount == 20) {
-//            System.out.println("Type dimensions = " + getType().getDimensions());
-//            System.out.println("Current dimensions = " + getDimensions(getPose()));
-//            System.out.println("Eye height = " + getEyeHeight());
+//    @Override
+//    public void tick() {
+//        super.tick();
 //
-//            System.out.println(EntityType.SKELETON.getDimensions());
+//        if (tickCount == 20) {
+////            System.out.println("Type dimensions = " + getType().getDimensions());
+////            System.out.println("Current dimensions = " + getDimensions(getPose()));
+////            System.out.println("Eye height = " + getEyeHeight());
+////
+////            System.out.println(EntityType.SKELETON.getDimensions());
+////            System.out.println(
+////                    ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get().getDimensions()
+////            );
+////
+////            System.out.println(
+////                    EntityType.SKELETON.getDimensions().attachments()
+////            );
+////
+////            System.out.println(
+////                    this.getType().getDimensions().attachments()
+////            );
+////
+////            EntityDimensions vanilla = EntityType.SKELETON.getDimensions();
+////            EntityDimensions custom = getType().getDimensions();
+//
 //            System.out.println(
-//                    ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get().getDimensions()
+//                    "Custom PASSENGER = " +
+//                            ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
+//                                    .getDimensions()
+//                                    .attachments()
+//                                    .get(EntityAttachment.PASSENGER, 0, 0)
 //            );
 //
 //            System.out.println(
-//                    EntityType.SKELETON.getDimensions().attachments()
+//                    "Custom VEHICLE = " +
+//                            ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
+//                                    .getDimensions()
+//                                    .attachments()
+//                                    .get(EntityAttachment.VEHICLE, 0, 0)
 //            );
 //
 //            System.out.println(
-//                    this.getType().getDimensions().attachments()
-//            );
-//
-//            EntityDimensions vanilla = EntityType.SKELETON.getDimensions();
-//            EntityDimensions custom = getType().getDimensions();
-
-            System.out.println(
-                    "Custom PASSENGER = " +
-                            ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
-                                    .getDimensions()
-                                    .attachments()
-                                    .get(EntityAttachment.PASSENGER, 0, 0)
-            );
-
-            System.out.println(
-                    "Custom VEHICLE = " +
-                            ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
-                                    .getDimensions()
-                                    .attachments()
-                                    .get(EntityAttachment.VEHICLE, 0, 0)
-            );
-
-            System.out.println(
-                    "Vanilla PASSENGER = " +
-                            EntityType.SKELETON.getDimensions()
-                                    .attachments()
-                                    .get(EntityAttachment.PASSENGER, 0, 0)
-            );
-
-            System.out.println(
-                    "Vanilla VEHICLE = " +
-                            EntityType.SKELETON.getDimensions()
-                                    .attachments()
-                                    .get(EntityAttachment.VEHICLE, 0, 0)
-            );
-
-//            System.out.println(
-//                    EntityType.SKELETON
-//                            .getDimensions()
-//                            .attachments()
-//                            .get(EntityAttachment.VEHICLE, 0, 0.0F)
+//                    "Vanilla PASSENGER = " +
+//                            EntityType.SKELETON.getDimensions()
+//                                    .attachments()
+//                                    .get(EntityAttachment.PASSENGER, 0, 0)
 //            );
 //
 //            System.out.println(
-//                    ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
-//                            .getDimensions()
-//                            .attachments()
-//                            .get(EntityAttachment.VEHICLE, 0, 0.0F)
+//                    "Vanilla VEHICLE = " +
+//                            EntityType.SKELETON.getDimensions()
+//                                    .attachments()
+//                                    .get(EntityAttachment.VEHICLE, 0, 0)
 //            );
-
-//            EntityType.HORSE.getDimensions()
-//                    .attachments()
-//                    .get(EntityAttachment.PASSENGER, 0, 0);
 //
-//            EntityType.ZOMBIE_HORSE.getDimensions()
-//                    .attachments()
-//                    .get(EntityAttachment.PASSENGER, 0, 0);
+////            System.out.println(
+////                    EntityType.SKELETON
+////                            .getDimensions()
+////                            .attachments()
+////                            .get(EntityAttachment.VEHICLE, 0, 0.0F)
+////            );
+////
+////            System.out.println(
+////                    ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get()
+////                            .getDimensions()
+////                            .attachments()
+////                            .get(EntityAttachment.VEHICLE, 0, 0.0F)
+////            );
 //
-//            ModEntities.HEXED_ZOMBIE_HORSE.get()
-//                    .getDimensions()
-//                    .attachments()
-//                    .get(EntityAttachment.PASSENGER, 0, 0);
-
-//            EntityAttachment.PASSENGER
-//            EntityAttachment.NAME_TAG
-//            EntityAttachment.WARDEN_CHEST
-
-        }
-
-
-    }
+////            EntityType.HORSE.getDimensions()
+////                    .attachments()
+////                    .get(EntityAttachment.PASSENGER, 0, 0);
+////
+////            EntityType.ZOMBIE_HORSE.getDimensions()
+////                    .attachments()
+////                    .get(EntityAttachment.PASSENGER, 0, 0);
+////
+////            ModEntities.HEXED_ZOMBIE_HORSE.get()
+////                    .getDimensions()
+////                    .attachments()
+////                    .get(EntityAttachment.PASSENGER, 0, 0);
+//
+////            EntityAttachment.PASSENGER
+////            EntityAttachment.NAME_TAG
+////            EntityAttachment.WARDEN_CHEST
+//
+//        }
+//
+//
+//    }
 }

@@ -45,12 +45,12 @@ public final class DecayInfectionEvents {
         int exposure = data.getInt(EXPOSURE) + 1;
         data.putInt(EXPOSURE, exposure);
 
-        NetherHexedKingdom.LOGGER.info(
-                "Piglin {} exposed to decay ({}/{})",
-                piglin.getUUID(),
-                exposure,
-                REQUIRED_EXPOSURES
-        );
+//        NetherHexedKingdom.LOGGER.info(
+//                "Piglin {} exposed to decay ({}/{})",
+//                piglin.getUUID(),
+//                exposure,
+//                REQUIRED_EXPOSURES
+//        );
 
         if (exposure >= REQUIRED_EXPOSURES) {
             data.putBoolean(INFECTED, true);
@@ -69,10 +69,10 @@ public final class DecayInfectionEvents {
                 );
             }
 
-            NetherHexedKingdom.LOGGER.info(
-                    "Piglin {} became infected",
-                    piglin.getUUID()
-            );
+//            NetherHexedKingdom.LOGGER.info(
+//                    "Piglin {} became infected",
+//                    piglin.getUUID()
+//            );
         }
     }
 }

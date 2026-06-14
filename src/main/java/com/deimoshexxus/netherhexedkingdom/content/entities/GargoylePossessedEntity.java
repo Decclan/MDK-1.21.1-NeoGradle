@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoylePlayTamedGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.GargoyleSpitAttackGoal;
 import net.minecraft.core.BlockPos;
@@ -300,6 +301,9 @@ public class GargoylePossessedEntity extends TamableAnimal {
 
     public static boolean canSpawn(EntityType<GargoylePossessedEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.GARGOYLE_POSSESSED.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
     // Removed Forge-specific spawn packet override: networking is handled by the platform/loader.

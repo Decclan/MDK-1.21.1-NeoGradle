@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.*;
 import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
 import com.deimoshexxus.netherhexedkingdom.content.events.ModEntitySpawnEvents;

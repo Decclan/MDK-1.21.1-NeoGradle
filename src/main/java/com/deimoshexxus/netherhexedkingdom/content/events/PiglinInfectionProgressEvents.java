@@ -58,20 +58,20 @@ public final class PiglinInfectionProgressEvents {
             );
         }
 
-        NetherHexedKingdom.LOGGER.info(
-                "Piglin {} infection progress {}/{}",
-                piglin.getUUID(),
-                progress,
-                CONVERT_THRESHOLD
-        );
-
-        if (progress >= CONVERT_THRESHOLD) {
-            convert(piglin);
-            NetherHexedKingdom.LOGGER.info(
-                    "Piglin {} converting to Zombified Piglin",
-                    piglin.getUUID()
-            );
-        }
+//        NetherHexedKingdom.LOGGER.info(
+//                "Piglin {} infection progress {}/{}",
+//                piglin.getUUID(),
+//                progress,
+//                CONVERT_THRESHOLD
+//        );
+//
+//        if (progress >= CONVERT_THRESHOLD) {
+//            convert(piglin);
+//            NetherHexedKingdom.LOGGER.info(
+//                    "Piglin {} converting to Zombified Piglin",
+//                    piglin.getUUID()
+//            );
+//        }
 
 
     }

@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.structures;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
 import com.deimoshexxus.netherhexedkingdom.content.ModStructures;
 import com.mojang.serialization.MapCodec;
@@ -7,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
@@ -31,6 +31,10 @@ public class HexedGreedMinesStructure extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+
+        if (!CommonConfig.HEXED_GREED_MINES.get()) {
+            return Optional.empty();
+        }
 
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.getMiddleBlockX();

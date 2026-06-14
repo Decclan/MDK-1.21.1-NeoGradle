@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -100,6 +101,9 @@ public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
 
     public static boolean canSpawn(EntityType<DecayedZombifiedPiglinEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.DECAYED_ZOMBIFIED_PIGLIN.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 }

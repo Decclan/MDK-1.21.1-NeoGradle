@@ -134,6 +134,7 @@ public class ModEntities {
                     EntityType.Builder.of(GuardZombieHorseJockeyEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.99F)
                             .vehicleAttachment(new Vec3(0.0D, 0.6D, 0.0D))
+                            .fireImmune()
                             .build("guard_zombie_horse_jockey")
             );
 

@@ -1,14 +1,13 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.entity.MobSpawnType;
 
 import javax.annotation.Nullable;
 
@@ -66,6 +64,10 @@ public class WitherSkeletonHorseJockeyEntity extends WitherSkeleton {
 
     }
 
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return EntityType.WITHER_SKELETON.getDimensions();
+    }
 
     private void spawnMount(ServerLevel level) {
 
@@ -99,6 +101,12 @@ public class WitherSkeletonHorseJockeyEntity extends WitherSkeleton {
 
     public static boolean canSpawn(EntityType<WitherSkeletonHorseJockeyEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.WITHER_SKELETON_HORSE.enabled.get()) {
+            return false;
+        }
+        if (!CommonConfig.WITHER_SKELETON_HORSE_JOCKEY.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 }

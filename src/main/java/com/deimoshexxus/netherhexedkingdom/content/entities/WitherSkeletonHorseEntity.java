@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -137,6 +138,9 @@ public class WitherSkeletonHorseEntity extends Horse {
 
     public static boolean canSpawn(EntityType<WitherSkeletonHorseEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.WITHER_SKELETON_HORSE.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 }

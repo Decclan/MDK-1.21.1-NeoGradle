@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -50,13 +51,10 @@ public class HexedZombieHorseEntity extends Horse {
                     this.level().broadcastEntityEvent(this, (byte)6);
                 }
             }
-
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
-
         return super.mobInteract(player, hand);
     }
-
     public boolean isUndead() {
         return true;
     }
@@ -99,27 +97,30 @@ public class HexedZombieHorseEntity extends Horse {
 //        return new Vec3(0.0D, 1.5D, 0.0D);
 //    }
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (tickCount == 20) {
-            System.out.println(
-                    EntityType.HORSE.getDimensions()
-                            .attachments()
-                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
-            );
-
-            System.out.println(
-                    this.getType().getDimensions()
-                            .attachments()
-                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
-            );
-        }
-    }
+//    @Override
+//    public void tick() {
+//        super.tick();
+//
+//        if (tickCount == 20) {
+//            System.out.println(
+//                    EntityType.HORSE.getDimensions()
+//                            .attachments()
+//                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
+//            );
+//
+//            System.out.println(
+//                    this.getType().getDimensions()
+//                            .attachments()
+//                            .get(EntityAttachment.PASSENGER, 0, 0.0F)
+//            );
+//        }
+//    }
 
     public static boolean canSpawn(EntityType<HexedZombieHorseEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (!CommonConfig.HEXED_ZOMBIE_HORSE.enabled.get()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).isSolid();
     }
 

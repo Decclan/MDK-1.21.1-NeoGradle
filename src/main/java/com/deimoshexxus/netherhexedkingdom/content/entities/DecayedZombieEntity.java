@@ -1,5 +1,6 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -47,6 +48,7 @@ public class DecayedZombieEntity extends Zombie {
 
     public static boolean canSpawn(EntityType<DecayedZombieEntity> type, LevelAccessor level,
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
+
         return level.getBlockState(pos.below()).isSolid();
     }
 }

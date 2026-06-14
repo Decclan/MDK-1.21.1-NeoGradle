@@ -70,25 +70,25 @@ public final class ZombifiedPiglinDecayEvents {
             progress = Math.max(0, progress - 1);
         }
 
-        NetherHexedKingdom.LOGGER.info(
-                "Zombified Piglin {} sees {} decayed piglins",
-                piglin.getUUID(),
-                nearbyDecayed
-        );
-
-        data.putInt(DECAY_PROGRESS, progress);
-
-        NetherHexedKingdom.LOGGER.info(
-                "Zombified Piglin {} decay progress {}/{}",
-                piglin.getUUID(),
-                progress,
-                CONVERT_THRESHOLD
-        );
+//        NetherHexedKingdom.LOGGER.info(
+//                "Zombified Piglin {} sees {} decayed piglins",
+//                piglin.getUUID(),
+//                nearbyDecayed
+//        );
+//
+//        data.putInt(DECAY_PROGRESS, progress);
+//
+//        NetherHexedKingdom.LOGGER.info(
+//                "Zombified Piglin {} decay progress {}/{}",
+//                piglin.getUUID(),
+//                progress,
+//                CONVERT_THRESHOLD
+//        );
 
         if (progress >= CONVERT_THRESHOLD - 3) {
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(
-                        ParticleTypes.SOUL,
+                        ParticleTypes.COMPOSTER,
                         piglin.getX(),
                         piglin.getY() + 1.0D,
                         piglin.getZ(),
@@ -101,13 +101,13 @@ public final class ZombifiedPiglinDecayEvents {
             }
         }
 
-        if (progress >= CONVERT_THRESHOLD) {
-            convert(piglin);
-            NetherHexedKingdom.LOGGER.info(
-                    "Zombified Piglin {} converting to Decayed",
-                    piglin.getUUID()
-            );
-        }
+//        if (progress >= CONVERT_THRESHOLD) {
+//            convert(piglin);
+//            NetherHexedKingdom.LOGGER.info(
+//                    "Zombified Piglin {} converting to Decayed",
+//                    piglin.getUUID()
+//            );
+//        }
     }
 
     private static int getNearbyDecayedCount(Level level, ZombifiedPiglin piglin) {
