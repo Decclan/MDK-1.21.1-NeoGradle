@@ -1,8 +1,8 @@
 package com.deimoshexxus.netherhexedkingdom.content.custom.blocks;
 
-import com.deimoshexxus.netherhexedkingdom.content.ModBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -10,13 +10,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -25,50 +26,69 @@ import javax.annotation.Nullable;
 
 public class SoulGlowMushroomBlock extends BushBlock implements EntityBlock {
 
-    private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 5.0D, 12.0D);
-    //private static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 13.0D, 13.0D);
-    public static final MapCodec<SoulGlowMushroomBlock> CODEC = simpleCodec(SoulGlowMushroomBlock::new);
+    public static final MapCodec<SoulGlowMushroomBlock> CODEC =
+            simpleCodec(SoulGlowMushroomBlock::new);
+
+    private static final VoxelShape SHAPE =
+            Block.box(4.0D, 0.0D, 4.0D, 12.0D, 5.0D, 12.0D);
 
     @Override
     public MapCodec<SoulGlowMushroomBlock> codec() {
         return CODEC;
     }
 
-    public SoulGlowMushroomBlock(Properties props) {
-        super(props);
+    public SoulGlowMushroomBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
-        BlockState soil = world.getBlockState(below);
+        BlockState soil = level.getBlockState(below);
 
-        // Allow normal Minecraft mushroom logic
-        boolean defaultLogic = super.canSurvive(state, world, pos);
-
-        // Add your custom blocks here
-        boolean customHost = soil.is(Blocks.SOUL_SOIL);// || soil.is(ModBlocks.MY_CUSTOM_BLOCK.get());
-
-        return defaultLogic || customHost;
+        return super.canSurvive(state, level, pos)
+                || soil.is(Blocks.SOUL_SOIL)
+                || soil.is(Blocks.MYCELIUM);
     }
 
+    /**
+     * Slower than vanilla mushrooms.
+     * Vanilla: 1/25 chance (~4%)
+     * Soul Glow: 1/200 chance (0.5%)
+     */
     @Override
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        if (!world.isAreaLoaded(pos, 1)) return; // Safety check
+    protected void randomTick(
+            BlockState state,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (!level.isAreaLoaded(pos, 1)) {
+            return;
+        }
 
-        // Only attempt spread occasionally
-        if (random.nextInt(200) == 0) { // 2% 1 in 200 chance per tick // vanilla mushrooms have 4% chance of spreading to a nearby block - 4 in 100
-            spreadMushroom(state, world, pos, random);
+        if (random.nextInt(200) == 0) {
+            spreadMushroom(state, level, pos, random);
         }
     }
 
-    private void spreadMushroom(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        BlockPos targetPos = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - 1, random.nextInt(3) - 1);
-        if (world.isEmptyBlock(targetPos) && state.canSurvive(world, targetPos)) {
-            world.setBlock(targetPos, state, 2);
+    private void spreadMushroom(
+            BlockState state,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        BlockPos targetPos = pos.offset(
+                random.nextInt(3) - 1,
+                random.nextInt(2) - 1,
+                random.nextInt(3) - 1
+        );
+
+        if (level.isEmptyBlock(targetPos)
+                && state.canSurvive(level, targetPos)) {
+            level.setBlock(targetPos, state, 2);
         }
     }
-
 
     @Nullable
     @Override
@@ -77,35 +97,62 @@ public class SoulGlowMushroomBlock extends BushBlock implements EntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            CollisionContext context
+    ) {
         return SHAPE;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        // Return EMPTY so entities can pass through
+    protected VoxelShape getCollisionShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            CollisionContext context
+    ) {
         return Shapes.empty();
     }
 
     @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(5) == 0) { // ~20% chance
+    public void animateTick(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (random.nextInt(5) == 0) {
             double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.3;
             double y = pos.getY() + 0.7;
             double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.3;
 
-            level.addParticle(ParticleTypes.GLOW, x, y, z, 0.0, 0.01, 0.0);
+            level.addParticle(
+                    ParticleTypes.GLOW,
+                    x,
+                    y,
+                    z,
+                    0.0,
+                    0.01,
+                    0.0
+            );
         }
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
-                                            Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            BlockHitResult hit
+    ) {
         if (level.isClientSide) {
             double x = pos.getX() + 0.5;
             double y = pos.getY() + 1.0;
@@ -117,16 +164,22 @@ public class SoulGlowMushroomBlock extends BushBlock implements EntityBlock {
                         x + (level.random.nextDouble() - 0.5) * 0.4,
                         y,
                         z + (level.random.nextDouble() - 0.5) * 0.4,
-                        0.0, 0.04, 0.0
+                        0.0,
+                        0.04,
+                        0.0
                 );
             }
         }
-        return InteractionResult.SUCCESS;
+
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter getter, BlockPos pos) {
+    protected boolean propagatesSkylightDown(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos
+    ) {
         return true;
     }
 }
-

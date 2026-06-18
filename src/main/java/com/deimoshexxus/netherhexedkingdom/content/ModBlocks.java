@@ -195,7 +195,7 @@ public class ModBlocks {
             ));
 
     public static final DeferredBlock<Block> MASONIAE_MUSHROOM = registerBlock("masoniae_mushroom",
-            () -> new Block(BlockBehaviour.Properties.of()
+            () -> new MasoniaeMushroomBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
                     .strength(0.2f)
                     .noCollission()

@@ -44,6 +44,11 @@ public final class DataGenerators {
 
         if (event.includeServer()) {
 
+            generator.addProvider(
+                    true,
+                    new ModRecipeProvider(output, lookupProvider)
+            );
+
             List<LootTableProvider.SubProviderEntry> subProviders = List.of(
                     new LootTableProvider.SubProviderEntry(
                             ModBlockLootProvider::new,

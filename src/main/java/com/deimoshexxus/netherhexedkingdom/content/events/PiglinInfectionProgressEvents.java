@@ -13,21 +13,29 @@ import net.minecraft.server.level.ServerLevel;
 
 public final class PiglinInfectionProgressEvents {
 
-    private static final String INFECTION_PROGRESS = "InfectionProgress";
+    private static final String INFECTION_PROGRESS =
+            "InfectionProgress";
 
-    private static final int CHECK_INTERVAL = 100; // 5 seconds
-    private static final int CONVERT_THRESHOLD = 24; // 2 minutes
+    private static final int CHECK_INTERVAL = 100;
+    private static final int CONVERT_THRESHOLD = 24;
 
     private PiglinInfectionProgressEvents() {}
 
     @SubscribeEvent
-    public static void onEntityTick(EntityTickEvent.Post event) {
+    public static void onTick(EntityTickEvent.Post event) {
+
         if (!(event.getEntity() instanceof AbstractPiglin piglin)) {
             return;
         }
 
-        Level level = piglin.level();
-        if (level.isClientSide()) {
+        if (piglin.level().isClientSide()) {
+            return;
+        }
+
+        CompoundTag data = piglin.getPersistentData();
+
+        if (!data.getBoolean(
+                DecayInfectionEvents.INFECTED)) {
             return;
         }
 
@@ -35,63 +43,27 @@ public final class PiglinInfectionProgressEvents {
             return;
         }
 
-        CompoundTag data = piglin.getPersistentData();
+        int progress =
+                data.getInt(INFECTION_PROGRESS) + 1;
 
-        if (!data.getBoolean(DecayInfectionEvents.INFECTED)) {
-            return;
-        }
-
-        int progress = data.getInt(INFECTION_PROGRESS) + 1;
         data.putInt(INFECTION_PROGRESS, progress);
 
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                    ParticleTypes.ASH,
-                    piglin.getX(),
-                    piglin.getY() + 1.0D,
-                    piglin.getZ(),
-                    2,
-                    0.2D,
-                    0.2D,
-                    0.2D,
-                    0.01D
-            );
+        NetherHexedKingdom.LOGGER.info(
+                "Piglin {} infection {}/{}",
+                piglin.getUUID(),
+                progress,
+                CONVERT_THRESHOLD
+        );
+
+        if (progress >= CONVERT_THRESHOLD) {
+            convert(piglin);
         }
-
-//        NetherHexedKingdom.LOGGER.info(
-//                "Piglin {} infection progress {}/{}",
-//                piglin.getUUID(),
-//                progress,
-//                CONVERT_THRESHOLD
-//        );
-//
-//        if (progress >= CONVERT_THRESHOLD) {
-//            convert(piglin);
-//            NetherHexedKingdom.LOGGER.info(
-//                    "Piglin {} converting to Zombified Piglin",
-//                    piglin.getUUID()
-//            );
-//        }
-
-
     }
 
-    private static void convert(AbstractPiglin piglin) {
-        Level level = piglin.level();
 
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                    ParticleTypes.POOF,
-                    piglin.getX(),
-                    piglin.getY() + 1.0D,
-                    piglin.getZ(),
-                    20,
-                    0.4D,
-                    0.5D,
-                    0.4D,
-                    0.05D
-            );
-        }
+    private static void convert(AbstractPiglin piglin) {
+
+        Level level = piglin.level();
 
         ZombifiedPiglin zombified =
                 EntityType.ZOMBIFIED_PIGLIN.create(level);
@@ -100,21 +72,23 @@ public final class PiglinInfectionProgressEvents {
             return;
         }
 
-        CompoundTag tag = piglin.saveWithoutId(new CompoundTag());
+        CompoundTag tag =
+                piglin.saveWithoutId(new CompoundTag());
 
         tag.remove(DecayInfectionEvents.INFECTED);
         tag.remove(DecayInfectionEvents.EXPOSURE);
         tag.remove(INFECTION_PROGRESS);
 
-        // Extra safety
         tag.remove("UUID");
 
         zombified.load(tag);
 
+        if (piglin.isBaby()) {
+            zombified.setBaby(true);
+        }
+
         zombified.moveTo(
-                piglin.getX(),
-                piglin.getY(),
-                piglin.getZ(),
+                piglin.position(),
                 piglin.getYRot(),
                 piglin.getXRot()
         );
@@ -126,5 +100,10 @@ public final class PiglinInfectionProgressEvents {
         level.addFreshEntity(zombified);
 
         piglin.discard();
+
+        NetherHexedKingdom.LOGGER.info(
+                "Piglin {} zombified",
+                piglin.getUUID()
+        );
     }
 }

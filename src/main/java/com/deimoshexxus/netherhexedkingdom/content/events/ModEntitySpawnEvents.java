@@ -20,6 +20,14 @@ public final class ModEntitySpawnEvents {
         );
 
         event.register(
+                ModEntities.HEXAN_GUARD.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                HexanGuardEntity::canSpawn,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE
+        );
+
+        event.register(
                 ModEntities.DECAYED_ZOMBIE.get(),
                 SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,

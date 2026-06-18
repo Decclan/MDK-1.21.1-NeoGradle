@@ -78,9 +78,9 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get(),
-                                10,
-                                1,
-                                2
+                                15,
+                                3,
+                                7
                         ))
                 )
         );
@@ -114,9 +114,9 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.SOUL_SAND_VALLEY)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.HEXED_ZOMBIE_HORSE_JOCKEY.get(),
-                                10,
-                                2,
-                                5
+                                15,
+                                1,
+                                3
                         ))
                 )
         );
@@ -126,7 +126,7 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.WITHER_SKELETON_HORSE_JOCKEY.get(),
-                                10,
+                                15,
                                 1,
                                 3
                         ))
@@ -138,8 +138,8 @@ public class ModBiomeModifiers {
                         HolderSet.direct(biomes.getOrThrow(Biomes.NETHER_WASTES)),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 ModEntities.GUARD_ZOMBIE_HORSE_JOCKEY.get(),
-                                15,
-                                1,
+                                20,
+                                2,
                                 3
                         ))
                 )

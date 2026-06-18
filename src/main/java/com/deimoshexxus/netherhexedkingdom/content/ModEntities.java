@@ -96,7 +96,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<HexedZombieHorseEntity>> HEXED_ZOMBIE_HORSE =
             ENTITY_TYPES.register("hexed_zombie_horse", () ->
                     EntityType.Builder.of(HexedZombieHorseEntity::new, MobCategory.MONSTER)
-                            .sized(1.3965F, 1.4F)
+                            .sized(1.3965F, 1.4F) //change height to 2.6 to avoid jockey suffocation, adjust vehicle attachments accordingly
                             //.passengerAttachments(0.0F, 1.2F, 0.0F)
                             .vehicleAttachment(new Vec3(0.0D, 0.0D, 0.0D))
                             .build("hexed_zombie_horse")
@@ -124,7 +124,7 @@ public class ModEntities {
             ENTITY_TYPES.register("wither_skeleton_horse_jockey", () ->
                     EntityType.Builder.of(WitherSkeletonHorseJockeyEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.99F)
-                            .vehicleAttachment(new Vec3(0.0D, 1.0D, 0.0D))
+                            .vehicleAttachment(new Vec3(0.0D, 0.8D, 0.0D)) // y changed from 1.0 to 0.8 on 15/06/26
                             .fireImmune()
                             .build("wither_skeleton_horse_jockey")
             );

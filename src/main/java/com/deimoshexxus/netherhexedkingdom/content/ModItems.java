@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content;
 
 import com.deimoshexxus.netherhexedkingdom.NetherHexedKingdom;
+import com.deimoshexxus.netherhexedkingdom.content.custom.items.MasoniaeMushroomItem;
 import com.deimoshexxus.netherhexedkingdom.content.custom.items.NetherPortalOrbItem;
 import com.deimoshexxus.netherhexedkingdom.content.custom.items.SoulGlowMushroomItem;
 import com.deimoshexxus.netherhexedkingdom.content.material.ModArmorMaterials;
@@ -43,11 +44,11 @@ public class ModItems {
     // --- Consumables ---
 
     public static final DeferredItem<BlockItem> MASONIAE_MUSHROOM_ITEM = ITEMS.register("masoniae_mushroom",
-            () -> new BlockItem(ModBlocks.MASONIAE_MUSHROOM.get(),
+            () -> new MasoniaeMushroomItem(ModBlocks.MASONIAE_MUSHROOM.get(),
                     new Item.Properties()
                             .food(new FoodProperties.Builder()
-                                    .nutrition(4)
-                                    .saturationModifier(0.6f)
+                                    .nutrition(3) // 1.5 drumsticks
+                                    .saturationModifier(0.4f)
                                     .alwaysEdible()
                                     //do not use effects here, results in suspicious holder bug
                                     .build()
@@ -60,7 +61,7 @@ public class ModItems {
                     new Item.Properties()
                             .food(new FoodProperties.Builder()
                                     .nutrition(1)
-                                    .saturationModifier(2.6f)
+                                    .saturationModifier(0.3f)
                                     .alwaysEdible()
                                     .build()
                             )

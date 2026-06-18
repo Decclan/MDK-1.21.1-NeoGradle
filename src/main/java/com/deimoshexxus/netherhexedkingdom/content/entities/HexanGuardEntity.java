@@ -1,10 +1,12 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
+import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
 import com.deimoshexxus.netherhexedkingdom.content.ModItems;
 import com.deimoshexxus.netherhexedkingdom.content.ModSounds;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.AlertNearbyGuardsGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.FollowSquadLeaderGoal;
 import com.deimoshexxus.netherhexedkingdom.content.entities.ai.ThrowGrenadeGoal;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -46,6 +48,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 
@@ -578,7 +581,14 @@ public class HexanGuardEntity extends Monster implements RangedAttackMob {
         );
     }
 
+    public static boolean canSpawn(
+            EntityType<? extends HexanGuardEntity> type,
+            LevelAccessor level,
+            MobSpawnType spawnType,
+            BlockPos pos,
+            RandomSource random) {
 
-
+        return level.getBlockState(pos.below()).isSolid();
+    }
 
 }

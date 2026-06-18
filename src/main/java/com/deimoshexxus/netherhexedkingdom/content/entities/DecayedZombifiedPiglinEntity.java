@@ -1,6 +1,7 @@
 package com.deimoshexxus.netherhexedkingdom.content.entities;
 
 import com.deimoshexxus.netherhexedkingdom.config.CommonConfig;
+import com.deimoshexxus.netherhexedkingdom.content.events.DecayInfectionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
@@ -47,8 +49,18 @@ public class DecayedZombifiedPiglinEntity extends ZombifiedPiglin {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(
                 this, Player.class, true));
 
+//        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
+//                this, Piglin.class, false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
-                this, Piglin.class, false));
+                this,
+                AbstractPiglin.class,
+                10,
+                true,
+                false,
+                piglin -> !piglin.getPersistentData().getBoolean(
+                        DecayInfectionEvents.INFECTED
+                )
+        ));
 
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(
                 this, IronGolem.class, true));
