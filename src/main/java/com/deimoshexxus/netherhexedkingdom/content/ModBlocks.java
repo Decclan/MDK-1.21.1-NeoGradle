@@ -166,6 +166,13 @@ public class ModBlocks {
                     .sound(SoundType.NETHER_BRICKS)
                     .requiresCorrectToolForDrops()));
 
+    public static final DeferredBlock<Block> GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME = registerBlockWithItem("gilded_blackstone_bricks_of_lost_time_block",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(32f, 15f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()));
+
     public static final DeferredBlock<Block> HEXAN_CHISELED_POLISHED_BLACKSTONE = registerBlockWithItem("hexan_chiseled_polished_blackstone_block",
             () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)

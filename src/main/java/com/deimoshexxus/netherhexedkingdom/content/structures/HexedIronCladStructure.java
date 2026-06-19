@@ -69,7 +69,7 @@ public class HexedIronCladStructure extends Structure {
 
         Rotation rotation = Rotation.getRandom(context.random());
 
-        NetherHexedKingdom.LOGGER.info(
+        NetherHexedKingdom.LOGGER.debug(
                 "[HexedIronClad] Lava surface at Y={}, placing at {} (offset -2)",
                 lavaSurfaceY,
                 basePos

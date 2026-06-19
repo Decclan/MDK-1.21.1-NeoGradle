@@ -57,6 +57,7 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.MILITUS_ALLOY_ORE.get());
                         output.accept(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get());
                         output.accept(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get());
+                        output.accept(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME.get());
                         output.accept(ModBlocks.ETERNAL_LIGHT_BLOCK.get());
                         output.accept(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get());
                         output.accept(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get());

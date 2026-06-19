@@ -108,14 +108,14 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_militus_nugget", has(ModItems.MILITUS_ALLOY_NUGGET))
                 .save(output);
 
-//        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.MILITUS_ALLOY_BLOCK.get())
-//                .pattern("IGI")
-//                .pattern("GIG")
-//                .pattern("IGI")
-//                .define('I', Items.IRON_INGOT)
-//                .define('G', Items.GOLD_INGOT)
-//                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-//                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME.get())
+                .pattern(" N ")
+                .pattern("NBN")
+                .pattern(" N ")
+                .define('N', ModItems.MILITUS_ALLOY_NUGGET)
+                .define('B', Blocks.POLISHED_BLACKSTONE_BRICKS)
+                .unlockedBy("has_militus_nugget", has(ModItems.MILITUS_ALLOY_NUGGET))
+                .save(output);
 
         // Misc #####################################################################################
 
