@@ -29,9 +29,9 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> MILITUS_ALLOY_ORE = registerBlockWithItem("militus_alloy_ore",
             () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
+                    .mapColor(MapColor.METAL)
                     .strength(16f, 13f)
-                    .sound(SoundType.STONE)
+                    .sound(SoundType.NETHER_GOLD_ORE)
                     .requiresCorrectToolForDrops()));
 
     public static final DeferredBlock<Block> MILITUS_ALLOY_BLOCK = registerBlockWithItem("militus_alloy_block",
@@ -166,6 +166,13 @@ public class ModBlocks {
                     .sound(SoundType.NETHER_BRICKS)
                     .requiresCorrectToolForDrops()));
 
+    public static final DeferredBlock<Block> GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME = registerBlockWithItem("gilded_blackstone_bricks_of_lost_time_block",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(32f, 15f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()));
+
     public static final DeferredBlock<Block> HEXAN_CHISELED_POLISHED_BLACKSTONE = registerBlockWithItem("hexan_chiseled_polished_blackstone_block",
             () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
@@ -195,7 +202,7 @@ public class ModBlocks {
             ));
 
     public static final DeferredBlock<Block> MASONIAE_MUSHROOM = registerBlock("masoniae_mushroom",
-            () -> new Block(BlockBehaviour.Properties.of()
+            () -> new MasoniaeMushroomBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
                     .strength(0.2f)
                     .noCollission()

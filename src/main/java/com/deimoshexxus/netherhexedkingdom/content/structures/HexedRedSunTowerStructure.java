@@ -37,7 +37,6 @@ public class HexedRedSunTowerStructure extends Structure {
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 
-        // gen in world true/false
         if (!CommonConfig.HEXED_RED_SUN_TOWER.get()) {
             return Optional.empty();
         }
@@ -46,8 +45,30 @@ public class HexedRedSunTowerStructure extends Structure {
         int centerX = chunkPos.getMiddleBlockX();
         int centerZ = chunkPos.getMiddleBlockZ();
 
-        int minY = 32;
-        int maxY = 90; // allow full tower height safely
+        Rotation rotation = Rotation.getRandom(context.random());
+        StructureTemplateManager manager = context.structureTemplateManager();
+
+        StructureTemplate foundationTemplate = manager.getOrCreate(FOUNDATION);
+        StructureTemplate bottomTemplate = manager.getOrCreate(BOTTOM);
+
+        ResourceLocation topId =
+                TOP[context.random().nextInt(TOP.length)];
+
+        StructureTemplate topTemplate = manager.getOrCreate(topId);
+
+        // Rotation-safe sizes
+        var foundationSize = foundationTemplate.getSize(rotation);
+        var bottomSize = bottomTemplate.getSize(rotation);
+        var topSize = topTemplate.getSize(rotation);
+
+        int totalHeight =
+                foundationSize.getY()
+                        + bottomSize.getY()
+                        + topSize.getY();
+
+        // Scan only where the entire tower can fit
+        int minGroundY = 32;
+        int maxGroundY = 120 - totalHeight;
 
         var column = context.chunkGenerator().getBaseColumn(
                 centerX,
@@ -56,61 +77,31 @@ public class HexedRedSunTowerStructure extends Structure {
                 context.randomState()
         );
 
-        // --- FIND GROUND ---
         int groundY = -1;
-        for (int y = maxY; y >= minY; y--) {
-            if (column.getBlock(y).canOcclude()) {
+
+        for (int y = maxGroundY; y >= minGroundY; --y) {
+            var state = column.getBlock(y);
+
+            if (!state.isAir() && state.blocksMotion()) {
                 groundY = y;
                 break;
             }
         }
 
-        if (groundY == -1) {
+        if (groundY < 0) {
             return Optional.empty();
         }
 
-        Rotation rotation = Rotation.getRandom(context.random());
-        StructureTemplateManager manager = context.structureTemplateManager();
-
-        StructureTemplate bottomTemplate = manager.getOrCreate(BOTTOM);
-        StructureTemplate foundationTemplate = manager.getOrCreate(FOUNDATION);
-        ResourceLocation topId =
-                TOP[context.random().nextInt(TOP.length)];
-
-        StructureTemplate topTemplate =
-                manager.getOrCreate(topId);
-
-        // --- ROTATION SAFE SIZES ---
-        var bottomSize = bottomTemplate.getSize(rotation);
-        var foundationSize = foundationTemplate.getSize(rotation);
-        var topSize = topTemplate.getSize(rotation);
-
-        int totalHeight =
-                foundationSize.getY()
-                        + bottomSize.getY()
-                        + topSize.getY();
-
-        // --- HEIGHT SAFETY CHECK ---
-        if (groundY + totalHeight > 120) {
-            return Optional.empty();
-        }
-
-        // --- CENTERED BASE POSITION ---
         BlockPos basePos = new BlockPos(
                 centerX - bottomSize.getX() / 2,
                 groundY + 1,
                 centerZ - bottomSize.getZ() / 2
         );
 
-        NetherHexedKingdom.LOGGER.info(
-                "[HexedRedSunTower] Ground={} TotalHeight={} Base={}",
-                groundY, totalHeight, basePos
-        );
-
         return Optional.of(new GenerationStub(basePos, builder -> {
 
-            // --- FOUNDATION ---
-            BlockPos foundationPos = basePos.below(foundationSize.getY());
+            BlockPos foundationPos =
+                    basePos.below(foundationSize.getY());
 
             builder.addPiece(new HexedRedSunTowerPiece(
                     manager,
@@ -120,7 +111,6 @@ public class HexedRedSunTowerStructure extends Structure {
                     -1
             ));
 
-            // --- BOTTOM ---
             builder.addPiece(new HexedRedSunTowerPiece(
                     manager,
                     BOTTOM,
@@ -129,8 +119,8 @@ public class HexedRedSunTowerStructure extends Structure {
                     0
             ));
 
-            // --- TOP ---
-            BlockPos topPos = basePos.above(bottomSize.getY());
+            BlockPos topPos =
+                    basePos.above(bottomSize.getY());
 
             builder.addPiece(new HexedRedSunTowerPiece(
                     manager,
@@ -139,12 +129,6 @@ public class HexedRedSunTowerStructure extends Structure {
                     rotation,
                     1
             ));
-
-            NetherHexedKingdom.LOGGER.info(
-                    "[HexedRedSunTower] Assembled at {} (topY={})",
-                    basePos,
-                    topPos.getY()
-            );
         }));
     }
 

@@ -15,23 +15,32 @@ import net.minecraft.server.level.ServerLevel;
 
 public final class ZombifiedPiglinDecayEvents {
 
-    private static final String DECAY_PROGRESS = "DecayProgress";
+    public static final String DECAY_INFECTED =
+            "DecayCarrier";
 
-    private static final int CHECK_INTERVAL = 200; // 10 seconds
-    private static final int CONVERT_THRESHOLD = 18;
+    private static final String DECAY_PROGRESS =
+            "DecayProgress";
+
     private static final int SEARCH_RADIUS = 6;
+
+    private static final int CHECK_INTERVAL = 200;
+
+    private static final int CONVERT_THRESHOLD = 18;
+
 
     private ZombifiedPiglinDecayEvents() {}
 
-    @SubscribeEvent
-    public static void onEntityTick(EntityTickEvent.Post event) {
-        Entity entity = event.getEntity();
 
-        if (!(entity instanceof ZombifiedPiglin piglin)) {
+    @SubscribeEvent
+    public static void onTick(EntityTickEvent.Post event) {
+
+        if (!(event.getEntity()
+                instanceof ZombifiedPiglin piglin)) {
             return;
         }
 
-        if (piglin instanceof DecayedZombifiedPiglinEntity) {
+        if (piglin instanceof
+                DecayedZombifiedPiglinEntity) {
             return;
         }
 
@@ -41,107 +50,141 @@ public final class ZombifiedPiglinDecayEvents {
             return;
         }
 
+        CompoundTag data =
+                piglin.getPersistentData();
+
+
+        /*
+         * Acquire infection
+         */
+
+        if (!data.getBoolean(DECAY_INFECTED)) {
+
+            if (isNearDecayed(level, piglin)) {
+
+                data.putBoolean(
+                        DECAY_INFECTED,
+                        true
+                );
+
+                NetherHexedKingdom.LOGGER.debug(
+                        "Zombified Piglin {} decay infected",
+                        piglin.getUUID()
+                );
+
+            } else {
+                return;
+            }
+        }
+
+
+        /*
+         * Progress infection
+         */
+
         if (piglin.tickCount % CHECK_INTERVAL != 0) {
             return;
         }
 
-        CompoundTag data = piglin.getPersistentData();
+        int progress =
+                data.getInt(DECAY_PROGRESS) + 1;
 
-        int progress = data.getInt(DECAY_PROGRESS);
+        data.putInt(
+                DECAY_PROGRESS,
+                progress
+        );
 
-        int nearbyDecayed = getNearbyDecayedCount(level, piglin);
-
-        if (nearbyDecayed > 0) {
-            progress += Math.min(nearbyDecayed, 3);
-            if (level instanceof ServerLevel serverLevel) {
+        if (level instanceof ServerLevel serverLevel) {
+            if (progress > 6) {
                 serverLevel.sendParticles(
-                        ParticleTypes.ASH,
+                        ParticleTypes.FALLING_SPORE_BLOSSOM,
                         piglin.getX(),
                         piglin.getY() + 1.0D,
                         piglin.getZ(),
-                        3,
-                        0.25D,
-                        0.25D,
-                        0.25D,
-                        0.01D
-                );
-            }
-        } else {
-            progress = Math.max(0, progress - 1);
-        }
-
-//        NetherHexedKingdom.LOGGER.info(
-//                "Zombified Piglin {} sees {} decayed piglins",
-//                piglin.getUUID(),
-//                nearbyDecayed
-//        );
-//
-//        data.putInt(DECAY_PROGRESS, progress);
-//
-//        NetherHexedKingdom.LOGGER.info(
-//                "Zombified Piglin {} decay progress {}/{}",
-//                piglin.getUUID(),
-//                progress,
-//                CONVERT_THRESHOLD
-//        );
-
-        if (progress >= CONVERT_THRESHOLD - 3) {
-            if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(
-                        ParticleTypes.COMPOSTER,
-                        piglin.getX(),
-                        piglin.getY() + 1.0D,
-                        piglin.getZ(),
-                        5,
-                        0.3D,
-                        0.3D,
-                        0.3D,
-                        0.01D
+                        12,
+                        0.35D,
+                        0.6D,
+                        0.35D,
+                        0.03D
                 );
             }
         }
 
-//        if (progress >= CONVERT_THRESHOLD) {
-//            convert(piglin);
-//            NetherHexedKingdom.LOGGER.info(
-//                    "Zombified Piglin {} converting to Decayed",
-//                    piglin.getUUID()
-//            );
-//        }
+        if (progress >= 3 && piglin.tickCount % 20 == 0) {
+
+            // convulsion animation
+            piglin.hurt(piglin.damageSources().magic(), 0.0F);
+
+            // small twitch motion (optional, subtle)
+            piglin.setDeltaMovement(
+                    (piglin.getRandom().nextDouble() - 0.5D) * 0.03D,
+                    0.01D,
+                    (piglin.getRandom().nextDouble() - 0.5D) * 0.03D
+            );
+        }
+
+
+        NetherHexedKingdom.LOGGER.debug(
+                "Decay progress {} / {}",
+                progress,
+                CONVERT_THRESHOLD
+        );
+
+
+        if (progress >= CONVERT_THRESHOLD) {
+            convert(piglin);
+        }
     }
 
-    private static int getNearbyDecayedCount(Level level, ZombifiedPiglin piglin) {
-        AABB area = piglin.getBoundingBox().inflate(SEARCH_RADIUS);
 
-        return level.getEntitiesOfClass(
+    private static boolean isNearDecayed(
+            Level level,
+            ZombifiedPiglin piglin
+    ) {
+
+        return !level.getEntitiesOfClass(
+
                 DecayedZombifiedPiglinEntity.class,
-                area
-        ).size();
+
+                piglin.getBoundingBox()
+                        .inflate(SEARCH_RADIUS)
+
+        ).isEmpty();
     }
 
-    private static void convert(ZombifiedPiglin piglin) {
+
+
+    private static void convert(
+            ZombifiedPiglin piglin
+    ) {
+
         Level level = piglin.level();
 
         DecayedZombifiedPiglinEntity decayed =
-                ModEntities.DECAYED_ZOMBIFIED_PIGLIN.get().create(level);
+
+                ModEntities
+                        .DECAYED_ZOMBIFIED_PIGLIN
+                        .get()
+                        .create(level);
 
         if (decayed == null) {
             return;
         }
 
-        CompoundTag tag = piglin.saveWithoutId(new CompoundTag());
+        CompoundTag tag =
+                piglin.saveWithoutId(
+                        new CompoundTag()
+                );
 
+        tag.remove(DECAY_INFECTED);
         tag.remove(DECAY_PROGRESS);
 
-        // Extra safety
         tag.remove("UUID");
 
         decayed.load(tag);
 
         decayed.moveTo(
-                piglin.getX(),
-                piglin.getY(),
-                piglin.getZ(),
+                piglin.position(),
                 piglin.getYRot(),
                 piglin.getXRot()
         );
@@ -153,5 +196,10 @@ public final class ZombifiedPiglinDecayEvents {
         level.addFreshEntity(decayed);
 
         piglin.discard();
+
+        NetherHexedKingdom.LOGGER.debug(
+                "Zombified Piglin {} decayed",
+                piglin.getUUID()
+        );
     }
 }

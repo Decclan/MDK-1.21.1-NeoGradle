@@ -4,7 +4,8 @@
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
 		"2": "minecraft:block/polished_blackstone",
-		"3": "minecraft:block/black_concrete"
+		"3": "minecraft:block/black_concrete",
+        "particle": "minecraft:block/polished_blackstone"
 	},
 	"elements": [
 		{

@@ -16,23 +16,24 @@ public final class DecayInfectionEvents {
     public static final String INFECTED = "DecayInfected";
     public static final String EXPOSURE = "DecayExposure";
 
-    private static final int REQUIRED_EXPOSURES = 3;
+    private static final int REQUIRED_EXPOSURES = 2;
 
     private DecayInfectionEvents() {}
 
     @SubscribeEvent
     public static void onPiglinDamaged(LivingDamageEvent.Post event) {
+
         if (!(event.getEntity() instanceof AbstractPiglin piglin)) {
             return;
         }
 
         Entity attacker = event.getSource().getEntity();
+
         if (!(attacker instanceof DecayedZombifiedPiglinEntity)) {
             return;
         }
 
-        Level level = piglin.level();
-        if (level.isClientSide()) {
+        if (piglin.level().isClientSide()) {
             return;
         }
 
@@ -43,36 +44,25 @@ public final class DecayInfectionEvents {
         }
 
         int exposure = data.getInt(EXPOSURE) + 1;
+
         data.putInt(EXPOSURE, exposure);
 
-//        NetherHexedKingdom.LOGGER.info(
-//                "Piglin {} exposed to decay ({}/{})",
-//                piglin.getUUID(),
-//                exposure,
-//                REQUIRED_EXPOSURES
-//        );
+        NetherHexedKingdom.LOGGER.debug(
+                "Piglin {} exposed ({}/{})",
+                piglin.getUUID(),
+                exposure,
+                REQUIRED_EXPOSURES
+        );
 
-        if (exposure >= REQUIRED_EXPOSURES) {
-            data.putBoolean(INFECTED, true);
-
-            if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(
-                        ParticleTypes.SMOKE,
-                        piglin.getX(),
-                        piglin.getY() + 1.0D,
-                        piglin.getZ(),
-                        15,
-                        0.3D,
-                        0.4D,
-                        0.3D,
-                        0.02D
-                );
-            }
-
-//            NetherHexedKingdom.LOGGER.info(
-//                    "Piglin {} became infected",
-//                    piglin.getUUID()
-//            );
+        if (exposure < REQUIRED_EXPOSURES) {
+            return;
         }
+
+        data.putBoolean(INFECTED, true);
+
+        NetherHexedKingdom.LOGGER.debug(
+                "Piglin {} infected",
+                piglin.getUUID()
+        );
     }
 }

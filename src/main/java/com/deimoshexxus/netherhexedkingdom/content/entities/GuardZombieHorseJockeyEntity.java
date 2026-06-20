@@ -131,11 +131,16 @@ public class GuardZombieHorseJockeyEntity extends HexanGuardEntity {
 
         this.startRiding(horse, true);
     }
-    public static boolean canSpawn(EntityType<GuardZombieHorseJockeyEntity> type, LevelAccessor level,
-                                   MobSpawnType reason, BlockPos pos, RandomSource random) {
-        if (!CommonConfig.HEXED_ZOMBIE_HORSE.enabled.get()) {
-            return false;
-        }
+
+    public static boolean canSpawn(
+            EntityType<? extends HexanGuardEntity> type,
+            LevelAccessor level,
+            MobSpawnType spawnType,
+            BlockPos pos,
+            RandomSource random) {
+//        if (!CommonConfig.HEXED_ZOMBIE_HORSE.enabled.get()) {
+//            return false;
+//        }
         if (!CommonConfig.GUARD_ZOMBIE_HORSE_JOCKEY.enabled.get()) {
             return false;
         }
