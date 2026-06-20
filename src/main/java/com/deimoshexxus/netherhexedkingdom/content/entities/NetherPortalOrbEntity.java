@@ -98,7 +98,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
         itemEntity.setPickUpDelay(10);
         level.addFreshEntity(itemEntity);
 
-        LOGGER.debug("Dropped Nether Portal Orb due to failed placement at {}", blockPosition());
+        LOGGER.info("Dropped Nether Portal Orb due to failed placement at {}", blockPosition());
     }
 
     private boolean placePortal(ServerLevel level, BlockPos centerPos) {
@@ -228,7 +228,7 @@ public class NetherPortalOrbEntity extends ThrowableItemProjectile {
                 2
         );
 
-        LOGGER.debug(
+        LOGGER.info(
                 "Placed {} at {} (dim={}, success={})",
                 id,
                 cursor,

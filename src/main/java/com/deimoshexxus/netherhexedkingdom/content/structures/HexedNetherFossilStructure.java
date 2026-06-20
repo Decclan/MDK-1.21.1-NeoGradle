@@ -75,7 +75,7 @@ public class HexedNetherFossilStructure extends Structure {
                 context.random().nextInt(FOSSILS.length)
                 ];
 
-        NetherHexedKingdom.LOGGER.debug("[HexedNetherFossil] Selected fossil template: {}", chosen);
+        NetherHexedKingdom.LOGGER.info("[HexedNetherFossil] Selected fossil template: {}", chosen);
         BlockPos basePos = new BlockPos(x, groundY, z); // lowered by 1
 
         Rotation rotation = Rotation.getRandom(context.random());

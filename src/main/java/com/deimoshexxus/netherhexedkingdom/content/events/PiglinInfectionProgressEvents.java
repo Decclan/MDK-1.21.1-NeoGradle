@@ -48,7 +48,7 @@ public final class PiglinInfectionProgressEvents {
 
         data.putInt(INFECTION_PROGRESS, progress);
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Piglin {} infection {}/{}",
                 piglin.getUUID(),
                 progress,
@@ -101,7 +101,7 @@ public final class PiglinInfectionProgressEvents {
 
         piglin.discard();
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Piglin {} zombified",
                 piglin.getUUID()
         );
