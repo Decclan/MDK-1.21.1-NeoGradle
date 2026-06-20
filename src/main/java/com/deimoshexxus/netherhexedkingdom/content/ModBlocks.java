@@ -29,9 +29,9 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> MILITUS_ALLOY_ORE = registerBlockWithItem("militus_alloy_ore",
             () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
+                    .mapColor(MapColor.METAL)
                     .strength(16f, 13f)
-                    .sound(SoundType.STONE)
+                    .sound(SoundType.NETHER_GOLD_ORE)
                     .requiresCorrectToolForDrops()));
 
     public static final DeferredBlock<Block> MILITUS_ALLOY_BLOCK = registerBlockWithItem("militus_alloy_block",
