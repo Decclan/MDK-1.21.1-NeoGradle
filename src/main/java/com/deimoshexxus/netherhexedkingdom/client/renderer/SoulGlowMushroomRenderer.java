@@ -59,7 +59,7 @@ public class SoulGlowMushroomRenderer implements BlockEntityRenderer<SoulGlowMus
         // --- DEBUG: check presence of glow texture resource ---
 //        try {
 //            Minecraft.getInstance().getResourceManager().getResource(GLOW_TEXTURE_RL);
-//            NetherHexedKingdom.LOGGER.debug("[SoulGlow] Glow texture FOUND: {}", GLOW_TEXTURE_RL);
+//            NetherHexedKingdom.LOGGER.info("[SoulGlow] Glow texture FOUND: {}", GLOW_TEXTURE_RL);
 //        } catch (Exception ex) {
 //            NetherHexedKingdom.LOGGER.error("[SoulGlow] Glow texture MISSING: {}", GLOW_TEXTURE_RL, ex);
 //        }
@@ -72,7 +72,7 @@ public class SoulGlowMushroomRenderer implements BlockEntityRenderer<SoulGlowMus
 //            NetherHexedKingdom.LOGGER.error("[SoulGlow] Glow model MISSING: {}", GLOW_MODEL_RL);
 //            glowModel = baseModel; // fallback to avoid crashes (no visible glow)
 //        } else {
-//            NetherHexedKingdom.LOGGER.debug("[SoulGlow] Glow model loaded: {}", GLOW_MODEL_RL);
+//            NetherHexedKingdom.LOGGER.info("[SoulGlow] Glow model loaded: {}", GLOW_MODEL_RL);
 //        }
 
         // --- Emissive pass: render glow model with eyes RenderType (fullbright) ---

@@ -67,7 +67,7 @@ public final class ZombifiedPiglinDecayEvents {
                         true
                 );
 
-                NetherHexedKingdom.LOGGER.debug(
+                NetherHexedKingdom.LOGGER.info(
                         "Zombified Piglin {} decay infected",
                         piglin.getUUID()
                 );
@@ -124,7 +124,7 @@ public final class ZombifiedPiglinDecayEvents {
         }
 
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Decay progress {} / {}",
                 progress,
                 CONVERT_THRESHOLD
@@ -197,7 +197,7 @@ public final class ZombifiedPiglinDecayEvents {
 
         piglin.discard();
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Zombified Piglin {} decayed",
                 piglin.getUUID()
         );

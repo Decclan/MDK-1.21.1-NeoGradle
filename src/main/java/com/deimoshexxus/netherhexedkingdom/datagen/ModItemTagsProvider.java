@@ -13,7 +13,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.minecraft.tags.ItemTags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -44,22 +43,20 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        // Mirror block tags to item tags where appropriate
+        tag(MINEABLE_WITH_PICKAXE)
+                .add(ModBlocks.MILITUS_ALLOY_BLOCK.get().asItem())
+                .add(ModBlocks.MILITUS_ALLOY_ORE.get().asItem())
+                .add(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get().asItem());
 
-        // Custom fungi grouping
+        // Add standalone items if necessary
+        // tag(MINEABLE_WITH_PICKAXE).add(ModItems.MILITUS_ALLOY_INGOT.get());
+
         tag(FUNGI_ITEMS)
                 .add(ModItems.LINGZHI_MUSHROOM_ITEM.get())
                 .add(ModItems.MASONIAE_MUSHROOM_ITEM.get())
                 .add(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
-
-        // Vanilla fungi tag
-        tag(ItemTags.FOX_FOOD)
-                .add(ModItems.LINGZHI_MUSHROOM_ITEM.get())
-                .add(ModItems.MASONIAE_MUSHROOM_ITEM.get())
-                .add(ModItems.SOULGLOW_MUSHROOM_ITEM.get());
-
-        // Optional: if alloy can be used for armor trims
-        // tag(ItemTags.TRIM_MATERIALS)
-        //         .add(ModItems.MILITUS_ALLOY_INGOT.get());
+                //.add(ModItems.LINGZHI_MUSHROOM_FOOD.get());
     }
 
     @Override

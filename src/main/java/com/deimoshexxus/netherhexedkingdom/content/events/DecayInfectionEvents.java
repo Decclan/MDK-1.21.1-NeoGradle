@@ -47,7 +47,7 @@ public final class DecayInfectionEvents {
 
         data.putInt(EXPOSURE, exposure);
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Piglin {} exposed ({}/{})",
                 piglin.getUUID(),
                 exposure,
@@ -60,7 +60,7 @@ public final class DecayInfectionEvents {
 
         data.putBoolean(INFECTED, true);
 
-        NetherHexedKingdom.LOGGER.debug(
+        NetherHexedKingdom.LOGGER.info(
                 "Piglin {} infected",
                 piglin.getUUID()
         );
