@@ -4,7 +4,8 @@
 	"parent": "netherhexedkingdom:block/gargoyle_gold_block",
 	"textures": {
 		"4": "minecraft:block/amethyst_block",
-		"7": "minecraft:block/gold_block"
+		"7": "minecraft:block/gold_block",
+        "particle": "minecraft:block/amethyst_block"
 	},
 	"elements": [
 		{

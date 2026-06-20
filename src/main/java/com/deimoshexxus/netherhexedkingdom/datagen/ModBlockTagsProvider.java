@@ -44,6 +44,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.value())
                 .add(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.value())
                 .add(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.value())
+                .add(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME.value())
                 .add(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.value());
 
         // --------------------------------------------------------------------
