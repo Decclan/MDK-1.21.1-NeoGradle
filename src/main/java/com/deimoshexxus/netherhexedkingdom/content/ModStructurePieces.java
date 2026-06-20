@@ -75,11 +75,11 @@ public final class ModStructurePieces {
             () -> HexedIronCladPiece::new
     );
 
-    public static final DeferredHolder<StructurePieceType, StructurePieceType>
-            HEXED_RED_PYRAMID_PIECE = STRUCTURE_PIECES.register(
-            "hexed_red_pyramid_piece",
-            () -> HexedRedPyramidPiece::new
-    );
+//    public static final DeferredHolder<StructurePieceType, StructurePieceType>
+//            HEXED_RED_PYRAMID_PIECE = STRUCTURE_PIECES.register(
+//            "hexed_red_pyramid_piece",
+//            () -> HexedRedPyramidPiece::new
+//    );
 
 }
 
