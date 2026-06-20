@@ -82,6 +82,30 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
                 continue;
             }
 
+            if (block == ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get()) {
+                this.add(block, LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.BONE)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5)))
+                                )
+                        )
+                );
+                continue;
+            }
+
+            if (block == ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get()) {
+                this.add(block, LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.BONE)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5)))
+                                )
+                        )
+                );
+                continue;
+            }
+
             // DEFAULT BEHAVIOR:
             // specify none → drop itself
             this.dropSelf(block);

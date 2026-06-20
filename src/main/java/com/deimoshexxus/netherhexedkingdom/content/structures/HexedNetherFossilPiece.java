@@ -91,7 +91,7 @@ public class HexedNetherFossilPiece extends TemplateStructurePiece {
         );
 
         if (placed) {
-            NetherHexedKingdom.LOGGER.info(
+            NetherHexedKingdom.LOGGER.debug(
                     "[HexedNetherFossilPiece] Placed template {} at {} rot={} box={}",
                     this.templateName,
                     this.templatePosition,

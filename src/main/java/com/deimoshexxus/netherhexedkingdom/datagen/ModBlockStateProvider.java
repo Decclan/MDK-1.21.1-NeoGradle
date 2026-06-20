@@ -50,6 +50,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.IRON_PLATE_BLOCK.get(), cubeAll(ModBlocks.IRON_PLATE_BLOCK.get()));
         simpleBlockWithItem(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.GILDED_BRICKS_OF_LOST_TIME.get()));
         simpleBlockWithItem(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.RED_GILDED_BRICKS_OF_LOST_TIME.get()));
+        simpleBlockWithItem(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME.get(), cubeAll(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME.get()));
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get(), cubeAll(ModBlocks.HEXAN_CHISELED_NETHER_BRICKS.get()));
         simpleBlockWithItem(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get(), cubeAll(ModBlocks.HEXAN_CHISELED_POLISHED_BLACKSTONE.get()));
         generateGasBlock(ModBlocks.GAS_SOURCE.get(), "poison_gas_source");
@@ -98,8 +99,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // Horizontal rotatable skeleton halves
         horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_TOP_BLOCK.get(), "human_skeleton_top_block");
         horizontalRotatableBlockInverted(ModBlocks.HUMAN_SKELETON_BOTTOM_BLOCK.get(), "human_skeleton_bottom_block");
-
-
 
     }
 
@@ -183,7 +182,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
                     .texture("cross", modLoc(emissiveTextureName));
             // Generate an item model variant too if you'd like (optional)
             simpleBlockItem(block, glowModel);
-            NetherHexedKingdom.LOGGER.info("[Datagen] Generated glow model referencing '{}'", emissiveTextureName);
+            //NetherHexedKingdom.LOGGER.debug("[Datagen] Generated glow model referencing '{}'", emissiveTextureName);
         } catch (IllegalArgumentException ex) {
             // Datagen couldn't validate the emissive PNG. Fall back safely to base texture
             NetherHexedKingdom.LOGGER.warn("[Datagen] emissive texture '{}' not visible to datagen; generating fallback glow model that uses base texture.",
@@ -208,22 +207,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         // But typically we keep the baseModel as the blockstate and let the renderer render the glow
         // overlay using the standalone model (registered in ModelEvent.RegisterAdditional).
     }
-
-
-
-//    private void generateGlowingMushroom(Block block, String name) {
-//        // Use NeoForge model builder to generate the JSON automatically
-//        ModelFile modelFile = models()
-//                .withExistingParent(name, mcLoc("block/cross"))
-//                .texture("cross", modLoc("block/" + name))
-//                .renderType("minecraft:cutout_mipped");
-//
-//        // Generate blockstate JSON pointing to the model
-//        simpleBlock(block, modelFile);
-//
-//        // Generate item model referencing the same model
-//        simpleBlockItem(block, modelFile);
-//    }
 
     private void generateBracketFungus(Block block, String name, int stages) {
 

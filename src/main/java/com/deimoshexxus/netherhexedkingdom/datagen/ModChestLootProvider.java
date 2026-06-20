@@ -98,7 +98,8 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .when(LootItemRandomChanceCondition.randomChance(0.5f))
                                         .add(LootItem.lootTableItem(ModItems.MILITUS_ALLOY_INGOT).setWeight(2).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 5))))
                                         .add(LootItem.lootTableItem(ModItems.MILITUS_ALLOY_NUGGET).setWeight(2).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 9))))
-                                        .add(LootItem.lootTableItem(ModBlocks.GILDED_BRICKS_OF_LOST_TIME).setWeight(2).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 6))))
+                                        .add(LootItem.lootTableItem(ModBlocks.GILDED_BRICKS_OF_LOST_TIME).setWeight(2).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 8))))
+                                        .add(LootItem.lootTableItem(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 8))))
                         ));
 
         ResourceLocation kingdom_loot_rare_id = ResourceLocation.fromNamespaceAndPath(
@@ -133,11 +134,11 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .add(LootItem.lootTableItem(Items.IRON_INGOT).setWeight(12).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
                                         .add(LootItem.lootTableItem(Items.GLASS_BOTTLE).setWeight(6))
                                         .add(LootItem.lootTableItem(Items.BOOK).setWeight(12).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.BLAZE_ROD).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(Items.BLAZE_ROD).setWeight(4).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(Items.SUSPICIOUS_STEW).setWeight(4))
-                                        .add(LootItem.lootTableItem(Items.CAKE).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(Items.GOLDEN_CARROT).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(Items.CAKE).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(Items.GOLDEN_CARROT).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(Items.QUARTZ).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 6))))
                                         .add(LootItem.lootTableItem(Items.IRON_PICKAXE).setWeight(3).apply(EnchantRandomlyFunction.randomEnchantment()))
                                         .add(LootItem.lootTableItem(Items.GOLDEN_CHESTPLATE).setWeight(3).apply(EnchantRandomlyFunction.randomEnchantment()))
@@ -152,6 +153,7 @@ public class ModChestLootProvider implements LootTableSubProvider {
                                         .add(LootItem.lootTableItem(ModBlocks.ETERNAL_LIGHT_BLOCK).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
                                         .add(LootItem.lootTableItem(ModItems.NETHERITE_OXIDE).setWeight(3))
                                         .add(LootItem.lootTableItem(Items.FEATHER).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 6))))
+                                        .add(LootItem.lootTableItem(ModBlocks.GILDED_BLACKSTONE_BRICKS_OF_LOST_TIME).setWeight(6).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 6))))
 
                                         // rare
                                         .add(LootItem.lootTableItem(ModItems.POISON_GAS_ITEM).setWeight(1))

@@ -26,10 +26,10 @@ public final class CommonConfig {
             BUILDER.define("Generate Hexed Nether Fossil?", true);
 
     public static final ModConfigSpec.BooleanValue CRIMSON_MOTHER_FUNGUS =
-            BUILDER.define("Generate Hexed Mother Fungus?", true);
+            BUILDER.define("Generate Crimson Mother Fungus?", true);
 
     public static final ModConfigSpec.BooleanValue WARPED_MOTHER_FUNGUS =
-            BUILDER.define("Generate Hexed Mother Fungus?", true);
+            BUILDER.define("Generate Warped Mother Fungus?", true);
 
     public static final ModConfigSpec.BooleanValue HEXED_GREED_MINES =
             BUILDER.define("Generate Hexed Greed Mines?", true);
@@ -43,8 +43,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue HEXED_IRON_CLAD =
             BUILDER.define("Generate Hexed Iron Clad?", true);
 
-//    public static final ModConfigSpec.BooleanValue HEXED_RED_PYRAMID =
-//            BUILDER.define("Generate Hexed Red Pyramid?", true);
+    public static final ModConfigSpec.BooleanValue HEXED_RED_PYRAMID =
+            BUILDER.define("Generate Hexed Red Pyramid?", true);
 
     // Mob configs
     public static final MobSpawnConfig GARGOYLE_POSSESSED;
