@@ -43,8 +43,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue HEXED_IRON_CLAD =
             BUILDER.define("Generate Hexed Iron Clad?", true);
 
-    public static final ModConfigSpec.BooleanValue HEXED_RED_PYRAMID =
-            BUILDER.define("Generate Hexed Red Pyramid?", true);
+//    public static final ModConfigSpec.BooleanValue HEXED_RED_PYRAMID =
+//            BUILDER.define("Generate Hexed Red Pyramid?", true);
 
     // Mob configs
     public static final MobSpawnConfig GARGOYLE_POSSESSED;
